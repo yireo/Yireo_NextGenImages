@@ -59,6 +59,11 @@ class Picture extends Template
     private $lazyLoading = true;
 
     /**
+     * @var bool
+     */
+    private $isDataSrc = false;
+
+    /**
      * @return SourceImage[]
      */
     public function getSourceImages(): array
@@ -247,6 +252,25 @@ class Picture extends Template
     public function setLazyLoading(bool $lazyLoading): Picture
     {
         $this->lazyLoading = $lazyLoading;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsDataSrc(): bool
+    {
+        return $this->isDataSrc;
+    }
+
+    /**
+     * @param bool $isDataSrc
+     * @return $this
+     */
+    public function setIsDataSrc(bool $isDataSrc): Picture
+    {
+        $this->isDataSrc = $isDataSrc;
 
         return $this;
     }
