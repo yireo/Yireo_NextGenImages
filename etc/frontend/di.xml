@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\LayoutInterface">
+        <plugin name="yireo_nextgenimages_replace_tags" type="Yireo\NextGenImages\Plugin\ReplaceTagsPlugin"/>
+    </type>
+
+    <type name="Magento\Swatches\Helper\Data">
+        <plugin name="yireo_nextgenimages_correct_images_in_ajax_response" type="Yireo\NextGenImages\Plugin\CorrectImagesInAjaxResponse"/>
+    </type>
+</config>

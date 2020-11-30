@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Yireo NextGenImages for Magento
+ *
+ * @author      Yireo (https://www.yireo.com/)
+ * @copyright   Copyright 2019 Yireo (https://www.yireo.com/)
+ * @license     Open Source License (OSL v3)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <yireo_nextgenimages>
+            <settings>
+                <enabled>1</enabled>
+                <debug>0</debug>
+                <lazy_loading>1</lazy_loading>
+                <convert_images>1</convert_images>
+            </settings>
+        </yireo_nextgenimages>
+    </default>
+</config>

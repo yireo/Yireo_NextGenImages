@@ -1,0 +1,2 @@
+# Magento 2 module for NextGenImages
+This module adds next-gen image support to Magento 2. Please note that this is a base extension for other extensions to use. See [Yireo_Webp2](https://github.com/yireo/Yireo_Webp2) for details.
