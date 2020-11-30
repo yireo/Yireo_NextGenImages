@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+use Yireo\NextGenImages\Block\Picture;
 
-/** @var $block \Yireo\NextGenImages\Block\Picture */
-
+/** @var $block Picture */
 $width = ($block->getWidth()) ? ' width="' . $block->getWidth() . '"' : '';
 $height = ($block->getHeight()) ? ' height="' . $block->getHeight() . '"' : '';
 $class = ($block->getClass()) ? ' class="' . $block->getClass() . '"' : '';
