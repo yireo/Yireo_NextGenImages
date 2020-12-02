@@ -174,6 +174,7 @@ class HtmlReplacer
             try {
                 $images[] = $convertor->convertByUrl($imageUrl);
             } catch (ConvertorException $convertorException) {
+                continue;
             }
         }
 
