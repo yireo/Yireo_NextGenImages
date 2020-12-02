@@ -5,7 +5,7 @@ namespace Yireo\NextGenImages\Plugin;
 
 use Magento\Swatches\Helper\Data;
 use Yireo\NextGenImages\Browser\BrowserSupport;
-use Yireo\NextGenImages\Image\UrlReplacer;
+use Yireo\Webp2\Image\UrlReplacer;
 
 class CorrectImagesInAjaxResponse
 {
