@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.3] - 2 December 2020
 ### Fixed
+- Re-add dep with WebP2 in controller
+
+## [0.0.3] - 2 December 2020
+### Fixed
 - Remove deps with WebP2 module
 - Add missing Browser class
 
