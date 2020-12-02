@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace Yireo\NextGenImages\Plugin;
 
 use Magento\Swatches\Helper\Data;
-use Yireo\Webp2\Browser\BrowserSupport;
-use Yireo\Webp2\Config\Config;
+use Yireo\NextGenImages\Browser\BrowserSupport;
 use Yireo\NextGenImages\Image\UrlReplacer;
 
 class CorrectImagesInAjaxResponse
@@ -16,11 +15,6 @@ class CorrectImagesInAjaxResponse
     private $browserSupport;
 
     /**
-     * @var Config
-     */
-    private $config;
-
-    /**
      * @var UrlReplacer
      */
     private $urlReplacer;
@@ -29,16 +23,13 @@ class CorrectImagesInAjaxResponse
      * CorrectImagesInAjaxResponse constructor.
      *
      * @param BrowserSupport $browserSupport
-     * @param Config $config
      * @param UrlReplacer $urlReplacer
      */
     public function __construct(
         BrowserSupport $browserSupport,
-        Config $config,
         UrlReplacer $urlReplacer
     ) {
         $this->browserSupport = $browserSupport;
-        $this->config = $config;
         $this->urlReplacer = $urlReplacer;
     }
 

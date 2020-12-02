@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Yireo\NextGenImages\Logger;
 
 use Psr\Log\LoggerInterface;
-use Yireo\Webp2\Config\Config;
+use Yireo\NextGenImages\Config\Config;
 
 class Debugger
 {
