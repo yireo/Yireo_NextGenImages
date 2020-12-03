@@ -132,6 +132,8 @@ class ModuleVersion extends Field
         if (isset($data['version'])) {
             return (string)$data['version'];
         }
+
+        return '';
     }
 
     /**

@@ -14,14 +14,14 @@ $originalTag = preg_replace('/(\/?)>$/', $lazyLoading . '\1>', $originalTag);
 $originalImage = $block->getOriginalImage();
 $originalImageType = $block->getOriginalImageType();
 ?>
-<?php if ($block->getDebug()) : ?>
+<?php if ($block->getDebug()): ?>
     <!-- <?= /* @noEscape */
     $block->getOriginalTag() ?> -->
 <?php endif; ?>
 
 <picture<?= /* @noEscape */
 $class ?>>
-    <?php foreach ($block->getSourceImages() as $sourceImage) : ?>
+    <?php foreach ($block->getSourceImages() as $sourceImage): ?>
         <source type="<?= /* @noEscape */
         $sourceImage->getMimeType() ?>" srcset="<?= /* @noEscape */
         $sourceImage->getUrl() ?>">

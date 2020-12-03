@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Plugin;
 
+use Exception;
 use Magento\Swatches\Helper\Data;
 use Yireo\NextGenImages\Browser\BrowserSupport;
-use Yireo\Webp2\Image\UrlReplacer;
+use Yireo\NextGenImages\Image\UrlReplacer;
 
 class CorrectImagesInAjaxResponse
 {
@@ -73,8 +75,8 @@ class CorrectImagesInAjaxResponse
             }
 
             try {
-                $dataArray[$name] = $this->urlReplacer->getWebpUrlFromImageUrl($value);
-            } catch (\Exception $e) {
+                $dataArray[$name] = $this->urlReplacer->getNewImageUrlFromImageUrl($value);
+            } catch (Exception $e) {
                 continue;
             }
         }

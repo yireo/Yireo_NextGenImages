@@ -172,7 +172,7 @@ class HtmlReplacer
         $images = [];
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
-                $images[] = $convertor->convertByUrl($imageUrl);
+                $images[] = $convertor->getSourceImage($imageUrl);
             } catch (ConvertorException $convertorException) {
                 continue;
             }
