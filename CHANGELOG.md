@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.3] - 2 December 2020
+## [0.0.5] - 3 December 2020
+### Fixed
+- Add dummy convertor with DI preference
+- Replace all WebP deps with NextGenImages deps
+
+## [0.0.4] - 2 December 2020
 ### Fixed
 - Re-add dep with WebP2 in controller
 
