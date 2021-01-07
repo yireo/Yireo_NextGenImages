@@ -54,15 +54,15 @@ class HtmlReplacer
      */
     public function replaceImagesInHtml(LayoutInterface $layout, string $html): string
     {
-        $regex = '/<([^<]+)\ src=\"([^\"]+)\.(png|jpg|jpeg)([^>]+)>(\s*)<(\/?)([a-z]+)/msi';
+        $regex = '/<([^<]+)\ (data\-src|src)=\"([^\"]+)\.(png|jpg|jpeg)([^>]+)>(\s*)<(\/?)([a-z]+)/msi';
         if (preg_match_all($regex, $html, $matches) === false) {
             return $html;
         }
 
         foreach ($matches[0] as $index => $match) {
-            $nextTag = $matches[6][$index] . $matches[7][$index];
+            $nextTag = $matches[7][$index] . $matches[8][$index];
             $fullSearchMatch = $matches[0][$index];
-            $imageUrl = $matches[2][$index] . '.' . $matches[3][$index];
+            $imageUrl = $matches[3][$index] . '.' . $matches[4][$index];
 
             if (!$this->isAllowedByNextTag($nextTag)) {
                 continue;
@@ -77,8 +77,9 @@ class HtmlReplacer
                 continue;
             }
 
+            $isDataSrc = $matches[2][$index] === 'data-src';
             $htmlTag = preg_replace('/>(.*)/msi', '>', $fullSearchMatch);
-            $newHtmlTag = $this->getNewHtmlTag($layout, $imageUrl, $sourceImages, $htmlTag);
+            $newHtmlTag = $this->getNewHtmlTag($layout, $imageUrl, $sourceImages, $htmlTag, $isDataSrc);
             $replacement = $newHtmlTag . '<' . $nextTag;
             $html = str_replace($fullSearchMatch, $replacement, $html);
         }
@@ -115,12 +116,18 @@ class HtmlReplacer
     /**
      * @param LayoutInterface $layout
      * @param string $imageUrl
-     * @param string $webpUrl
+     * @param array $sourceImages
      * @param $htmlTag
+     * @param bool $isDataSrc
      * @return string
      */
-    private function getNewHtmlTag(LayoutInterface $layout, string $imageUrl, array $sourceImages, $htmlTag): string
-    {
+    private function getNewHtmlTag(
+        LayoutInterface $layout,
+        string $imageUrl,
+        array $sourceImages,
+        $htmlTag,
+        bool $isDataSrc = false
+    ): string {
         return (string)$this->getPictureBlock($layout)
             ->setOriginalImage($imageUrl)
             ->setSourceImages($sourceImages)
@@ -130,6 +137,7 @@ class HtmlReplacer
             ->setWidth($this->getAttributeText($htmlTag, 'width'))
             ->setHeight($this->getAttributeText($htmlTag, 'height'))
             ->setLazyLoading($this->config->addLazyLoading())
+            ->setIsDataSrc($isDataSrc)
             ->toHtml();
     }
 
