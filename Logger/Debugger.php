@@ -40,7 +40,7 @@ class Debugger
      */
     public function debug(string $msg, $data = null): bool
     {
-        if ($this->config->isDebugging() === false) {
+        if ($this->config->isLogging() === false) {
             return false;
         }
 

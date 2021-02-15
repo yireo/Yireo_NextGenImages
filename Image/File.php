@@ -8,6 +8,7 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Directory\ReadFactory as DirectoryReadFactory;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
+use Yireo\NextGenImages\Logger\Debugger;
 
 class File
 {
@@ -25,6 +26,10 @@ class File
      * @var FileDriver
      */
     private $fileDriver;
+    /**
+     * @var Debugger
+     */
+    private $debugger;
 
     /**
      * File constructor.
@@ -32,15 +37,18 @@ class File
      * @param DirectoryList $directoryList
      * @param DirectoryReadFactory $directoryReadFactory
      * @param FileDriver $fileDriver
+     * @param Debugger $debugger
      */
     public function __construct(
         DirectoryList $directoryList,
         DirectoryReadFactory $directoryReadFactory,
-        FileDriver $fileDriver
+        FileDriver $fileDriver,
+        Debugger $debugger
     ) {
         $this->directoryList = $directoryList;
         $this->directoryReadFactory = $directoryReadFactory;
         $this->fileDriver = $fileDriver;
+        $this->debugger = $debugger;
     }
 
     /**
@@ -95,6 +103,7 @@ class File
             $stat = $this->fileDriver->stat($filePath);
             return (isset($stat['mtime'])) ? (int)$stat['mtime'] : $stat['ctime'];
         } catch (FileSystemException $e) {
+            $this->debugger->debug($e->getMessage(), ['filePath' => $filePath]);
             return 0;
         }
     }

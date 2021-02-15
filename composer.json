@@ -1,7 +1,7 @@
 {
     "name": "yireo/magento2-next-gen-images",
     "license": "OSL-3.0",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "type": "magento2-module",
     "homepage": "https://www.yireo.com/software/magento-extensions/next-gen-images",
     "description": "Magento 2 module to add NextGen images support to the Magento frontend",

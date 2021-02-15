@@ -8,6 +8,7 @@ use Exception;
 use Magento\Swatches\Helper\Data;
 use Yireo\NextGenImages\Browser\BrowserSupport;
 use Yireo\NextGenImages\Image\UrlReplacer;
+use Yireo\NextGenImages\Logger\Debugger;
 
 class CorrectImagesInAjaxResponse
 {
@@ -20,19 +21,26 @@ class CorrectImagesInAjaxResponse
      * @var UrlReplacer
      */
     private $urlReplacer;
+    /**
+     * @var Debugger
+     */
+    private $debugger;
 
     /**
      * CorrectImagesInAjaxResponse constructor.
      *
      * @param BrowserSupport $browserSupport
      * @param UrlReplacer $urlReplacer
+     * @param Debugger $debugger
      */
     public function __construct(
         BrowserSupport $browserSupport,
-        UrlReplacer $urlReplacer
+        UrlReplacer $urlReplacer,
+        Debugger $debugger
     ) {
         $this->browserSupport = $browserSupport;
         $this->urlReplacer = $urlReplacer;
+        $this->debugger = $debugger;
     }
 
     /**
@@ -77,6 +85,7 @@ class CorrectImagesInAjaxResponse
             try {
                 $dataArray[$name] = $this->urlReplacer->getNewImageUrlFromImageUrl($value);
             } catch (Exception $e) {
+                $this->debugger->debug($e->getMessage(), [$name => $value]);
                 continue;
             }
         }

@@ -182,6 +182,7 @@ class HtmlReplacer
             try {
                 $images[] = $convertor->getSourceImage($imageUrl);
             } catch (ConvertorException $convertorException) {
+                $this->debugger->debug($convertorException->getMessage(), ['imageUrl' => $imageUrl]);
                 continue;
             }
         }

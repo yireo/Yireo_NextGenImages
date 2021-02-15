@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 15 February 2021
+### Added
+- Enhance debugger with logging option
+- Add logging with every exception
+
 ## [0.0.6] - 7 January 2021
 ### Fixed
 - Reimplement `data-src` (PR 51 from the `Yireo_Webp2` module)

@@ -78,4 +78,12 @@ class Config implements ArgumentInterface
     {
         return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/debug');
     }
+
+    /**
+     * @return bool
+     */
+    public function isLogging(): bool
+    {
+        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/log');
+    }
 }
