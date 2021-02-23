@@ -14,6 +14,7 @@
             <settings>
                 <enabled>1</enabled>
                 <debug>0</debug>
+                <log>0</log>
                 <lazy_loading>1</lazy_loading>
                 <convert_images>1</convert_images>
             </settings>
