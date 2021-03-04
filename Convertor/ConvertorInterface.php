@@ -15,10 +15,10 @@ interface ConvertorInterface
     public function getSourceImage(string $imageUrl): SourceImage;
 
     /**
-     * @param string $sourceImageUrl
-     * @param string $destinationImageUrl
+     * @param string $sourceImageUri
+     * @param string $destinationImageUri
      * @return bool
      * @throws ConvertorException
      */
-    public function convert(string $sourceImageUrl, string $destinationImageUrl): bool;
+    public function convert(string $sourceImageUri, string $destinationImageUri): bool;
 }
