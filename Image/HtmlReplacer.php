@@ -10,6 +10,7 @@ use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Exception\ConvertorException;
+use Yireo\NextGenImages\Exception\NoConversionNeededException;
 use Yireo\NextGenImages\Logger\Debugger;
 
 class HtmlReplacer

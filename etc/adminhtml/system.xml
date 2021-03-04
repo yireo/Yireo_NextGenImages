@@ -24,9 +24,14 @@
                     <comment>Logging to var/log/yireo_nextgenimages.log</comment>
                 </field>
                 <field id="convert_images" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>Convert NextGenImages images</label>
+                    <label>Convert images</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Try to convert JPGs and PNGs to NextGen, if the NextGen image does not exist yet</comment>
+                </field>
+                <field id="convert_on_save" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Convert images on save</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Try to convert JPGs and PNGs to NextGen, when the original image is modified or created</comment>
                 </field>
                 <field id="lazy_loading" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Add lazy loading attribute</label>

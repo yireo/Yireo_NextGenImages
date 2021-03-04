@@ -17,6 +17,7 @@
                 <log>0</log>
                 <lazy_loading>1</lazy_loading>
                 <convert_images>1</convert_images>
+                <convert_on_save>0</convert_on_save>
             </settings>
         </yireo_nextgenimages>
     </default>

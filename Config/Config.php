@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Config;
 
@@ -48,6 +47,14 @@ class Config implements ArgumentInterface
     public function allowImageCreation(): bool
     {
         return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/convert_images');
+    }
+
+    /**
+     * @return bool
+     */
+    public function convertImagesOnSave(): bool
+    {
+        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/convert_on_save');
     }
 
     /**
