@@ -8,6 +8,7 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Directory\ReadFactory as DirectoryReadFactory;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
+use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Yireo\NextGenImages\Logger\Debugger;
 
 class File
@@ -30,6 +31,10 @@ class File
      * @var Debugger
      */
     private $debugger;
+    /**
+     * @var FileReadFactory
+     */
+    private $fileReadFactory;
 
     /**
      * File constructor.
@@ -38,17 +43,20 @@ class File
      * @param DirectoryReadFactory $directoryReadFactory
      * @param FileDriver $fileDriver
      * @param Debugger $debugger
+     * @param FileReadFactory $fileReadFactory
      */
     public function __construct(
         DirectoryList $directoryList,
         DirectoryReadFactory $directoryReadFactory,
         FileDriver $fileDriver,
-        Debugger $debugger
+        Debugger $debugger,
+        FileReadFactory $fileReadFactory
     ) {
         $this->directoryList = $directoryList;
         $this->directoryReadFactory = $directoryReadFactory;
         $this->fileDriver = $fileDriver;
         $this->debugger = $debugger;
+        $this->fileReadFactory = $fileReadFactory;
     }
 
     /**
@@ -58,6 +66,10 @@ class File
      */
     public function resolve(string $url): string
     {
+        if ($this->fileExists($url)) {
+            return $url;
+        }
+
         // phpcs:disable Magento2.Functions.DiscouragedFunction
         $parsedUrl = parse_url($url);
         if (!$parsedUrl) {
@@ -70,6 +82,35 @@ class File
         $path = $this->getAbsolutePathFromImagePath((string)$path);
 
         return $path;
+    }
+
+    /**
+     * @param $filePath
+     * @return bool
+     */
+    public function fileExists($filePath): bool
+    {
+        try {
+            $fileRead = $this->fileReadFactory->create($filePath, 'file');
+            return (bool)$fileRead->readAll();
+        } catch (FileSystemException $fileSystemException) {
+            return false;
+        }
+    }
+
+
+    /**
+     * @param $filePath
+     * @return bool
+     * @throws FileSystemException
+     */
+    public function isWritable($filePath): bool
+    {
+        if ($this->fileExists($filePath)) {
+            return $this->fileDriver->isWritable($filePath);
+        }
+
+        return $this->fileDriver->isWritable($this->fileDriver->getParentDirectory($filePath));
     }
 
     /**
