@@ -27,10 +27,12 @@ class File
      * @var FileDriver
      */
     private $fileDriver;
+
     /**
      * @var Debugger
      */
     private $debugger;
+
     /**
      * @var FileReadFactory
      */
@@ -85,6 +87,24 @@ class File
     }
 
     /**
+     * @param string $url
+     * @return bool
+     */
+    public function urlExists(string $url): bool
+    {
+        if ($this->fileExists($url)) {
+            return true;
+        }
+
+        $filePath = $this->resolve($url);
+        if ($this->fileExists($filePath)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param $filePath
      * @return bool
      */
@@ -97,7 +117,6 @@ class File
             return false;
         }
     }
-
 
     /**
      * @param $filePath
