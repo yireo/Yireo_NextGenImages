@@ -72,6 +72,10 @@ class File
             return $url;
         }
 
+        if (strstr($this->directoryList->getRoot(), $url)) {
+            return $url;
+        }
+
         // phpcs:disable Magento2.Functions.DiscouragedFunction
         $parsedUrl = parse_url($url);
         if (!$parsedUrl) {
@@ -87,16 +91,26 @@ class File
     }
 
     /**
+     * @param string $uri
+     * @return bool
+     * @deprecated Use uriExists($uri) instead
+     */
+    public function urlExists(string $uri): bool
+    {
+        return $this->uriExists($uri);
+    }
+
+    /**
      * @param string $url
      * @return bool
      */
-    public function urlExists(string $url): bool
+    public function uriExists(string $uri): bool
     {
-        if ($this->fileExists($url)) {
+        if ($this->fileExists($uri)) {
             return true;
         }
 
-        $filePath = $this->resolve($url);
+        $filePath = $this->resolve($uri);
         if ($this->fileExists($filePath)) {
             return true;
         }
@@ -176,6 +190,10 @@ class File
      */
     public function isNewerThan(string $targetFile, string $comparisonFile): bool
     {
+        if (!$this->fileExists($targetFile)) {
+            return false;
+        }
+
         $targetFileModificationTime = $this->getModificationTime($targetFile);
         if ($targetFileModificationTime === 0) {
             return false;
