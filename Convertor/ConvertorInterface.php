@@ -16,9 +16,9 @@ interface ConvertorInterface
 
     /**
      * @param string $sourceImageUri
-     * @param string $destinationImageUri
+     * @param string|null $destinationImageUri
      * @return bool
      * @throws ConvertorException
      */
-    public function convert(string $sourceImageUri, string $destinationImageUri): bool;
+    public function convert(string $sourceImageUri, ?string $destinationImageUri = null): bool;
 }
