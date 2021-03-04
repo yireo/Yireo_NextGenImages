@@ -50,7 +50,6 @@ class HtmlReplacer
      * @param LayoutInterface $layout
      * @param string $html
      * @return string
-     * @throws ExceptionAlias
      */
     public function replaceImagesInHtml(LayoutInterface $layout, string $html): string
     {

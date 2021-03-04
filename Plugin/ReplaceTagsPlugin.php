@@ -31,7 +31,6 @@ class ReplaceTagsPlugin
      * @param LayoutInterface $layout
      * @param string $output
      * @return string
-     * @throws ExceptionAlias
      */
     public function afterGetOutput(LayoutInterface $layout, string $output): string
     {

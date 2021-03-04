@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Yireo\NextGenImages\Convertor\ConvertorInterface" type="Yireo\NextGenImages\Convertor\DummyConvertor"/>
+
+    <type name="Yireo\NextGenImages\Logger\Debugger">
+        <arguments>
+            <argument name="logger" xsi:type="object">Yireo\NextGenImages\Logger\CustomLogger</argument>
+        </arguments>
+    </type>
+
+    <virtualType type="Magento\Framework\Logger\Monolog" name="Yireo\NextGenImages\Logger\CustomLogger">
+        <arguments>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Yireo\NextGenImages\Logger\CustomLogHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType type="Magento\Framework\Logger\Handler\Base" name="Yireo\NextGenImages\Logger\CustomLogHandler">
+        <arguments>
+            <argument name="fileName" xsi:type="string">var/log/yireo_nextgenimages.log</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Framework\Image">
+        <plugin name="Yireo_NextGenImages::convertWebpAfterImageSave" type="Yireo\NextGenImages\Plugin\ConvertAfterImageSave"/>
+    </type>
+
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="next-gen-images-test-uri" xsi:type="object">Yireo\NextGenImages\Console\Command\TestUriCommand</item>
+                <item name="next-gen-images-convert" xsi:type="object">Yireo\NextGenImages\Console\Command\ConvertCommand</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -9,6 +9,7 @@ use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Directory\ReadFactory as DirectoryReadFactory;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
+use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\NextGenImages\Logger\Debugger;
 
 class File
@@ -62,22 +63,22 @@ class File
     }
 
     /**
-     * @param string $url
+     * @param string $uri
      *
      * @return string
      */
-    public function resolve(string $url): string
+    public function resolve(string $uri): string
     {
-        if ($this->fileExists($url)) {
-            return $url;
+        if ($this->fileExists($uri)) {
+            return $uri;
         }
 
-        if (strstr($this->directoryList->getRoot(), $url)) {
-            return $url;
+        if (strpos($uri, $this->directoryList->getRoot()) === 0) {
+            return $uri;
         }
 
         // phpcs:disable Magento2.Functions.DiscouragedFunction
-        $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url($uri);
         if (!$parsedUrl) {
             return '';
         }
@@ -101,7 +102,7 @@ class File
     }
 
     /**
-     * @param string $url
+     * @param string $uri
      * @return bool
      */
     public function uriExists(string $uri): bool
@@ -209,5 +210,28 @@ class File
         }
 
         return false;
+    }
+
+    /**
+     * @param string $sourceImageFilename
+     * @param string $destinationImageFilename
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function needsConversion(string $sourceImageFilename, string $destinationImageFilename): bool
+    {
+        if (!$this->fileExists($sourceImageFilename)) {
+            return false;
+        }
+
+        if ($this->fileExists($destinationImageFilename)) {
+            return false;
+        }
+
+        if ($this->isNewerThan($destinationImageFilename, $sourceImageFilename)) {
+            return false;
+        }
+
+        return true;
     }
 }
