@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 9 March 2021
+### Added
+- New option to try to convert on saving
+- Add console command for converting images manually
+- Add command to test for URIs quickly
+- Update convertor to make second arg optional
+
 ## [0.1.1] - 15 February 2021
 ### Fixed
 - Fix composer version
