@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 9 March 2021
+### Fixed
+- Fix Dummy convertor to prevent compilation error
+
 ## [0.2.0] - 9 March 2021
 ### Added
 - New option to try to convert on saving
