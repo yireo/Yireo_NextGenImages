@@ -4,7 +4,9 @@ namespace Yireo\NextGenImages\Test\Unit\Image;
 
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Directory\ReadFactory as DirectoryReadFactory;
+use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
+use Magento\Framework\Filesystem\File\ReadInterface;
 use Yireo\NextGenImages\Image\File;
 use PHPUnit\Framework\TestCase;
 use Yireo\NextGenImages\Logger\Debugger;
@@ -45,7 +47,21 @@ class FileTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $target = new File($directoryListMock, $directoryReadFactoryMock, $fileDriverMock, $debugger); // phpstan:ignore
-        return $target;
+        $fileReadFactoryMock = $this->getMockBuilder(FileReadFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fileReadMock = $this->getMockBuilder(ReadInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $fileReadFactoryMock->method('create')->willReturn($fileReadMock);
+
+        return new File(
+            $directoryListMock,
+            $directoryReadFactoryMock,
+            $fileDriverMock,
+            $debugger,
+            $fileReadFactoryMock
+        ); // phpstan:ignore
     }
 }
