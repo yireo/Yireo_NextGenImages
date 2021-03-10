@@ -33,10 +33,10 @@ class DummyConvertor implements ConvertorInterface
 
     /**
      * @param string $sourceImageUrl
-     * @param string $destinationImageUrl
+     * @param string|null $destinationImageUrl
      * @return bool
      */
-    public function convert(string $sourceImageUrl, string $destinationImageUrl): bool
+    public function convert(string $sourceImageUrl, ?string $destinationImageUrl = null): bool
     {
         return false;
     }
