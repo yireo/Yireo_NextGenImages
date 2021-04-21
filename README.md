@@ -19,3 +19,12 @@ A module `Foo_Bar` could add a `etc/di.xml` file to add a new convertor (a class
     </type>
 </config>
 ```
+
+# Roadmap
+- Add more next gen image formats
+    - JPEG 2000
+    - HEIC
+    - AVIF
+    - JPEG XL
+    - WebP2
+
