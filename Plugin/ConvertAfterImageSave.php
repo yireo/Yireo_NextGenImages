@@ -8,10 +8,6 @@ use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Logger\Debugger;
 
-/**
- * Class ConvertAfterImageSave
- * @package Yireo\NextGenImages\Plugin
- */
 class ConvertAfterImageSave
 {
     /**
