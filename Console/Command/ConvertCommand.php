@@ -46,11 +46,16 @@ class ConvertCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $image = (string)$input->getArgument('image');
+        $image = realpath((string)$input->getArgument('image'));
+        if (!is_file($image)) {
+            $output->writeln('<error>Please supply a valid image</error>');
+            return -1;
+        }
 
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
                 $convertor->convert($image);
+                $output->writeln('Converted image: ' . $image);
             } catch (ConvertorException $e) {
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
             }
