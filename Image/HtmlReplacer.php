@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yireo\NextGenImages\Image;
 
 use Exception as ExceptionAlias;
+use Magento\Framework\UrlInterface;
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Config\Config;
@@ -29,6 +30,10 @@ class HtmlReplacer
      * @var Config
      */
     private $config;
+    /**
+     * @var UrlInterface
+     */
+    private $url;
 
     /**
      * ReplaceTags constructor.
@@ -40,11 +45,13 @@ class HtmlReplacer
     public function __construct(
         ConvertorListing $convertorListing,
         Debugger $debugger,
-        Config $config
+        Config $config,
+        UrlInterface $url
     ) {
         $this->convertorListing = $convertorListing;
         $this->debugger = $debugger;
         $this->config = $config;
+        $this->url = $url;
     }
 
     /**
@@ -106,6 +113,12 @@ class HtmlReplacer
      */
     private function isAllowedByImageUrl(string $imageUrl): bool
     {
+        $imageUrl = trim($imageUrl);
+        $baseUrl = $this->url->getBaseUrl();
+        if (preg_match('/^https?:\/\//', $imageUrl) && strpos($imageUrl, $baseUrl) === false) {
+            return false;
+        }
+
         if (strpos($imageUrl, '/media/captcha/') !== false) {
             return false;
         }
