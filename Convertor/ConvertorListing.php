@@ -13,7 +13,7 @@ class ConvertorListing
      * ConvertorListing constructor.
      * @param ConvertorInterface[] $convertors
      */
-    public function __construct(array $convertors)
+    public function __construct(array $convertors = [])
     {
         $this->convertors = $convertors;
     }
