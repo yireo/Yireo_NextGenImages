@@ -46,7 +46,10 @@ class ConvertCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // phpcs:ignore
         $image = realpath((string)$input->getArgument('image'));
+
+        // phpcs:ignore
         if (!is_file($image)) {
             $output->writeln('<error>Please supply a valid image</error>');
             return -1;
