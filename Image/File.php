@@ -73,7 +73,8 @@ class File
             return $uri;
         }
 
-        if (strpos($uri, $this->directoryList->getRoot()) === 0) {
+        $root = $this->directoryList->getRoot();
+        if ($root && strpos($uri, $root) === 0) {
             return $uri;
         }
 
@@ -86,9 +87,7 @@ class File
         $path = $parsedUrl['path'];
         $path = preg_replace('/^\/pub\//', '/', (string)$path);
         $path = preg_replace('/\/static\/version([0-9]+\/)/', '/static/', (string)$path);
-        $path = $this->getAbsolutePathFromImagePath((string)$path);
-
-        return $path;
+        return $this->getAbsolutePathFromImagePath((string)$path);
     }
 
     /**
