@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Image;
 
@@ -18,11 +16,6 @@ class File
      * @var DirectoryList
      */
     private $directoryList;
-
-    /**
-     * @var DirectoryReadFactory
-     */
-    private $directoryReadFactory;
 
     /**
      * @var FileDriver
@@ -43,20 +36,17 @@ class File
      * File constructor.
      *
      * @param DirectoryList $directoryList
-     * @param DirectoryReadFactory $directoryReadFactory
      * @param FileDriver $fileDriver
      * @param Debugger $debugger
      * @param FileReadFactory $fileReadFactory
      */
     public function __construct(
         DirectoryList $directoryList,
-        DirectoryReadFactory $directoryReadFactory,
         FileDriver $fileDriver,
         Debugger $debugger,
         FileReadFactory $fileReadFactory
     ) {
         $this->directoryList = $directoryList;
-        $this->directoryReadFactory = $directoryReadFactory;
         $this->fileDriver = $fileDriver;
         $this->debugger = $debugger;
         $this->fileReadFactory = $fileReadFactory;
@@ -124,12 +114,8 @@ class File
      */
     public function fileExists($filePath): bool
     {
-        try {
-            $fileRead = $this->fileReadFactory->create($filePath, 'file');
-            return (bool)$fileRead->readAll();
-        } catch (FileSystemException $fileSystemException) {
-            return false;
-        }
+        $fileRead = $this->fileReadFactory->create($filePath, 'file');
+        return (bool)$fileRead->readAll();
     }
 
     /**

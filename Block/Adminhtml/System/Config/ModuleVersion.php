@@ -1,12 +1,12 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Block\Adminhtml\System\Config;
 
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem\Directory\ReadFactory as DirectoryReadFactory;
 use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Magento\Framework\Module\ModuleListInterface;
@@ -115,6 +115,8 @@ class ModuleVersion extends Field
 
     /**
      * @return string
+     * @throws FileSystemException
+     * @throws ValidatorException
      */
     private function getModuleVersionFromComposer(): string
     {

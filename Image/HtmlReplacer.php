@@ -1,17 +1,13 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Image;
 
-use Exception as ExceptionAlias;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Exception\ConvertorException;
-use Yireo\NextGenImages\Exception\NoConversionNeededException;
 use Yireo\NextGenImages\Logger\Debugger;
 
 class HtmlReplacer
@@ -30,6 +26,7 @@ class HtmlReplacer
      * @var Config
      */
     private $config;
+
     /**
      * @var UrlInterface
      */
@@ -41,6 +38,7 @@ class HtmlReplacer
      * @param ConvertorListing $convertorListing
      * @param Debugger $debugger
      * @param Config $config
+     * @param UrlInterface $url
      */
     public function __construct(
         ConvertorListing $convertorListing,
@@ -141,7 +139,7 @@ class HtmlReplacer
         $htmlTag,
         bool $isDataSrc = false
     ): string {
-        return (string)$this->getPictureBlock($layout)
+        return $this->getPictureBlock($layout)
             ->setOriginalImage($imageUrl)
             ->setSourceImages($sourceImages)
             ->setAltText($this->getAttributeText($htmlTag, 'alt'))
@@ -163,8 +161,7 @@ class HtmlReplacer
     {
         if (preg_match('/\ ' . $attribute . '=\"([^\"]+)/', $htmlTag, $match)) {
             $altText = $match[1];
-            $altText = strtr($altText, ['"' => '', "'" => '']);
-            return $altText;
+            return strtr($altText, ['"' => '', "'" => '']);
         }
 
         return '';

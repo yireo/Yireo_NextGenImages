@@ -1,9 +1,7 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Plugin;
 
-use Exception as ExceptionAlias;
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Image\HtmlReplacer;
 

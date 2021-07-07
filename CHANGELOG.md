@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Add current store to all methods
 - Make sure ConvertorListing works even though no convertor is available
 
 ## [0.2.2] - 29 June 2021
