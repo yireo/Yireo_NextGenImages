@@ -114,8 +114,12 @@ class File
      */
     public function fileExists($filePath): bool
     {
-        $fileRead = $this->fileReadFactory->create($filePath, 'file');
-        return (bool)$fileRead->readAll();
+        try {
+            $fileRead = $this->fileReadFactory->create($filePath, 'file');
+            return (bool)$fileRead->readAll();
+        } catch(FileSystemException $fileSystemException) {
+            return false;
+        }
     }
 
     /**
@@ -134,7 +138,7 @@ class File
 
     /**
      * @param string $sourceFilename
-     *
+     * @param string $destinationSuffix
      * @return string
      */
     public function convertSuffix(string $sourceFilename, string $destinationSuffix): string
