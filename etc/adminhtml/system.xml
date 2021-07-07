@@ -10,45 +10,69 @@
             <resource>Yireo_NextGenImages::config</resource>
             <group id="settings" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Settings</label>
-                <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="debug" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="debug" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Debugging</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
-                <field id="log" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="log" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Logging</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Logging to var/log/yireo_nextgenimages.log</comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
-                <field id="convert_images" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="convert_images" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Convert images</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Try to convert JPGs and PNGs to NextGen, if the NextGen image does not exist yet</comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
-                <field id="convert_on_save" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="convert_on_save" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Convert images on save</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Try to convert JPGs and PNGs to NextGen, when the original image is modified or created</comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
-                <field id="lazy_loading" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="lazy_loading" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Add lazy loading attribute</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Add <code>loading="lazy"</code> attribute, which is supported by some browsers]]></comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
-                <field id="php_version" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="php_version" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>PHP version</label>
                     <frontend_model>Yireo\NextGenImages\Block\Adminhtml\System\Config\PhpVersion</frontend_model>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
-                <field id="module_version" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="module_version" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Module version</label>
                     <frontend_model>Yireo\NextGenImages\Block\Adminhtml\System\Config\ModuleVersion</frontend_model>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
-                <field id="gd" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="gd" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>GD support</label>
                     <frontend_model>Yireo\NextGenImages\Block\Adminhtml\System\Config\Gd</frontend_model>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
                 </field>
             </group>
         </section>
