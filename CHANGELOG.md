@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.3] - 7 July 2021
 ### Fixed
 - Add current store to all methods
 - Make sure ConvertorListing works even though no convertor is available
 - Hide all other fields if setting "Enabled" is set to 0
+- Make sure plugins are off when module is configured to be disabled
 
 ## [0.2.2] - 29 June 2021
 ### Fixed
