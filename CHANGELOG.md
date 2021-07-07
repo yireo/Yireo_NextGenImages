@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Add current store to all methods
 - Make sure ConvertorListing works even though no convertor is available
+- Hide all other fields if setting "Enabled" is set to 0
 
 ## [0.2.2] - 29 June 2021
 ### Fixed
