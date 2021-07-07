@@ -3,9 +3,12 @@
 namespace Yireo\NextGenImages\Config;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\PageCache\Model\DepersonalizeChecker;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Config implements ArgumentInterface
 {
@@ -18,19 +21,26 @@ class Config implements ArgumentInterface
      * @var DepersonalizeChecker
      */
     private $depersonalizeChecker;
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
 
     /**
      * Config constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
      * @param DepersonalizeChecker $depersonalizeChecker
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        DepersonalizeChecker $depersonalizeChecker
+        DepersonalizeChecker $depersonalizeChecker,
+        StoreManagerInterface $storeManager
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->depersonalizeChecker = $depersonalizeChecker;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -38,7 +48,7 @@ class Config implements ArgumentInterface
      */
     public function enabled(): bool
     {
-        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/enabled');
+        return (bool)$this->getValue('yireo_nextgenimages/settings/enabled');
     }
 
     /**
@@ -46,7 +56,7 @@ class Config implements ArgumentInterface
      */
     public function allowImageCreation(): bool
     {
-        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/convert_images');
+        return (bool)$this->getValue('yireo_nextgenimages/settings/convert_images');
     }
 
     /**
@@ -54,7 +64,7 @@ class Config implements ArgumentInterface
      */
     public function convertImagesOnSave(): bool
     {
-        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/convert_on_save');
+        return (bool)$this->getValue('yireo_nextgenimages/settings/convert_on_save');
     }
 
     /**
@@ -62,7 +72,7 @@ class Config implements ArgumentInterface
      */
     public function addLazyLoading(): bool
     {
-        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/lazy_loading');
+        return (bool)$this->getValue('yireo_nextgenimages/settings/lazy_loading');
     }
 
     /**
@@ -83,7 +93,7 @@ class Config implements ArgumentInterface
      */
     public function isDebugging(): bool
     {
-        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/debug');
+        return (bool)$this->getValue('yireo_nextgenimages/settings/debug');
     }
 
     /**
@@ -91,6 +101,21 @@ class Config implements ArgumentInterface
      */
     public function isLogging(): bool
     {
-        return (bool)$this->scopeConfig->getValue('yireo_nextgenimages/settings/log');
+        return (bool)$this->getValue('yireo_nextgenimages/settings/log');
+    }
+
+    /**
+     * @param string $path
+     * @return mixed
+     */
+    private function getValue(string $path)
+    {
+        try {
+            return $this->scopeConfig->getValue(
+                $path,
+                ScopeInterface::SCOPE_STORE,
+                $this->storeManager->getStore());
+        } catch (NoSuchEntityException $e) {
+        }
     }
 }
