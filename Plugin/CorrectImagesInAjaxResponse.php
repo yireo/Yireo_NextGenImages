@@ -7,6 +7,7 @@ use Magento\Swatches\Helper\Data;
 use Yireo\NextGenImages\Browser\BrowserSupport;
 use Yireo\NextGenImages\Image\UrlReplacer;
 use Yireo\NextGenImages\Logger\Debugger;
+use Yireo\NextGenImages\Config\Config;
 
 class CorrectImagesInAjaxResponse
 {
@@ -23,6 +24,10 @@ class CorrectImagesInAjaxResponse
      * @var Debugger
      */
     private $debugger;
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * CorrectImagesInAjaxResponse constructor.
@@ -30,15 +35,18 @@ class CorrectImagesInAjaxResponse
      * @param BrowserSupport $browserSupport
      * @param UrlReplacer $urlReplacer
      * @param Debugger $debugger
+     * @param Config $config
      */
     public function __construct(
         BrowserSupport $browserSupport,
         UrlReplacer $urlReplacer,
-        Debugger $debugger
+        Debugger $debugger,
+        Config $config
     ) {
         $this->browserSupport = $browserSupport;
         $this->urlReplacer = $urlReplacer;
         $this->debugger = $debugger;
+        $this->config = $config;
     }
 
     /**
@@ -48,6 +56,10 @@ class CorrectImagesInAjaxResponse
      */
     public function afterGetProductMediaGallery(Data $dataHelper, array $data): array
     {
+        if (!$this->config->enabled()) {
+            return $data;
+        }
+
         if (!$this->browserSupport->hasWebpSupport()) {
             return $data;
         }

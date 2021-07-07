@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Plugin;
 
 use Magento\Framework\View\LayoutInterface;
+use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\HtmlReplacer;
 
 class ReplaceTagsPlugin
@@ -11,16 +12,23 @@ class ReplaceTagsPlugin
      * @var HtmlReplacer
      */
     private $htmlReplacer;
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * ReplaceTags constructor.
      *
      * @param HtmlReplacer $htmlReplacer
+     * @param Config $config
      */
     public function __construct(
-        HtmlReplacer $htmlReplacer
+        HtmlReplacer $htmlReplacer,
+        Config $config
     ) {
         $this->htmlReplacer = $htmlReplacer;
+        $this->config = $config;
     }
 
     /**
@@ -32,6 +40,10 @@ class ReplaceTagsPlugin
      */
     public function afterGetOutput(LayoutInterface $layout, string $output): string
     {
+        if (!$this->config->enabled()) {
+            return $output;
+        }
+
         if ($this->shouldModifyOutput($layout) === false) {
             return $output;
         }

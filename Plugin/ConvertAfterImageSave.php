@@ -48,6 +48,10 @@ class ConvertAfterImageSave
      */
     public function afterSave(Image $subject, $return, $destination = null, $newFileName = null)
     {
+        if (!$this->config->enabled()) {
+            return;
+        }
+
         if (!$this->config->convertImagesOnSave()) {
             return;
         }
