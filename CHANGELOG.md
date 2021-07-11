@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Make sure plugin ConvertAfterImageSave still respects original return value
+
+### Added
+- Additional debug options for CLI command
 
 ## [0.2.3] - 7 July 2021
 ### Fixed
