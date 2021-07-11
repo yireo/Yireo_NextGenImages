@@ -14,10 +14,12 @@ class ConvertAfterImageSave
      * @var ConvertorListing
      */
     private $convertorListing;
+
     /**
      * @var Debugger
      */
     private $debugger;
+
     /**
      * @var Config
      */
@@ -49,11 +51,11 @@ class ConvertAfterImageSave
     public function afterSave(Image $subject, $return, $destination = null, $newFileName = null)
     {
         if (!$this->config->enabled()) {
-            return;
+            return $return;
         }
 
         if (!$this->config->convertImagesOnSave()) {
-            return;
+            return $return;
         }
 
         foreach ($this->convertorListing->getConvertors() as $convertor) {
@@ -63,5 +65,7 @@ class ConvertAfterImageSave
                 $this->debugger->debug($e->getMessage());
             }
         }
+
+        return $return;
     }
 }
