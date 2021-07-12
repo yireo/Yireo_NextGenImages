@@ -35,10 +35,6 @@ class FileTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $directoryReadFactoryMock = $this->getMockBuilder(DirectoryReadFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $fileDriverMock = $this->getMockBuilder(FileDriver::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -58,7 +54,6 @@ class FileTest extends TestCase
 
         return new File(
             $directoryListMock,
-            $directoryReadFactoryMock,
             $fileDriverMock,
             $debugger,
             $fileReadFactoryMock
