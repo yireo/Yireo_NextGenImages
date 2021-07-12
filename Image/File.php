@@ -117,7 +117,7 @@ class File
         try {
             $fileRead = $this->fileReadFactory->create($filePath, 'file');
             return (bool)$fileRead->readAll();
-        } catch(FileSystemException $fileSystemException) {
+        } catch (FileSystemException $fileSystemException) {
             return false;
         }
     }

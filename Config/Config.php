@@ -111,11 +111,15 @@ class Config implements ArgumentInterface
     private function getValue(string $path)
     {
         try {
-            return $this->scopeConfig->getValue(
+            $value = $this->scopeConfig->getValue(
                 $path,
                 ScopeInterface::SCOPE_STORE,
-                $this->storeManager->getStore());
+                $this->storeManager->getStore()
+            );
         } catch (NoSuchEntityException $e) {
+            $value = null;
         }
+
+        return $value;
     }
 }
