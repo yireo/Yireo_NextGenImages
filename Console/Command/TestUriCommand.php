@@ -48,9 +48,19 @@ class TestUriCommand extends Command
     {
         $uri = (string)$input->getArgument('uri');
         $path = $this->imageFile->resolve($uri);
-        $output->writeln('Resolved path: ' . $path);
-        $output->writeln('Path exists: ' . (int)$this->imageFile->uriExists($uri));
 
+        $output->writeln('Source path: ' . $path);
+        $output->writeln('Source exists: ' . (int)$this->imageFile->uriExists($uri));
+        $output->writeln('Source modification time: '.date('r', $this->imageFile->getModificationTime($path)));
+
+        $targetUri = $this->imageFile->convertSuffix($uri, '.webp');
+        $targetPath = $this->imageFile->resolve($targetUri);
+
+        $output->writeln('Target path: ' . $targetPath);
+        $output->writeln('Target exists: ' . (int)$this->imageFile->uriExists($targetUri));
+        $output->writeln('Target modification time: '.date('r', $this->imageFile->getModificationTime($targetPath)));
+
+        $output->writeln('Source is newer than target: '.(int)$this->imageFile->isNewerThan($path, $targetPath));
         return -1;
     }
 }
