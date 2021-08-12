@@ -12,6 +12,7 @@ class ReplaceTagsPlugin
      * @var HtmlReplacer
      */
     private $htmlReplacer;
+
     /**
      * @var Config
      */
