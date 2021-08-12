@@ -111,7 +111,6 @@ class HtmlReplacer
     private function isAllowedByImageUrl(string $imageUrl): bool
     {
         if (!$this->urlConvertor->isLocal($imageUrl)) {
-            die('test: '.$imageUrl);
             return false;
         }
 

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] - 12 August 2021
+### Fixed
+- Remove debugging info
+
 ## [0.2.4] - 12 August 2021
 ### Fixed
 - Make sure plugin ConvertAfterImageSave still respects original return value
