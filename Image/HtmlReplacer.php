@@ -112,7 +112,7 @@ class HtmlReplacer
     private function isAllowedByImageUrl(string $imageUrl): bool
     {
         $imageUrl = trim($imageUrl);
-        $baseUrl = $this->url->getBaseUrl();
+        $baseUrl = $this->url->getBaseUrl(['_type' => UrlInterface::URL_TYPE_MEDIA]);
         if (preg_match('/^https?:\/\//', $imageUrl) && strpos($imageUrl, $baseUrl) === false) {
             return false;
         }
