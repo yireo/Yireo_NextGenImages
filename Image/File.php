@@ -66,9 +66,14 @@ class File
      * @return string
      * @throws FileSystemException
      * @throws NoSuchEntityException
+     * @deprecated Use UrlConvertor::getFilenameFromUrl($url) instead
      */
     public function resolve(string $uri): string
     {
+        if ($this->fileExists($uri)) {
+            return $uri;
+        }
+
         return $this->urlConvertor->getFilenameFromUrl($uri);
     }
 

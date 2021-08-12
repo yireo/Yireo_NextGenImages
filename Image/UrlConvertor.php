@@ -30,7 +30,6 @@ class UrlConvertor
      * @param UrlInterface $urlModel
      * @param StoreManagerInterface $storeManager
      * @param DirectoryList $directoryList
-     * @param File $file
      */
     public function __construct(
         UrlInterface $urlModel,

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Additional debug options for CLI command
+- Support for media URL different from base URL (like CDNs)
 
 ## [0.2.3] - 7 July 2021
 ### Fixed
