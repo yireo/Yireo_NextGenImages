@@ -51,7 +51,7 @@ class ConvertCommand extends Command
         $image = realpath((string)$input->getArgument('image'));
 
         // phpcs:ignore
-        if (!is_file($image)) {
+        if ($image === false || !is_file($image)) {
             $output->writeln('<error>Please supply a valid image</error>');
             return -1;
         }
