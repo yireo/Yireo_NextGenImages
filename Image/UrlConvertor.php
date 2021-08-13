@@ -48,7 +48,7 @@ class UrlConvertor
      */
     public function isLocal(string $url): bool
     {
-        if (preg_match('/^https?:\/\//', $url) === false) {
+        if (!preg_match('/^https?:\/\//', $url)) {
             return true;
         }
 
