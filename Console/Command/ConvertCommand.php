@@ -19,6 +19,7 @@ class ConvertCommand extends Command
     /**
      * TestUriCommand constructor.
      * @param ConvertorListing $convertorListing
+     * @param string|null $name
      */
     public function __construct(
         ConvertorListing $convertorListing,
@@ -58,7 +59,7 @@ class ConvertCommand extends Command
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
                 $convertor->convert($image);
-                $output->writeln('Converted image: ' . $image);
+                $output->writeln('Converted image to ' . $image);
             } catch (ConvertorException $e) {
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
             }
