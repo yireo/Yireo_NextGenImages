@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 13 August 2021
+### Fixed
+- Exception was supplied `Phrase` instead of string
+
 ## [0.2.5] - 12 August 2021
 ### Fixed
 - Remove debugging info

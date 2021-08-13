@@ -74,7 +74,7 @@ class UrlConvertor
         $url = preg_replace('/\/static\/version([0-9]+\/)/', '/static/', (string)$url);
 
         if ($this->isLocal($url) === false) {
-            throw new NotFoundException(__('URL "' . $url . '" does not appear to be a local file'));
+            throw new NotFoundException((string)__('URL "' . $url . '" does not appear to be a local file'));
         }
 
         if (strpos($url, $this->getMediaUrl()) !== false) {
@@ -89,7 +89,7 @@ class UrlConvertor
             return $this->getBaseFolder() . $url;
         }
 
-        throw new NotFoundException(__('URL "' . $url . '" is not matched with a local file'));
+        throw new NotFoundException((string)__('URL "' . $url . '" is not matched with a local file'));
     }
 
     /**
