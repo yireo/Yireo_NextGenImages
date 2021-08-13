@@ -5,11 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.6] - 13 August 2021
+### Fixed
+- Exception was supplied `Phrase` instead of string
+
+## [0.2.5] - 12 August 2021
+### Fixed
+- Remove debugging info
+
+## [0.2.4] - 12 August 2021
 ### Fixed
 - Make sure plugin ConvertAfterImageSave still respects original return value
 
 ### Added
 - Additional debug options for CLI command
+- Support for media URL different from base URL (like CDNs)
 
 ## [0.2.3] - 7 July 2021
 ### Fixed

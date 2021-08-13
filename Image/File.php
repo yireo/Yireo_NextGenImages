@@ -3,8 +3,8 @@
 namespace Yireo\NextGenImages\Image;
 
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem\Directory\ReadFactory as DirectoryReadFactory;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Magento\Framework\View\Asset\File\NotFoundException;
@@ -33,29 +33,40 @@ class File
     private $fileReadFactory;
 
     /**
+     * @var UrlConvertor
+     */
+    private $urlConvertor;
+
+    /**
      * File constructor.
      *
      * @param DirectoryList $directoryList
      * @param FileDriver $fileDriver
      * @param Debugger $debugger
      * @param FileReadFactory $fileReadFactory
+     * @param UrlConvertor $urlConvertor
      */
     public function __construct(
         DirectoryList $directoryList,
         FileDriver $fileDriver,
         Debugger $debugger,
-        FileReadFactory $fileReadFactory
+        FileReadFactory $fileReadFactory,
+        UrlConvertor $urlConvertor
     ) {
         $this->directoryList = $directoryList;
         $this->fileDriver = $fileDriver;
         $this->debugger = $debugger;
         $this->fileReadFactory = $fileReadFactory;
+        $this->urlConvertor = $urlConvertor;
     }
 
     /**
      * @param string $uri
      *
      * @return string
+     * @throws FileSystemException
+     * @throws NoSuchEntityException
+     * @deprecated Use UrlConvertor::getFilenameFromUrl($url) instead
      */
     public function resolve(string $uri): string
     {
@@ -63,21 +74,7 @@ class File
             return $uri;
         }
 
-        $root = $this->directoryList->getRoot();
-        if ($root && strpos($uri, $root) === 0) {
-            return $uri;
-        }
-
-        // phpcs:disable Magento2.Functions.DiscouragedFunction
-        $parsedUrl = parse_url($uri);
-        if (!$parsedUrl) {
-            return '';
-        }
-
-        $path = $parsedUrl['path'];
-        $path = preg_replace('/^\/pub\//', '/', (string)$path);
-        $path = preg_replace('/\/static\/version([0-9]+\/)/', '/static/', (string)$path);
-        return $this->getAbsolutePathFromImagePath((string)$path);
+        return $this->urlConvertor->getFilenameFromUrl($uri);
     }
 
     /**

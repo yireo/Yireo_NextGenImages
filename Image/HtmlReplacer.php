@@ -2,7 +2,6 @@
 
 namespace Yireo\NextGenImages\Image;
 
-use Magento\Framework\UrlInterface;
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Config\Config;
@@ -28,9 +27,9 @@ class HtmlReplacer
     private $config;
 
     /**
-     * @var UrlInterface
+     * @var UrlConvertor
      */
-    private $url;
+    private $urlConvertor;
 
     /**
      * ReplaceTags constructor.
@@ -38,18 +37,18 @@ class HtmlReplacer
      * @param ConvertorListing $convertorListing
      * @param Debugger $debugger
      * @param Config $config
-     * @param UrlInterface $url
+     * @param UrlConvertor $urlConvertor
      */
     public function __construct(
         ConvertorListing $convertorListing,
         Debugger $debugger,
         Config $config,
-        UrlInterface $url
+        UrlConvertor $urlConvertor
     ) {
         $this->convertorListing = $convertorListing;
         $this->debugger = $debugger;
         $this->config = $config;
-        $this->url = $url;
+        $this->urlConvertor = $urlConvertor;
     }
 
     /**
@@ -111,9 +110,7 @@ class HtmlReplacer
      */
     private function isAllowedByImageUrl(string $imageUrl): bool
     {
-        $imageUrl = trim($imageUrl);
-        $baseUrl = $this->url->getBaseUrl();
-        if (preg_match('/^https?:\/\//', $imageUrl) && strpos($imageUrl, $baseUrl) === false) {
+        if (!$this->urlConvertor->isLocal($imageUrl)) {
             return false;
         }
 
