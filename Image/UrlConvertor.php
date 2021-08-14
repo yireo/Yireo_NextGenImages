@@ -114,7 +114,7 @@ class UrlConvertor
      */
     private function getBaseFolder(): string
     {
-        return $this->directoryList->getRoot();
+        return $this->directoryList->getRoot() . '/pub';
     }
 
     /**
