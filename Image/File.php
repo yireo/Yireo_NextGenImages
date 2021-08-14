@@ -66,7 +66,6 @@ class File
      * @return string
      * @throws FileSystemException
      * @throws NoSuchEntityException
-     * @deprecated Use UrlConvertor::getFilenameFromUrl($url) instead
      */
     public function resolve(string $uri): string
     {
@@ -80,23 +79,11 @@ class File
     /**
      * @param string $uri
      * @return bool
-     * @deprecated Use uriExists($uri) instead
-     */
-    public function urlExists(string $uri): bool
-    {
-        return $this->uriExists($uri);
-    }
-
-    /**
-     * @param string $uri
-     * @return bool
+     * @throws FileSystemException
+     * @throws NoSuchEntityException
      */
     public function uriExists(string $uri): bool
     {
-        if ($this->fileExists($uri)) {
-            return true;
-        }
-
         $filePath = $this->resolve($uri);
         if ($this->fileExists($filePath)) {
             return true;
@@ -106,10 +93,10 @@ class File
     }
 
     /**
-     * @param $filePath
+     * @param string $filePath
      * @return bool
      */
-    public function fileExists($filePath): bool
+    public function fileExists(string $filePath): bool
     {
         try {
             $fileRead = $this->fileReadFactory->create($filePath, 'file');
@@ -147,6 +134,7 @@ class File
      * @param string $imagePath
      *
      * @return string
+     * @deprecated Removed
      */
     public function getAbsolutePathFromImagePath(string $imagePath): string
     {
@@ -162,7 +150,15 @@ class File
     {
         try {
             $stat = $this->fileDriver->stat($filePath);
-            return (isset($stat['mtime'])) ? (int)$stat['mtime'] : $stat['ctime'];
+            if (!empty($stat['mtime'])) {
+                return (int)$stat['mtime'];
+            }
+
+            if (!empty($stat['ctime'])) {
+                return (int)$stat['ctime'];
+            }
+
+            return 0;
         } catch (FileSystemException $e) {
             $this->debugger->debug($e->getMessage(), ['filePath' => $filePath]);
             return 0;
@@ -206,7 +202,7 @@ class File
      */
     public function needsConversion(string $sourceImageFilename, string $destinationImageFilename): bool
     {
-        if (!$this->fileExists($sourceImageFilename)) {
+        if ($this->fileExists($sourceImageFilename) === false) {
             return false;
         }
 
@@ -219,5 +215,17 @@ class File
         }
 
         return true;
+    }
+
+    /**
+     * @param string $uri
+     * @return bool
+     * @throws FileSystemException
+     * @throws NoSuchEntityException
+     * @deprecated Use uriExists($uri) instead
+     */
+    public function urlExists(string $uri): bool
+    {
+        return $this->uriExists($uri);
     }
 }
