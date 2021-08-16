@@ -41,9 +41,20 @@ class UrlConvertorTest extends TestCase
             $this->getDirectoryListMock()
         );
 
-        $this->assertSame('/var/www/html/pub/media/sample.png', $urlConvertor->getFilenameFromUrl('http://cdn/sample.png'));
-        $this->assertSame('/var/www/html/pub/sample.webp', $urlConvertor->getFilenameFromUrl('http://localhost/sample.webp'));
-        $this->assertSame('/var/www/html/pub/static/sample.jpg', $urlConvertor->getFilenameFromUrl('http://localhost/static/version432423423/sample.jpg'));
+        $this->assertSame(
+            '/var/www/html/pub/media/sample.png',
+            $urlConvertor->getFilenameFromUrl('http://cdn/sample.png')
+        );
+
+        $this->assertSame(
+            '/var/www/html/pub/sample.webp',
+            $urlConvertor->getFilenameFromUrl('http://localhost/sample.webp')
+        );
+
+        $this->assertSame(
+            '/var/www/html/pub/static/sample.jpg',
+            $urlConvertor->getFilenameFromUrl('http://localhost/static/version432423423/sample.jpg')
+        );
     }
 
     /**
