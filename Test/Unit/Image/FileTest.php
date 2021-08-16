@@ -134,7 +134,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock([]),
+            $this->getFileDriverMock(),
             $this->getDebuggerMock(),
             $this->getFileReadFactoryMock(),
             $this->getUrlConvertorMock()
