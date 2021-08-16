@@ -19,6 +19,7 @@ class ConvertCommand extends Command
     /**
      * TestUriCommand constructor.
      * @param ConvertorListing $convertorListing
+     * @param string|null $name
      */
     public function __construct(
         ConvertorListing $convertorListing,
@@ -50,7 +51,7 @@ class ConvertCommand extends Command
         $image = realpath((string)$input->getArgument('image'));
 
         // phpcs:ignore
-        if (!is_file($image)) {
+        if ($image === false || !is_file($image)) {
             $output->writeln('<error>Please supply a valid image</error>');
             return -1;
         }
@@ -58,7 +59,7 @@ class ConvertCommand extends Command
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
                 $convertor->convert($image);
-                $output->writeln('Converted image: ' . $image);
+                $output->writeln('Converted image to ' . $image);
             } catch (ConvertorException $e) {
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
             }
