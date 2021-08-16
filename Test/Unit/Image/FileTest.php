@@ -7,6 +7,7 @@ use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\Filesystem\File\ReadInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Yireo\NextGenImages\Image\File;
 use Yireo\NextGenImages\Image\UrlConvertor;
 use PHPUnit\Framework\TestCase;
@@ -250,9 +251,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return UrlConvertor
+     * @return MockObject
      */
-    private function getUrlConvertorMock(): UrlConvertor
+    private function getUrlConvertorMock(): MockObject
     {
         return $this->getMockBuilder(UrlConvertor::class)
             ->disableOriginalConstructor()
@@ -260,9 +261,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return FileReadFactory
+     * @return MockObject
      */
-    private function getFileReadFactoryMockWithExistingFiles(): FileReadFactory
+    private function getFileReadFactoryMockWithExistingFiles(): MockObject
     {
         $fileRead = $this->getFileReadMockWithExistingFile();
         $fileReadFactoryMock = $this->getFileReadFactoryMock();
@@ -271,9 +272,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return FileReadFactory
+     * @return MockObject
      */
-    private function getFileReadFactoryMockWithNonExistingFiles(): FileReadFactory
+    private function getFileReadFactoryMockWithNonExistingFiles(): MockObject
     {
         $fileRead = $this->getFileReadMockWithoutExistingFile();
         $fileReadFactoryMock = $this->getFileReadFactoryMock();
@@ -282,9 +283,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return FileReadFactory
+     * @return MockObject
      */
-    private function getFileReadFactoryMock(): FileReadFactory
+    private function getFileReadFactoryMock(): MockObject
     {
         return $this->getMockBuilder(FileReadFactory::class)
             ->disableOriginalConstructor()
@@ -292,9 +293,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return ReadInterface
+     * @return MockObject
      */
-    private function getFileReadMockWithExistingFile(): ReadInterface
+    private function getFileReadMockWithExistingFile(): MockObject
     {
         $fileReadMock = $this->getFileReadMock();
         $fileReadMock->method('readAll')->willReturn('foobar');
@@ -302,9 +303,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return ReadInterface
+     * @return MockObject
      */
-    private function getFileReadMockWithoutExistingFile(): ReadInterface
+    private function getFileReadMockWithoutExistingFile(): MockObject
     {
         $fileReadMock = $this->getFileReadMock();
         $fileReadMock->method('readAll')->willThrowException(new FileSystemException(__('Nope')));
@@ -312,9 +313,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return ReadInterface
+     * @return MockObject
      */
-    private function getFileReadMock(): ReadInterface
+    private function getFileReadMock(): MockObject
     {
         return $this->getMockBuilder(ReadInterface::class)
             ->disableOriginalConstructor()
@@ -322,9 +323,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return Debugger
+     * @return MockObject
      */
-    private function getDebuggerMock(): Debugger
+    private function getDebuggerMock(): MockObject
     {
         return $this->getMockBuilder(Debugger::class)
             ->disableOriginalConstructor()
@@ -332,9 +333,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return FileDriver
+     * @return MockObject
      */
-    private function getFileDriverMock(): FileDriver
+    private function getFileDriverMock(): MockObject
     {
         return $this->getMockBuilder(FileDriver::class)
             ->disableOriginalConstructor()
@@ -342,9 +343,9 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return DirectoryList
+     * @return MockObject
      */
-    private function getDirectoryListMock(): DirectoryList
+    private function getDirectoryListMock(): MockObject
     {
         return $this->getMockBuilder(DirectoryList::class)
             ->disableOriginalConstructor()
