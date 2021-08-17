@@ -64,8 +64,6 @@ class File
      * @param string $uri
      *
      * @return string
-     * @throws FileSystemException
-     * @throws NoSuchEntityException
      */
     public function resolve(string $uri): string
     {

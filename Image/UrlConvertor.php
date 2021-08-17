@@ -44,7 +44,6 @@ class UrlConvertor
     /**
      * @param string $url
      * @return bool
-     * @throws NoSuchEntityException
      */
     public function isLocal(string $url): bool
     {
@@ -56,8 +55,12 @@ class UrlConvertor
             return true;
         }
 
-        if (strpos($url, $this->getMediaUrl()) !== false) {
-            return true;
+        try {
+            if (strpos($url, $this->getMediaUrl()) !== false) {
+                return true;
+            }
+        } catch (NoSuchEntityException $e) {
+            return false;
         }
 
         return false;
@@ -66,8 +69,6 @@ class UrlConvertor
     /**
      * @param string $url
      * @return string
-     * @throws FileSystemException
-     * @throws NoSuchEntityException
      */
     public function getFilenameFromUrl(string $url): string
     {
@@ -77,8 +78,12 @@ class UrlConvertor
             throw new NotFoundException((string)__('URL "' . $url . '" does not appear to be a local file'));
         }
 
-        if (strpos($url, $this->getMediaUrl()) !== false) {
-            return str_replace($this->getMediaUrl(), $this->getMediaFolder() . '/', $url);
+        try {
+            if (strpos($url, $this->getMediaUrl()) !== false) {
+                return str_replace($this->getMediaUrl(), $this->getMediaFolder() . '/', $url);
+            }
+        } catch (FileSystemException | NoSuchEntityException $e) {
+            throw new NotFoundException((string)__('Media folder does not exist'));
         }
 
         if (strpos($url, $this->getBaseUrl()) !== false) {
