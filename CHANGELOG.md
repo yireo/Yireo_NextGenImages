@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.8] - 17 August 2021
 ### Fixed
 - Wrap exceptions so they don't appear in frontend
+- Prevent non-existing files from throwing NotFoundException
 
 ## [0.2.7] - 13 August 2021
 ### Fixed

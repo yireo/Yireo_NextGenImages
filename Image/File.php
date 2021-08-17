@@ -8,6 +8,7 @@ use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Magento\Framework\View\Asset\File\NotFoundException;
+use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Logger\Debugger;
 
 class File
@@ -64,6 +65,7 @@ class File
      * @param string $uri
      *
      * @return string
+     * @throws ConvertorException
      */
     public function resolve(string $uri): string
     {
@@ -71,7 +73,11 @@ class File
             return $uri;
         }
 
-        return $this->urlConvertor->getFilenameFromUrl($uri);
+        try {
+            return $this->urlConvertor->getFilenameFromUrl($uri);
+        } catch (NotFoundException $e) {
+            throw new ConvertorException($e->getMessage());
+        }
     }
 
     /**
