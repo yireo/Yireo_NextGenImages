@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.9] - 17 August 2021
+### Fixed
+- Fatal Error on swatches AJAX call
+
+### Removed
+- DummyConvertor with DI preference
+- UrlReplacer used only in CorrectImagesInAjaxResponse
+
 ## [0.2.8] - 17 August 2021
 ### Fixed
 - Wrap exceptions so they don't appear in frontend
