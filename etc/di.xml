@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Yireo\NextGenImages\Convertor\ConvertorInterface" type="Yireo\NextGenImages\Convertor\DummyConvertor"/>
-
     <type name="Yireo\NextGenImages\Logger\Debugger">
         <arguments>
             <argument name="logger" xsi:type="object">Yireo\NextGenImages\Logger\CustomLogger</argument>

@@ -2,11 +2,9 @@
 
 namespace Yireo\NextGenImages\Plugin;
 
-use Exception;
 use Magento\Swatches\Helper\Data;
 use Yireo\NextGenImages\Browser\BrowserSupport;
-use Yireo\NextGenImages\Image\UrlReplacer;
-use Yireo\NextGenImages\Logger\Debugger;
+use Yireo\NextGenImages\Image\SourceImageFactory;
 use Yireo\NextGenImages\Config\Config;
 
 class CorrectImagesInAjaxResponse
@@ -17,36 +15,30 @@ class CorrectImagesInAjaxResponse
     private $browserSupport;
 
     /**
-     * @var UrlReplacer
-     */
-    private $urlReplacer;
-    /**
-     * @var Debugger
-     */
-    private $debugger;
-    /**
      * @var Config
      */
     private $config;
 
     /**
+     * @var SourceImageFactory
+     */
+    private $sourceImageFactory;
+
+    /**
      * CorrectImagesInAjaxResponse constructor.
      *
      * @param BrowserSupport $browserSupport
-     * @param UrlReplacer $urlReplacer
-     * @param Debugger $debugger
      * @param Config $config
+     * @param SourceImageFactory $sourceImageFactory
      */
     public function __construct(
         BrowserSupport $browserSupport,
-        UrlReplacer $urlReplacer,
-        Debugger $debugger,
-        Config $config
+        Config $config,
+        SourceImageFactory $sourceImageFactory
     ) {
         $this->browserSupport = $browserSupport;
-        $this->urlReplacer = $urlReplacer;
-        $this->debugger = $debugger;
         $this->config = $config;
+        $this->sourceImageFactory = $sourceImageFactory;
     }
 
     /**
@@ -64,8 +56,7 @@ class CorrectImagesInAjaxResponse
             return $data;
         }
 
-        $data = $this->replaceUrls($data);
-        return $data;
+        return $this->replaceUrls($data);
     }
 
     /**
@@ -88,16 +79,13 @@ class CorrectImagesInAjaxResponse
                 continue;
             }
 
-            if (!preg_match('/\.(jpg|png)$/', $value)) {
+            if (!preg_match('/\.(jpg|png)$/', $value, $match)) {
                 continue;
             }
 
-            try {
-                $dataArray[$name] = $this->urlReplacer->getNewImageUrlFromImageUrl($value);
-            } catch (Exception $e) {
-                $this->debugger->debug($e->getMessage(), [$name => $value]);
-                continue;
-            }
+            $mimeType = 'image/' . $match[0];
+            $sourceImage = $this->sourceImageFactory->create(['url' => $value, 'mimeType' => $mimeType]);
+            $dataArray[$name] = $sourceImage->getUrl();
         }
 
         return $dataArray;

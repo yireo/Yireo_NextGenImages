@@ -83,8 +83,7 @@ class File
     /**
      * @param string $uri
      * @return bool
-     * @throws FileSystemException
-     * @throws NoSuchEntityException
+     * @throws ConvertorException
      */
     public function uriExists(string $uri): bool
     {
@@ -224,8 +223,7 @@ class File
     /**
      * @param string $uri
      * @return bool
-     * @throws FileSystemException
-     * @throws NoSuchEntityException
+     * @throws ConvertorException
      * @deprecated Use uriExists($uri) instead
      */
     public function urlExists(string $uri): bool
