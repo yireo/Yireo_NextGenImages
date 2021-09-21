@@ -103,6 +103,14 @@ class File
     {
         try {
             $fileRead = $this->fileReadFactory->create($filePath, 'file');
+
+            $stat = $fileRead->stat();
+
+            if (isset($stat['size'])) {
+                return (int)$stat['size'] > 0;
+            }
+
+            // fallback if filesystem returns no stats
             return (bool)$fileRead->readAll();
         } catch (FileSystemException $fileSystemException) {
             return false;
