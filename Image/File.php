@@ -3,10 +3,8 @@
 namespace Yireo\NextGenImages\Image;
 
 use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
-use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Logger\Debugger;
@@ -29,11 +27,6 @@ class File
     private $debugger;
 
     /**
-     * @var FileReadFactory
-     */
-    private $fileReadFactory;
-
-    /**
      * @var UrlConvertor
      */
     private $urlConvertor;
@@ -44,20 +37,17 @@ class File
      * @param DirectoryList $directoryList
      * @param FileDriver $fileDriver
      * @param Debugger $debugger
-     * @param FileReadFactory $fileReadFactory
      * @param UrlConvertor $urlConvertor
      */
     public function __construct(
         DirectoryList $directoryList,
         FileDriver $fileDriver,
         Debugger $debugger,
-        FileReadFactory $fileReadFactory,
         UrlConvertor $urlConvertor
     ) {
         $this->directoryList = $directoryList;
         $this->fileDriver = $fileDriver;
         $this->debugger = $debugger;
-        $this->fileReadFactory = $fileReadFactory;
         $this->urlConvertor = $urlConvertor;
     }
 
@@ -102,8 +92,7 @@ class File
     public function fileExists(string $filePath): bool
     {
         try {
-            $fileRead = $this->fileReadFactory->create($filePath, 'file');
-            return (bool)$fileRead->readAll();
+            return $this->fileDriver->isExists($filePath);
         } catch (FileSystemException $fileSystemException) {
             return false;
         }

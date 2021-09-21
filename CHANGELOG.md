@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.10] - 17 August 2021
+### Fixed
+- Prevent file check from reading whole file (performance issue)
+
 ## [0.2.9] - 17 August 2021
 ### Fixed
 - Fatal Error on swatches AJAX call

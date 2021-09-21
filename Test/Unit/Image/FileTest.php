@@ -2,11 +2,8 @@
 
 namespace Yireo\NextGenImages\Test\Unit\Image;
 
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem\File\ReadFactory as FileReadFactory;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
-use Magento\Framework\Filesystem\File\ReadInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Yireo\NextGenImages\Image\File;
 use Yireo\NextGenImages\Image\UrlConvertor;
@@ -25,13 +22,17 @@ class FileTest extends TestCase
     {
         $urlConvertor = $this->getUrlConvertorMock();
         $urlConvertor->method('getFilenameFromUrl')->willReturn('/pub/some/fake/url.png');
-        $fileRead = $this->getFileReadMockWithoutExistingFile();
+
+        $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturnMap([
+            ['http://anotherhost.com/some/fake/url.png', false],
+            ['/pub/some/fake/url.png', true]
+        ]);
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock(),
+            $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMockWithNonExistingFiles(),
             $urlConvertor
         ); // phpstan:ignore
 
@@ -44,11 +45,13 @@ class FileTest extends TestCase
      */
     public function testFileExistsWithExistingFile(): void
     {
+        $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturn(true);
+
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock(),
+            $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMockWithExistingFiles(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -60,11 +63,13 @@ class FileTest extends TestCase
      */
     public function testFileExistsWithoutExistingFile(): void
     {
+        $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturn(false);
+
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock(),
+            $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMockWithNonExistingFiles(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -80,7 +85,6 @@ class FileTest extends TestCase
             $this->getDirectoryListMock(),
             $this->getFileDriverMock(),
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -113,19 +117,18 @@ class FileTest extends TestCase
             $this->getDirectoryListMock(),
             $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
         $this->assertSame($now, $file->getModificationTime('/foo/bar.png'));
 
         $fileDriverMock = $this->getFileDriverMock();
         $fileDriverMock->method('stat')->willReturn(['mtime' => $now]);
+        $fileDriverMock->method('isExists')->willReturn(false);
 
         $file = new File(
             $this->getDirectoryListMock(),
             $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
         $this->assertSame($now, $file->getModificationTime('/foo/bar.png'));
@@ -137,7 +140,6 @@ class FileTest extends TestCase
             $this->getDirectoryListMock(),
             $this->getFileDriverMock(),
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
         $this->assertSame(0, $file->getModificationTime('/foo/bar.png'));
@@ -150,6 +152,7 @@ class FileTest extends TestCase
     {
         $now = time();
         $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturn(false);
         $fileDriverMock->method('stat')->willReturnMap([
             ['target.png', ['ctime' => $now]],
             ['source.png', ['ctime' => $now]]
@@ -159,7 +162,6 @@ class FileTest extends TestCase
             $this->getDirectoryListMock(),
             $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMockWithExistingFiles(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -173,6 +175,7 @@ class FileTest extends TestCase
     {
         $now = time();
         $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturn(false);
         $fileDriverMock->method('stat')->willReturnMap([
             ['target.png', ['ctime' => $now]],
             ['source.png', ['ctime' => $now]]
@@ -182,7 +185,6 @@ class FileTest extends TestCase
             $this->getDirectoryListMock(),
             $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMockWithExistingFiles(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -196,6 +198,7 @@ class FileTest extends TestCase
     {
         $now = time();
         $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturn(true);
         $fileDriverMock->method('stat')->willReturnMap([
             ['target.png', ['ctime' => $now + 1000]],
             ['source.png', ['ctime' => $now]]
@@ -205,7 +208,6 @@ class FileTest extends TestCase
             $this->getDirectoryListMock(),
             $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMockWithExistingFiles(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -217,11 +219,13 @@ class FileTest extends TestCase
      */
     public function testNeedsConversionWithExistingFiles()
     {
+        $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturn(false);
+
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock(),
+            $fileDriverMock,
             $this->getDebuggerMock(),
-            $this->getFileReadFactoryMockWithExistingFiles(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -233,17 +237,16 @@ class FileTest extends TestCase
      */
     public function testNeedsConversionWithNonExistingDestinationFile()
     {
-        $fileReadFactoryMock = $this->getFileReadFactoryMock();
-        $fileReadFactoryMock->method('create')->willReturnMap([
-            ['source.png', 'file', $this->getFileReadMockWithExistingFile()],
-            ['destination.webp', 'file', $this->getFileReadMockWithoutExistingFile()]
+        $fileDriverMock = $this->getFileDriverMock();
+        $fileDriverMock->method('isExists')->willReturnMap([
+            ['source.png', true],
+            ['destination.webp', false]
         ]);
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock(),
+            $fileDriverMock,
             $this->getDebuggerMock(),
-            $fileReadFactoryMock,
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
 
@@ -256,68 +259,6 @@ class FileTest extends TestCase
     private function getUrlConvertorMock(): MockObject
     {
         return $this->getMockBuilder(UrlConvertor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getFileReadFactoryMockWithExistingFiles(): MockObject
-    {
-        $fileRead = $this->getFileReadMockWithExistingFile();
-        $fileReadFactoryMock = $this->getFileReadFactoryMock();
-        $fileReadFactoryMock->method('create')->willReturn($fileRead);
-        return $fileReadFactoryMock;
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getFileReadFactoryMockWithNonExistingFiles(): MockObject
-    {
-        $fileRead = $this->getFileReadMockWithoutExistingFile();
-        $fileReadFactoryMock = $this->getFileReadFactoryMock();
-        $fileReadFactoryMock->method('create')->willReturn($fileRead);
-        return $fileReadFactoryMock;
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getFileReadFactoryMock(): MockObject
-    {
-        return $this->getMockBuilder(FileReadFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getFileReadMockWithExistingFile(): MockObject
-    {
-        $fileReadMock = $this->getFileReadMock();
-        $fileReadMock->method('readAll')->willReturn('foobar');
-        return $fileReadMock;
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getFileReadMockWithoutExistingFile(): MockObject
-    {
-        $fileReadMock = $this->getFileReadMock();
-        $fileReadMock->method('readAll')->willThrowException(new FileSystemException(__('Nope')));
-        return $fileReadMock;
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getFileReadMock(): MockObject
-    {
-        return $this->getMockBuilder(ReadInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
