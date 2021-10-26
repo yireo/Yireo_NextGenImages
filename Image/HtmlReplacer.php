@@ -97,7 +97,7 @@ class HtmlReplacer
      */
     private function isAllowedByNextTag(string $nextTag): bool
     {
-        if ($nextTag === '/picture') {
+        if ($nextTag === '/picture' || $nextTag === '/source') {
             return false;
         }
 
