@@ -2,9 +2,10 @@
 
 namespace Yireo\NextGenImages\Image;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem\Driver\File as FileDriver;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Logger\Debugger;
@@ -17,9 +18,9 @@ class File
     private $directoryList;
 
     /**
-     * @var FileDriver
+     * @var DriverInterface
      */
-    private $fileDriver;
+    protected $fileDriver;
 
     /**
      * @var Debugger
@@ -35,18 +36,18 @@ class File
      * File constructor.
      *
      * @param DirectoryList $directoryList
-     * @param FileDriver $fileDriver
+     * @param Filesystem $filesystem
      * @param Debugger $debugger
      * @param UrlConvertor $urlConvertor
      */
     public function __construct(
         DirectoryList $directoryList,
-        FileDriver $fileDriver,
+        Filesystem $filesystem,
         Debugger $debugger,
         UrlConvertor $urlConvertor
     ) {
         $this->directoryList = $directoryList;
-        $this->fileDriver = $fileDriver;
+        $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
         $this->debugger = $debugger;
         $this->urlConvertor = $urlConvertor;
     }
