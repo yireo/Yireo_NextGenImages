@@ -199,7 +199,8 @@ class File
             return false;
         }
 
-        if ($this->fileExists($destinationImageFilename) && $this->isNewerThan($destinationImageFilename, $sourceImageFilename)) {
+        if ($this->fileExists($destinationImageFilename) 
+            && $this->isNewerThan($destinationImageFilename, $sourceImageFilename)) {
             return false;
         }
 
