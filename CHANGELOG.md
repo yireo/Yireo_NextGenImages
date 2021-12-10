@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.13] - 10 December 2021
+### Fixed
+- isNewerThan method is not reached when the converted image already exists (@peteracs)
+
 ## [0.2.12] - 10 November 2021
 ### Added
 - Allow file driver interface to be overwritten
