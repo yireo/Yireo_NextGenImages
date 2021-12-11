@@ -2,7 +2,8 @@
 
 namespace Yireo\NextGenImages\Test\Unit\Image;
 
-use Magento\Framework\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem;
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use PHPUnit\Framework\MockObject\MockObject;
 use Yireo\NextGenImages\Image\File;
@@ -31,7 +32,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $urlConvertor
         ); // phpstan:ignore
@@ -50,7 +51,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -68,7 +69,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -83,7 +84,7 @@ class FileTest extends TestCase
     {
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock(),
+            $this->getFilesystemMock($this->getFileDriverMock()),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -115,7 +116,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -127,7 +128,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -138,7 +139,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $this->getFileDriverMock(),
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -160,7 +161,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -183,7 +184,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -206,7 +207,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -224,7 +225,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -245,7 +246,7 @@ class FileTest extends TestCase
 
         $file = new File(
             $this->getDirectoryListMock(),
-            $fileDriverMock,
+            $this->getFilesystemMock($fileDriverMock),
             $this->getDebuggerMock(),
             $this->getUrlConvertorMock()
         ); // phpstan:ignore
@@ -281,6 +282,27 @@ class FileTest extends TestCase
         return $this->getMockBuilder(FileDriver::class)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * @param MockObject $fileDriver
+     *
+     * @return MockObject
+     */
+    private function getFilesystemMock(MockObject $fileDriver): MockObject
+    {
+        $filesystemMock = $this->getMockBuilder(Filesystem::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $directoryWriteMock = $this->getMockBuilder(Filesystem\Directory\WriteInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $directoryWriteMock->method('getDriver')->willReturn($fileDriver);
+        $filesystemMock->method('getDirectoryWrite')->willReturn($directoryWriteMock);
+
+        return $filesystemMock;
     }
 
     /**
