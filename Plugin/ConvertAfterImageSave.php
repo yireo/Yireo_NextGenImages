@@ -43,12 +43,11 @@ class ConvertAfterImageSave
 
     /**
      * @param Image $subject
-     * @param $return
+     * @param mixed $return
      * @param null $destination
-     * @param null $newFileName
      * @return void
      */
-    public function afterSave(Image $subject, $return, $destination = null, $newFileName = null)
+    public function afterSave(Image $subject, $return, $destination = null)
     {
         if (!$this->config->enabled()) {
             return;

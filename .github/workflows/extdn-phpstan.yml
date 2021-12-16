@@ -10,5 +10,4 @@ jobs:
       - uses: extdn/github-actions-m2/magento-phpstan@master
         with:
           composer_name: ${{ secrets.COMPOSER_NAME }}
-          composer_version: 2
           phpstan_level: 2

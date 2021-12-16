@@ -100,11 +100,11 @@ class File
     }
 
     /**
-     * @param $filePath
+     * @param string $filePath
      * @return bool
      * @throws FileSystemException
      */
-    public function isWritable($filePath): bool
+    public function isWritable(string $filePath): bool
     {
         if ($this->fileExists($filePath)) {
             return $this->fileDriver->isWritable($filePath);

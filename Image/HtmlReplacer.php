@@ -125,7 +125,7 @@ class HtmlReplacer
      * @param LayoutInterface $layout
      * @param string $imageUrl
      * @param array $sourceImages
-     * @param $htmlTag
+     * @param string $htmlTag
      * @param bool $isDataSrc
      * @return string
      */
@@ -133,7 +133,7 @@ class HtmlReplacer
         LayoutInterface $layout,
         string $imageUrl,
         array $sourceImages,
-        $htmlTag,
+        string $htmlTag,
         bool $isDataSrc = false
     ): string {
         return $this->getPictureBlock($layout)

@@ -81,11 +81,10 @@ class Picture extends Template
     }
 
     /**
-     * @param SourceImage $alternateImage
-     *
+     * @param SourceImage $sourceImage
      * @return Picture
      */
-    public function addSourceImage(SourceImage $sourceImage)
+    public function addSourceImage(SourceImage $sourceImage): Picture
     {
         $this->sourceImages[] = $sourceImage;
         return $this;
