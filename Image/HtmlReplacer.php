@@ -58,15 +58,20 @@ class HtmlReplacer
      */
     public function replaceImagesInHtml(LayoutInterface $layout, string $html): string
     {
-        $regex = '/<([^<]+)\ (data\-src|src)=\"([^\"]+)\.(png|jpg|jpeg)([^>]+)>(\s*)<(\/?)([a-z]+)/msi';
-        if (preg_match_all($regex, $html, $matches) === false) {
+        $groupRegex = '/(?=(<(?:[^<]+)\ (?:data\-src|src)=\"(?:[^\"]+)\.(?:png|jpg|jpeg)(?:[^>]+)>(?:\s*)<(?:\/?)(?:[a-z]+)))/msi';
+        if (preg_match_all($groupRegex, $html, $groups) === false) {
             return $html;
         }
 
-        foreach ($matches[0] as $index => $match) {
-            $nextTag = $matches[7][$index] . $matches[8][$index];
-            $fullSearchMatch = $matches[0][$index];
-            $imageUrl = $matches[3][$index] . '.' . $matches[4][$index];
+        $regex = '/<([^<]+)\ (data\-src|src)=\"([^\"]+)\.(png|jpg|jpeg)([^>]+)>(\s*)<(\/?)([a-z]+)/msi';
+        foreach ($groups[1] as $index => $match) {
+            if (preg_match($regex, $match, $matches) === false) {
+                continue;
+            }
+
+            $nextTag = $matches[7] . $matches[8];
+            $fullSearchMatch = $matches[0];
+            $imageUrl = $matches[3] . '.' . $matches[4];
 
             if (!$this->isAllowedByNextTag($nextTag)) {
                 continue;
@@ -81,7 +86,7 @@ class HtmlReplacer
                 continue;
             }
 
-            $isDataSrc = $matches[2][$index] === 'data-src';
+            $isDataSrc = $matches[2] === 'data-src';
             $htmlTag = preg_replace('/>(.*)/msi', '>', $fullSearchMatch);
             $newHtmlTag = $this->getNewHtmlTag($layout, $imageUrl, $sourceImages, $htmlTag, $isDataSrc);
             $replacement = $newHtmlTag . '<' . $nextTag;
