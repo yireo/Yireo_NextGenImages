@@ -6,7 +6,9 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\File\NotFoundException;
+use Magento\Store\Model\StoreManagerInterface;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Logger\Debugger;
 
@@ -33,6 +35,11 @@ class File
     private $urlConvertor;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private StoreManagerInterface $storeManager;
+
+    /**
      * File constructor.
      *
      * @param DirectoryList $directoryList
@@ -44,12 +51,14 @@ class File
         DirectoryList $directoryList,
         Filesystem $filesystem,
         Debugger $debugger,
-        UrlConvertor $urlConvertor
+        UrlConvertor $urlConvertor,
+        StoreManagerInterface $storeManager
     ) {
         $this->directoryList = $directoryList;
         $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
         $this->debugger = $debugger;
         $this->urlConvertor = $urlConvertor;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -120,7 +129,23 @@ class File
      */
     public function convertSuffix(string $sourceFilename, string $destinationSuffix): string
     {
-        return (string)preg_replace('/\.(jpg|jpeg|png)/i', $destinationSuffix, $sourceFilename);
+        $destinationUrl = (string)preg_replace('/\.(jpg|jpeg|png)/i', $destinationSuffix, $sourceFilename);
+
+        if ($destinationUrl !== $sourceFilename) {
+            $destinationPath = $this->resolve($destinationUrl);
+            if (!$this->isWritable($destinationPath)) {
+                // parent folder or the file itself is not writeable. so we need to use a custom folder to save the
+                // optimized file.
+
+                // remove root path
+                $relativeDestPath = str_replace($this->directoryList->getPath('base'), '', $destinationPath);
+
+                $baseUrl = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+                $destinationUrl = $baseUrl . '.yireo-cache' . $relativeDestPath;
+            }
+        }
+
+        return $destinationUrl;
     }
 
     /**
