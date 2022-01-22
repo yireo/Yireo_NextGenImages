@@ -37,6 +37,14 @@
                         <field id="*/*/enabled">1</field>
                     </depends>
                 </field>
+                <field id="target_directory" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Target directory</label>
+                    <source_model>Yireo\NextGenImages\Config\Source\TargetDirectory</source_model>
+                    <comment>Where to save converted images</comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
                 <field id="convert_on_save" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Convert images on save</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

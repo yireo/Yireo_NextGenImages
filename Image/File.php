@@ -20,7 +20,7 @@ class File
     /**
      * @var DriverInterface
      */
-    protected $fileDriver;
+    private $fileDriver;
 
     /**
      * @var Debugger

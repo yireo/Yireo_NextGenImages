@@ -306,7 +306,7 @@ class FileTest extends TestCase
     }
 
     /**
-     * @return MockObject
+     * @return DirectoryList
      */
     private function getDirectoryListMock(): MockObject
     {

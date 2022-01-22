@@ -9,6 +9,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\PageCache\Model\DepersonalizeChecker;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Yireo\NextGenImages\Config\Source\TargetDirectory;
 
 class Config implements ArgumentInterface
 {
@@ -65,6 +66,19 @@ class Config implements ArgumentInterface
     public function convertImagesOnSave(): bool
     {
         return (bool)$this->getValue('yireo_nextgenimages/settings/convert_on_save');
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetDirectory(): string
+    {
+        $value = $this->getValue('yireo_nextgenimages/settings/target_directory');
+        if ($value === TargetDirectory::CACHE) {
+            return $value;
+        }
+
+        return TargetDirectory::SAME_AS_SOURCE;
     }
 
     /**
