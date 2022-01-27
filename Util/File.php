@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Image;
+namespace Yireo\NextGenImages\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
@@ -8,6 +8,8 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\NextGenImages\Exception\ConvertorException;
+use Yireo\NextGenImages\Image\ImageFactory;
+use Yireo\NextGenImages\Image\TargetImageFactory;
 use Yireo\NextGenImages\Logger\Debugger;
 
 class File
@@ -33,6 +35,16 @@ class File
     private $urlConvertor;
 
     /**
+     * @var TargetImageFactory
+     */
+    private $targetImageFactory;
+
+    /**
+     * @var ImageFactory
+     */
+    private $imageFactory;
+
+    /**
      * File constructor.
      *
      * @param DirectoryList $directoryList
@@ -44,12 +56,16 @@ class File
         DirectoryList $directoryList,
         Filesystem $filesystem,
         Debugger $debugger,
-        UrlConvertor $urlConvertor
+        UrlConvertor $urlConvertor,
+        TargetImageFactory $targetImageFactory,
+        ImageFactory $imageFactory
     ) {
         $this->directoryList = $directoryList;
         $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
         $this->debugger = $debugger;
         $this->urlConvertor = $urlConvertor;
+        $this->targetImageFactory = $targetImageFactory;
+        $this->imageFactory = $imageFactory;
     }
 
     /**
@@ -117,21 +133,13 @@ class File
      * @param string $sourceFilename
      * @param string $destinationSuffix
      * @return string
+     * @throws FileSystemException
+     * @deprecated Use TargetImageFactory::get() directly
      */
     public function convertSuffix(string $sourceFilename, string $destinationSuffix): string
     {
-        return (string)preg_replace('/\.(jpg|jpeg|png)/i', $destinationSuffix, $sourceFilename);
-    }
-
-    /**
-     * @param string $imagePath
-     *
-     * @return string
-     * @deprecated Removed
-     */
-    public function getAbsolutePathFromImagePath(string $imagePath): string
-    {
-        return $this->directoryList->getRoot() . '/pub' . $imagePath;
+        $image = $this->imageFactory->createFromPath($sourceFilename);
+        return $this->targetImageFactory->get($image, $destinationSuffix)->getPath();
     }
 
     /**

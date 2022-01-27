@@ -4,7 +4,7 @@ namespace Yireo\NextGenImages\Plugin;
 
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Config\Config;
-use Yireo\NextGenImages\Image\HtmlReplacer;
+use Yireo\NextGenImages\Util\HtmlReplacer;
 
 class ReplaceTagsPlugin
 {
@@ -49,7 +49,7 @@ class ReplaceTagsPlugin
             return $output;
         }
 
-        return $this->htmlReplacer->replaceImagesInHtml($layout, $output);
+        return $this->htmlReplacer->replace($output);
     }
 
     /**

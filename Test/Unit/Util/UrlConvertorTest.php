@@ -8,7 +8,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\TestCase;
-use Yireo\NextGenImages\Image\UrlConvertor;
+use Yireo\NextGenImages\Util\UrlConvertor;
 
 class UrlConvertorTest extends TestCase
 {

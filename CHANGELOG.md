@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Same WebP image for example.jpg and example.jpeg
+
+### Added
+- Various unit tests
+- Live testing for better testing
 
 ## [0.2.13] - 10 December 2021
 ### Fixed

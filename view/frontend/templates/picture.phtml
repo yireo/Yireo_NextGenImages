@@ -23,11 +23,11 @@ $srcsetAttribute = $block->getIsDataSrc() ? 'data-srcset' : 'srcset';
 
 <picture<?= /* @noEscape */
 $class ?>>
-    <?php foreach ($block->getSourceImages() as $sourceImage): ?>
+    <?php foreach ($block->getImages() as $image): ?>
         <source type="<?= /* @noEscape */
-        $sourceImage->getMimeType() ?>" <?= /* @noEscape */
+        $image->getMimeType() ?>" <?= /* @noEscape */
         $srcsetAttribute ?>="<?= /* @noEscape */
-        $sourceImage->getUrl() ?>">
+        $image->getUrl() ?>">
     <?php endforeach; ?>
     <source type="<?= /* @noEscape */
     $originalImageType ?>" <?= /* @noEscape */

@@ -3,7 +3,7 @@
 namespace Yireo\NextGenImages\Block;
 
 use Magento\Framework\View\Element\Template;
-use Yireo\NextGenImages\Image\SourceImage;
+use Yireo\NextGenImages\Image\Image;
 
 class Picture extends Template
 {
@@ -13,9 +13,9 @@ class Picture extends Template
     protected $_template = 'picture.phtml';
 
     /**
-     * @var SourceImage[]
+     * @var Image[]
      */
-    private $sourceImages = [];
+    private $images = [];
 
     /**
      * @var string
@@ -63,30 +63,30 @@ class Picture extends Template
     private $isDataSrc = false;
 
     /**
-     * @return SourceImage[]
+     * @return Image[]
      */
-    public function getSourceImages(): array
+    public function getImages(): array
     {
-        return $this->sourceImages;
+        return $this->images;
     }
 
     /**
-     * @param array $sourceImages
+     * @param array $images
      * @return Picture
      */
-    public function setSourceImages(array $sourceImages): Picture
+    public function setImages(array $images): Picture
     {
-        $this->sourceImages = $sourceImages;
+        $this->images = $images;
         return $this;
     }
 
     /**
-     * @param SourceImage $sourceImage
+     * @param Image $image
      * @return Picture
      */
-    public function addSourceImage(SourceImage $sourceImage): Picture
+    public function addImage(Image $image): Picture
     {
-        $this->sourceImages[] = $sourceImage;
+        $this->images[] = $image;
         return $this;
     }
 

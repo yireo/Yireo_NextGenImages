@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Image;
+namespace Yireo\NextGenImages\Util;
 
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -68,12 +68,37 @@ class UrlConvertor
     }
 
     /**
+     * @param string $filename
+     * @return string
+     */
+    public function getUrlFromFilename(string $filename): string
+    {
+        try {
+            if (strpos($filename, $this->getMediaFolder()) !== false) {
+                return str_replace($this->getMediaFolder() . '/', $this->getMediaUrl(), $filename);
+            }
+        } catch (FileSystemException|NoSuchEntityException $e) {
+            throw new NotFoundException((string)__('Media folder does not exist'));
+        }
+
+        if (strpos($filename, $this->getBaseFolder()) !== false) {
+            return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(), $filename);
+        }
+
+        if (!preg_match('/^\//', $filename)) {
+            return $this->getBaseUrl() . $filename;
+        }
+
+        throw new NotFoundException((string)__('Filename "' . $filename . '" is not matched with an URL'));
+    }
+
+    /**
      * @param string $url
      * @return string
      */
     public function getFilenameFromUrl(string $url): string
     {
-        $url = preg_replace('/\/static\/version([0-9]+\/)/', '/static/', (string)$url);
+        $url = preg_replace('/\/static\/version([0-9]+\/)/', '/static/', $url);
 
         if ($this->isLocal($url) === false) {
             throw new NotFoundException((string)__('URL "' . $url . '" does not appear to be a local file'));
@@ -83,7 +108,7 @@ class UrlConvertor
             if (strpos($url, $this->getMediaUrl()) !== false) {
                 return str_replace($this->getMediaUrl(), $this->getMediaFolder() . '/', $url);
             }
-        } catch (FileSystemException | NoSuchEntityException $e) {
+        } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Media folder does not exist'));
         }
 

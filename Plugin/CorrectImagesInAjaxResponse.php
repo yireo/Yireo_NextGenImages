@@ -4,7 +4,6 @@ namespace Yireo\NextGenImages\Plugin;
 
 use Magento\Swatches\Helper\Data;
 use Yireo\NextGenImages\Browser\BrowserSupport;
-use Yireo\NextGenImages\Image\SourceImageFactory;
 use Yireo\NextGenImages\Config\Config;
 
 class CorrectImagesInAjaxResponse
@@ -20,25 +19,17 @@ class CorrectImagesInAjaxResponse
     private $config;
 
     /**
-     * @var SourceImageFactory
-     */
-    private $sourceImageFactory;
-
-    /**
      * CorrectImagesInAjaxResponse constructor.
      *
      * @param BrowserSupport $browserSupport
      * @param Config $config
-     * @param SourceImageFactory $sourceImageFactory
      */
     public function __construct(
         BrowserSupport $browserSupport,
-        Config $config,
-        SourceImageFactory $sourceImageFactory
+        Config $config
     ) {
         $this->browserSupport = $browserSupport;
         $this->config = $config;
-        $this->sourceImageFactory = $sourceImageFactory;
     }
 
     /**
@@ -75,19 +66,31 @@ class CorrectImagesInAjaxResponse
                 continue;
             }
 
-            if (!is_string($value)) {
+            if (!$this->isValidUrl($value)) {
                 continue;
             }
 
-            if (!preg_match('/\.(jpg|png)$/', $value, $match)) {
-                continue;
-            }
-
-            $mimeType = 'image/' . $match[0];
-            $sourceImage = $this->sourceImageFactory->create(['url' => $value, 'mimeType' => $mimeType]);
-            $dataArray[$name] = $sourceImage->getUrl();
+            // @todo: Shouldn't this be a nextgen image?
+            $dataArray[$name] = $value;
         }
 
         return $dataArray;
+    }
+
+    /**
+     * @param string $url
+     * @return bool
+     */
+    private function isValidUrl(string $url): bool
+    {
+        if (!is_string($url)) {
+            return false;
+        }
+
+        if (!preg_match('/\.(jpg|png)$/', $url)) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -3,22 +3,14 @@
 namespace Yireo\NextGenImages\Convertor;
 
 use Yireo\NextGenImages\Exception\ConvertorException;
-use Yireo\NextGenImages\Image\SourceImage;
+use Yireo\NextGenImages\Image\Image;
 
 interface ConvertorInterface
 {
     /**
-     * @param string $imageUrl
-     * @return SourceImage
+     * @param Image $image
+     * @return image
      * @throws ConvertorException
      */
-    public function getSourceImage(string $imageUrl): SourceImage;
-
-    /**
-     * @param string $sourceImageUri
-     * @param string|null $destinationImageUri
-     * @return bool
-     * @throws ConvertorException
-     */
-    public function convert(string $sourceImageUri, ?string $destinationImageUri = null): bool;
+    public function convertImage(Image $image): Image;
 }

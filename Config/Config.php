@@ -22,6 +22,7 @@ class Config implements ArgumentInterface
      * @var DepersonalizeChecker
      */
     private $depersonalizeChecker;
+
     /**
      * @var StoreManagerInterface
      */

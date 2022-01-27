@@ -4,17 +4,19 @@ namespace Yireo\NextGenImages\Test\Unit\Image;
 
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use PHPUnit\Framework\MockObject\MockObject;
-use Yireo\NextGenImages\Image\File;
-use Yireo\NextGenImages\Image\UrlConvertor;
-use PHPUnit\Framework\TestCase;
+use Yireo\NextGenImages\Util\File;
+use Yireo\NextGenImages\Image\TargetImageFactory;
+use Yireo\NextGenImages\Image\ImageFactory;
 use Yireo\NextGenImages\Logger\Debugger;
+use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
 
 /**
  * Class FileTest testing behaviour of File
  */
-class FileTest extends TestCase
+class FileTest extends AbstractTestCase
 {
     /**
      * @test \Yireo\NextGenImages\Image\File::resolve()
@@ -31,10 +33,12 @@ class FileTest extends TestCase
         ]);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $urlConvertor
+            $this->getMagentoMock(Debugger::class),
+            $urlConvertor,
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $resolvedFile = $file->resolve('http://anotherhost.com/some/fake/url.png');
@@ -50,10 +54,12 @@ class FileTest extends TestCase
         $fileDriverMock->method('isExists')->willReturn(true);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $this->assertSame(true, $file->fileExists('/some/fake/url.png'));
@@ -68,41 +74,15 @@ class FileTest extends TestCase
         $fileDriverMock->method('isExists')->willReturn(false);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $this->assertSame(false, $file->fileExists('/some/fake/url.png'));
-    }
-
-    /**
-     * @test \Yireo\NextGenImages\Image\File::convertSuffix()
-     */
-    public function testConvertSuffix()
-    {
-        $file = new File(
-            $this->getDirectoryListMock(),
-            $this->getFilesystemMock($this->getFileDriverMock()),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
-        ); // phpstan:ignore
-
-        $destination = $file->convertSuffix('/some/path/example.jpg', '.webp');
-        $this->assertSame('/some/path/example.webp', $destination);
-
-        $destination = $file->convertSuffix('/some/path/example.JPG', '.webp');
-        $this->assertSame('/some/path/example.webp', $destination);
-
-        $destination = $file->convertSuffix('/some/path/example.jpeg', '.webp');
-        $this->assertSame('/some/path/example.webp', $destination);
-
-        $destination = $file->convertSuffix('/some/path/example.png', '.webp');
-        $this->assertSame('/some/path/example.webp', $destination);
-
-        $destination = $file->convertSuffix('/some/path/example.jpeg', '.foobar');
-        $this->assertSame('/some/path/example.foobar', $destination);
     }
 
     /**
@@ -115,10 +95,12 @@ class FileTest extends TestCase
         $fileDriverMock->method('stat')->willReturn(['mtime' => $now]);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
         $this->assertSame($now, $file->getModificationTime('/foo/bar.png'));
 
@@ -127,10 +109,12 @@ class FileTest extends TestCase
         $fileDriverMock->method('isExists')->willReturn(false);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
         $this->assertSame($now, $file->getModificationTime('/foo/bar.png'));
 
@@ -138,10 +122,12 @@ class FileTest extends TestCase
         $fileDriverMock->method('stat')->willReturn([]);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
         $this->assertSame(0, $file->getModificationTime('/foo/bar.png'));
     }
@@ -160,10 +146,12 @@ class FileTest extends TestCase
         ]);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $this->assertFalse($file->isNewerThan('target.png', 'source.png'));
@@ -183,10 +171,12 @@ class FileTest extends TestCase
         ]);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $this->assertFalse($file->isNewerThan('target.png', 'source.png'));
@@ -206,10 +196,12 @@ class FileTest extends TestCase
         ]);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $this->assertTrue($file->isNewerThan('target.png', 'source.png'));
@@ -224,10 +216,12 @@ class FileTest extends TestCase
         $fileDriverMock->method('isExists')->willReturn(false);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $this->assertFalse($file->needsConversion('source.png', 'destination.webp'));
@@ -245,23 +239,14 @@ class FileTest extends TestCase
         ]);
 
         $file = new File(
-            $this->getDirectoryListMock(),
+            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
-            $this->getDebuggerMock(),
-            $this->getUrlConvertorMock()
+            $this->getMagentoMock(Debugger::class),
+            $this->getUrlConvertorMock(), $this->getMagentoMock(TargetImageFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
         $this->assertTrue($file->needsConversion('source.png', 'destination.webp'));
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getUrlConvertorMock(): MockObject
-    {
-        return $this->getMockBuilder(UrlConvertor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 
     /**
@@ -291,27 +276,12 @@ class FileTest extends TestCase
      */
     private function getFilesystemMock(MockObject $fileDriver): MockObject
     {
-        $filesystemMock = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $directoryWriteMock = $this->getMockBuilder(Filesystem\Directory\WriteInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $directoryWriteMock = $this->getMagentoMock(WriteInterface::class);
         $directoryWriteMock->method('getDriver')->willReturn($fileDriver);
+
+        $filesystemMock = $this->getMagentoMock(Filesystem::class);
         $filesystemMock->method('getDirectoryWrite')->willReturn($directoryWriteMock);
 
         return $filesystemMock;
-    }
-
-    /**
-     * @return DirectoryList
-     */
-    private function getDirectoryListMock(): MockObject
-    {
-        return $this->getMockBuilder(DirectoryList::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 }

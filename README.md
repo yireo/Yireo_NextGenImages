@@ -21,6 +21,9 @@ A module `Foo_Bar` could add a `etc/di.xml` file to add a new convertor (a class
 ```
 
 # Roadmap
+- Move CLI into separate module
+- Move frontend into separate module
+- Create GraphQL support
 - Add more next gen image formats
     - JPEG 2000
     - HEIC
