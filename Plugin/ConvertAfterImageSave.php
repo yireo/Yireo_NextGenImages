@@ -6,6 +6,7 @@ use Magento\Framework\Image;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Exception\ConvertorException;
+use Yireo\NextGenImages\Image\ImageFactory;
 use Yireo\NextGenImages\Logger\Debugger;
 
 class ConvertAfterImageSave
@@ -24,6 +25,7 @@ class ConvertAfterImageSave
      * @var Config
      */
     private $config;
+    private ImageFactory $imageFactory;
 
     /**
      * ConvertAfterImageSave constructor.
@@ -34,11 +36,13 @@ class ConvertAfterImageSave
     public function __construct(
         ConvertorListing $convertorListing,
         Debugger $debugger,
-        Config $config
+        Config $config,
+        ImageFactory $imageFactory
     ) {
         $this->convertorListing = $convertorListing;
         $this->debugger = $debugger;
         $this->config = $config;
+        $this->imageFactory = $imageFactory;
     }
 
     /**
@@ -57,9 +61,10 @@ class ConvertAfterImageSave
             return;
         }
 
+        $image = $this->imageFactory->createFromPath((string)$destination);
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
-                $convertor->convert((string)$destination);
+                $convertor->convertImage($image);
             } catch (ConvertorException $e) {
                 $this->debugger->debug($e->getMessage());
             }
