@@ -6,26 +6,26 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yireo\NextGenImages\Image\File as ImageFile;
+use Yireo\NextGenImages\Util\File as FileUtil;
 
 class TestUriCommand extends Command
 {
     /**
-     * @var ImageFile
+     * @var FileUtil
      */
-    private $imageFile;
+    private $fileUtil;
 
     /**
      * TestUriCommand constructor.
-     * @param ImageFile $imageFile
+     * @param FileUtil $fileUtil
      * @param string|null $name
      */
     public function __construct(
-        ImageFile $imageFile,
+        FileUtil $fileUtil,
         string $name = null
     ) {
         parent::__construct($name);
-        $this->imageFile = $imageFile;
+        $this->fileUtil = $fileUtil;
     }
 
     /**
@@ -47,20 +47,20 @@ class TestUriCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $uri = (string)$input->getArgument('uri');
-        $path = $this->imageFile->resolve($uri);
+        $path = $this->fileUtil->resolve($uri);
 
         $output->writeln('Source path: ' . $path);
-        $output->writeln('Source exists: ' . (int)$this->imageFile->uriExists($uri));
-        $output->writeln('Source modification time: '.date('r', $this->imageFile->getModificationTime($path)));
+        $output->writeln('Source exists: ' . (int)$this->fileUtil->uriExists($uri));
+        $output->writeln('Source modification time: '.date('r', $this->fileUtil->getModificationTime($path)));
 
-        $targetUri = $this->imageFile->convertSuffix($uri, '.webp');
-        $targetPath = $this->imageFile->resolve($targetUri);
+        $targetUri = $this->fileUtil->convertSuffix($uri, '.webp');
+        $targetPath = $this->fileUtil->resolve($targetUri);
 
         $output->writeln('Target path: ' . $targetPath);
-        $output->writeln('Target exists: ' . (int)$this->imageFile->uriExists($targetUri));
-        $output->writeln('Target modification time: '.date('r', $this->imageFile->getModificationTime($targetPath)));
+        $output->writeln('Target exists: ' . (int)$this->fileUtil->uriExists($targetUri));
+        $output->writeln('Target modification time: '.date('r', $this->fileUtil->getModificationTime($targetPath)));
 
-        $output->writeln('Source is newer than target: '.(int)$this->imageFile->isNewerThan($path, $targetPath));
+        $output->writeln('Source is newer than target: '.(int)$this->fileUtil->isNewerThan($path, $targetPath));
         return -1;
     }
 }

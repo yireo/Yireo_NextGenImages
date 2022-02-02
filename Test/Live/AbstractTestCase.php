@@ -69,8 +69,8 @@ class AbstractTestCase extends TestCase
     protected function setConfigurationValue(string $name, string $value)
     {
         /** @var ConfigValueFactory $configValueFactory */
-       $configValueFactory = $this->getObject(ConfigValueFactory::class);
-       $configValueFactory->create()->load('yireo_nextgenimages/settings/target_directory', 'path')
-           ->setValue(TargetDirectory::CACHE)->setPath('yireo_nextgenimages/settings/target_directory');
+        $configValueFactory = $this->getObject(ConfigValueFactory::class);
+        $configValueFactory->create()->load('yireo_nextgenimages/settings/target_directory', 'path')
+            ->setValue(TargetDirectory::CACHE)->setPath('yireo_nextgenimages/settings/target_directory');
     }
 }

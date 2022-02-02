@@ -52,6 +52,7 @@ class TargetImageFactory
             $mediaDirectory = $this->directoryList->getPath(DirectoryList::MEDIA);
             $cacheDirectory = $mediaDirectory . '/nextgenimages/';
 
+            // phpcs:ignore
             $targetPath = $cacheDirectory . basename($targetPath);
             return $this->imageFactory->createFromPath($targetPath);
         }

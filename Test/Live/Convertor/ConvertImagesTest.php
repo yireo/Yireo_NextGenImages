@@ -2,6 +2,7 @@
 
 namespace Yireo\NextGenImages\Test\Live;
 
+use Yireo\NextGenImages\Convertor\ConvertorInterface;
 use Yireo\NextGenImages\Exception\ConvertorException;
 
 class ConvertImagesTest extends AbstractTestCase
@@ -24,7 +25,7 @@ class ConvertImagesTest extends AbstractTestCase
             }
 
             foreach ($convertors as $convertor) {
-                //$convertor->convert($file);
+                $this->assertInstanceOf(ConvertorInterface::class, $convertor);
             }
         }
     }

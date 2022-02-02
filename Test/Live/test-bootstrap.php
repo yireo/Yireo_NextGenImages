@@ -3,7 +3,7 @@
 use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Http;
 
-require __DIR__ . '/../../../../../app/bootstrap.php';
-$bootstrap = Bootstrap::create(BP, $_SERVER);
+$basePath = realpath(__DIR__ . '/../../../../../');
+require $basePath . 'app/bootstrap.php';
+$bootstrap = Bootstrap::create($basePath, $_SERVER);
 $bootstrap->createApplication(Http::class);
-

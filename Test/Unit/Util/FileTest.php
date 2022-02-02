@@ -242,7 +242,8 @@ class FileTest extends AbstractTestCase
             $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
-            $this->getUrlConvertorMock(), $this->getMagentoMock(TargetImageFactory::class),
+            $this->getUrlConvertorMock(),
+            $this->getMagentoMock(TargetImageFactory::class),
             $this->getMagentoMock(ImageFactory::class)
         ); // phpstan:ignore
 
