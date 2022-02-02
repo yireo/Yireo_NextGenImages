@@ -6,6 +6,9 @@ use Magento\Swatches\Helper\Data as SwatchesHelper;
 use Yireo\NextGenImages\Plugin\CorrectImagesInAjaxResponse;
 use Yireo\NextGenImages\Test\Integration\AbstractTestCase;
 
+/**
+ * @magentoAppArea frontend
+ */
 class CorrectImagesInAjaxResponseTest extends AbstractTestCase
 {
     /**

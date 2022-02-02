@@ -25,7 +25,11 @@ class ConvertAfterImageSave
      * @var Config
      */
     private $config;
-    private ImageFactory $imageFactory;
+
+    /**
+     * @var ImageFactory
+     */
+    private $imageFactory;
 
     /**
      * ConvertAfterImageSave constructor.

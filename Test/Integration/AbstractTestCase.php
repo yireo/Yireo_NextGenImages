@@ -24,7 +24,8 @@ class AbstractTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->objectManager = ObjectManager::getInstance();
+        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        //$this->objectManager = ObjectManager::getInstance();
     }
 
     protected function tearDown(): void
