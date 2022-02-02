@@ -3,11 +3,15 @@
 namespace Yireo\NextGenImages\Test\Integration;
 
 use Magento\Developer\Model\Di\PluginList;
+use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\App\DeploymentConfig\Reader as DeploymentConfigReader;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\State;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 use Magento\Framework\Module\ModuleList;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
 class AbstractTestCase extends TestCase
@@ -20,7 +24,43 @@ class AbstractTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->objectManager = Bootstrap::getObjectManager();
+        $this->objectManager = ObjectManager::getInstance();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->setAreaCode(null);
+    }
+
+    protected function createObject(string $className)
+    {
+        return $this->objectManager->create($className, ['config' => $this->getConfig()]);
+    }
+
+    protected function setAreaCode($areaCode)
+    {
+        $applicationState = $this->objectManager->get(State::class);
+        $applicationState->setAreaCode($areaCode);
+    }
+
+    protected function getConfig()
+    {
+        $directoryList = $this->objectManager->create(DirectoryList::class, ['root' => BP]);
+        $configReader = $this->objectManager->create(DeploymentConfigReader::class, ['dirList' => $directoryList]);
+        return $this->objectManager->create(DeploymentConfig::class, ['reader' => $configReader]);
+    }
+
+    protected function getModulePath(string $moduleName): string
+    {
+        $componentRegistrar = $this->createObject(ComponentRegistrar::class);
+
+        $modulePaths = $componentRegistrar->getPaths(ComponentRegistrar::MODULE);
+        $this->assertArrayHasKey($moduleName, $modulePaths);
+
+        $modulePath = $componentRegistrar->getPath(ComponentRegistrar::MODULE, $moduleName);
+        $this->assertNotEmpty($modulePath, 'Module path is empty');
+
+        return $modulePath;
     }
 
     protected function assertModuleIsRegistered(string $moduleName)
@@ -44,18 +84,16 @@ class AbstractTestCase extends TestCase
 
     protected function assertDiFileIsLoaded(string $moduleName, string $diFile = 'etc/di.xml')
     {
+        $this->setAreaCode('frontend');
+
         $this->assertModuleIsRegistered($moduleName);
 
-        $modulesReader = $this->objectManager->get(ModuleDirReader::class);
-        $configFiles = $modulesReader->getConfigurationFiles('di.xml');
+        /** @var ModuleDirReader $modulesReader */
+        $modulesReader = $this->createObject(ModuleDirReader::class);
+        $configFiles = array_keys($modulesReader->getConfigurationFiles('di.xml')->toArray());
         $this->assertNotEmpty($configFiles);
 
-        $componentRegistrar = $this->objectManager->get(ComponentRegistrar::class);
-
-        $modulePath = $componentRegistrar->getPath(ComponentRegistrar::MODULE, $moduleName);
-        $this->assertNotEmpty($modulePath, 'Module path is empty');
-
-        $diFile = $modulePath . '/' . $diFile;
+        $diFile = $this->getModulePath($moduleName) . '/' . $diFile;
 
         $diXmlFound = false;
         foreach ($configFiles as $configFile) {
