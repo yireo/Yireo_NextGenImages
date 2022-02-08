@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Unit\Image;
+namespace Yireo\NextGenImages\Test\Unit\Util;
 
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;

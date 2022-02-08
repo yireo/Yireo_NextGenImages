@@ -7,6 +7,7 @@ use Magento\Framework\App\Config\ValueFactory as ConfigValueFactory;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\UrlInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Yireo\NextGenImages\Config\Source\TargetDirectory;
@@ -53,7 +54,9 @@ class AbstractTestCase extends TestCase
 
     protected function getBaseUrl(string $type = ''): string
     {
-        return $this->getStoreManager()->getStore()->getBaseUrl($type);
+        /** @var Store $store */
+        $store = $this->getStoreManager()->getStore();
+        return $store->getBaseUrl($type);
     }
 
     protected function getMediaUrl(): string

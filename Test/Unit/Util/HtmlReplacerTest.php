@@ -1,13 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Unit\Image;
+namespace Yireo\NextGenImages\Test\Unit\Util;
 
-use Magento\Framework\View\Element\AbstractBlock;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageCollector;
-use Yireo\NextGenImages\Image\ImageFactory;
 use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\UrlConvertor;

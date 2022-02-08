@@ -1,15 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Live;
+namespace Yireo\NextGenImages\Test\Live\Convertor;
 
 use Yireo\NextGenImages\Convertor\ConvertorInterface;
 use Yireo\NextGenImages\Exception\ConvertorException;
+use Yireo\NextGenImages\Test\Live\AbstractTestCase;
 
 class ConvertImagesTest extends AbstractTestCase
 {
-    /**
-     * @throws ConvertorException
-     */
     public function testConvertImages()
     {
         $searchPath = $this->getDirectoryList()->getRoot() . '/dev/tests/nextgenimages';
