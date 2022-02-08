@@ -14,6 +14,8 @@ class ReplaceTagsPluginTest extends AbstractTestCase
      */
     public function testIfPluginIsEnabled()
     {
+        \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea('frontend');
+
         $this->assertDiPluginIsRegistered(
             LayoutInterface::class,
             ReplaceTagsPlugin::class,
