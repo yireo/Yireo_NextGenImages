@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Test\Unit\Image;
 
 use Magento\Framework\ObjectManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageFactory;
@@ -39,14 +40,14 @@ class ImageFactoryTest extends TestCase
         $this->assertEquals('/url/foo/bar.jpg', $image->getUrl());
     }
 
-    private function getObjectManager(): ObjectManagerInterface
+    private function getObjectManager(): MockObject
     {
         return $this->getMockBuilder(ObjectManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
 
-    private function getUrlConvertor(): UrlConvertor
+    private function getUrlConvertor(): MockObject
     {
         return $this->getMockBuilder(UrlConvertor::class)
             ->disableOriginalConstructor()

@@ -7,7 +7,7 @@ use Yireo\NextGenImages\Image\ImageFactory;
 use Yireo\NextGenImages\Image\TargetImageFactory;
 use Yireo\NextGenImages\Test\Live\AbstractTestCase;
 
-class TargetImageFactoryTest extends AbstractTestCase
+class TargetImageResolverTest extends AbstractTestCase
 {
     public function testResolve()
     {

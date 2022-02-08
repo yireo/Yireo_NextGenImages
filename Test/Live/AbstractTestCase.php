@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Test\Live;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\ValueFactory as ConfigValueFactory;
+use Magento\Framework\App\Config\Value as ConfigValue;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\UrlInterface;
@@ -24,6 +25,10 @@ class AbstractTestCase extends TestCase
         return ObjectManager::getInstance();
     }
 
+    /**
+     * @param string $className
+     * @return mixed
+     */
     protected function getObject(string $className)
     {
         return $this->getObjectManager()->get($className);
@@ -73,7 +78,11 @@ class AbstractTestCase extends TestCase
     {
         /** @var ConfigValueFactory $configValueFactory */
         $configValueFactory = $this->getObject(ConfigValueFactory::class);
-        $configValueFactory->create()->load('yireo_nextgenimages/settings/target_directory', 'path')
-            ->setValue(TargetDirectory::CACHE)->setPath('yireo_nextgenimages/settings/target_directory');
+
+        /** @var $configValue ConfigValue */
+        $configValue = $configValueFactory->create();
+        $configValue->load('yireo_nextgenimages/settings/target_directory', 'path')
+            ->setValue(TargetDirectory::CACHE)
+            ->setPath('yireo_nextgenimages/settings/target_directory');
     }
 }
