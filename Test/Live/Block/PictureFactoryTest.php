@@ -12,7 +12,7 @@ class PictureFactoryTest extends AbstractTestCase
     public function testCreate()
     {
         ObjectManager::getInstance()->get(State::class)->setAreaCode('frontend');
-        $pictureFactory = ObjectManager::getInstance()->get(PictureFactory::class);
+        $pictureFactory = ObjectManager::getInstance()->get(PictureFactory::class); // phpcs:ignore
         $picture = $pictureFactory->create('/foo/bar.png', [], '<img src="/foo/bar.png"/>');
         $html = $picture->toHtml();
 
