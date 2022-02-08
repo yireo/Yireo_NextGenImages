@@ -2,7 +2,11 @@
 
 namespace Yireo\NextGenImages\Test\Integration\Plugin;
 
+use Magento\Bundle\Model\Plugin\Frontend\ProductIdentitiesExtender;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\View\LayoutInterface;
+use Magento\TestFramework\Helper\Bootstrap;
+use Magento\TestFramework\Interception\PluginList;
 use Yireo\NextGenImages\Plugin\ReplaceTagsPlugin;
 use Yireo\NextGenImages\Test\Integration\AbstractTestCase;
 
@@ -17,12 +21,10 @@ class ReplaceTagsPluginTest extends AbstractTestCase
      */
     public function testIfPluginIsEnabled()
     {
-        \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea('frontend');
-
         $this->assertDiPluginIsRegistered(
             LayoutInterface::class,
             ReplaceTagsPlugin::class,
-            'after'
+            'Yireo_NextGenImages::replaceTags'
         );
     }
 }

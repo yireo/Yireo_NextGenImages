@@ -2,16 +2,16 @@
 
 namespace Yireo\NextGenImages\Test\Integration;
 
-use Magento\Developer\Model\Di\PluginList;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\DeploymentConfig\Reader as DeploymentConfigReader;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\State;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 use Magento\Framework\Module\ModuleList;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\TestFramework\Helper\Bootstrap;
+use Magento\TestFramework\Interception\PluginList;
 use PHPUnit\Framework\TestCase;
 
 class AbstractTestCase extends TestCase
@@ -24,7 +24,7 @@ class AbstractTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $this->objectManager = Bootstrap::getObjectManager();
     }
 
     protected function tearDown(): void
@@ -72,14 +72,16 @@ class AbstractTestCase extends TestCase
         );
     }
 
-    protected function assertDiPluginIsRegistered(string $subjectClass, string $pluginClass, string $pluginMethodType)
+    protected function assertDiPluginIsRegistered(string $subjectClass, string $pluginClass, string $pluginName)
     {
         $pluginList = $this->objectManager->get(PluginList::class);
-        $plugins = $pluginList->getPluginsListByClass($subjectClass);
+        $pluginInfo = $pluginList->get($subjectClass, []);
+        $this->assertArrayHasKey($pluginName, $pluginInfo);
 
-        $this->assertTrue(!empty($plugins));
-        $this->assertArrayHasKey($pluginMethodType, $plugins);
-        $this->assertArrayHasKey($pluginClass, $plugins[$pluginMethodType]);
+        $this->assertSame(
+            $pluginClass,
+            $pluginInfo[$pluginName]['instance']
+        );
     }
 
     protected function assertDiFileIsLoaded(string $moduleName, string $diFile = 'etc/di.xml')

@@ -17,12 +17,12 @@ class CorrectImagesInAjaxResponseTest extends AbstractTestCase
      */
     public function testIfPluginIsEnabled()
     {
-        $this->assertDiFileIsLoaded('Yireo_NextGenImages', 'etc/frontend/di.xml');
+        //$this->assertDiFileIsLoaded('Yireo_NextGenImages', 'etc/frontend/di.xml');
 
         $this->assertDiPluginIsRegistered(
             SwatchesHelper::class,
             CorrectImagesInAjaxResponse::class,
-            'after'
+            'Yireo_NextGenImages::correctImagesInAjaxResponse'
         );
     }
 }
