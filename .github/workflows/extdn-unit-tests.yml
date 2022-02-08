@@ -12,12 +12,9 @@ jobs:
       COMPOSER_NAME: ${{ secrets.COMPOSER_NAME }}
     steps:
       - uses: actions/checkout@v2
-      - uses: extdn/github-actions-m2/magento-unit-tests@7.3
-        env:
-          MAGENTO_VERSION: '2.3.4'
-      - uses: extdn/github-actions-m2/magento-unit-tests@7.3
+      - uses: extdn/github-actions-m2/magento-unit-tests/7.3@master
         env:
           MAGENTO_VERSION: '2.3.5-p2'
-      - uses: extdn/github-actions-m2/magento-unit-tests@7.4
+      - uses: extdn/github-actions-m2/magento-unit-tests/7.4@master
         env:
-          MAGENTO_VERSION: '2.4.0'
+          MAGENTO_VERSION: '2.4.3'
