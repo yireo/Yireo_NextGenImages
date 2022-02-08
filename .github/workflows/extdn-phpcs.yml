@@ -1,9 +1,9 @@
-name: ExtDN Static Tests
+name: ExtDN Coding Standard
 on: [push]
 
 jobs:
   static:
-    name: Static Code Analysis
+    name: Coding Standard
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
