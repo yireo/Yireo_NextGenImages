@@ -81,8 +81,8 @@ class AbstractTestCase extends TestCase
 
         /** @var ConfigValue $configValue */
         $configValue = $configValueFactory->create();
-        $configValue->load('yireo_nextgenimages/settings/target_directory', 'path')
-            ->setValue(TargetDirectory::CACHE)
-            ->setPath('yireo_nextgenimages/settings/target_directory');
+        $configValue->load('yireo_nextgenimages/settings/target_directory', 'path') /* @phpstan-ignore-line */
+            ->setValue(TargetDirectory::CACHE) /* @phpstan-ignore-line */
+            ->setPath('yireo_nextgenimages/settings/target_directory'); /* @phpstan-ignore-line */
     }
 }
