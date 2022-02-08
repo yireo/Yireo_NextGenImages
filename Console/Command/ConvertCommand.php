@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Exception\ConvertorException;
+use Yireo\NextGenImages\Image\ImageFactory;
 
 class ConvertCommand extends Command
 {
@@ -17,16 +18,24 @@ class ConvertCommand extends Command
     private $convertorListing;
 
     /**
+     * @var ImageFactory
+     */
+    private $imageFactory;
+
+    /**
      * TestUriCommand constructor.
      * @param ConvertorListing $convertorListing
+     * @param ImageFactory $imageFactory
      * @param string|null $name
      */
     public function __construct(
         ConvertorListing $convertorListing,
+        ImageFactory $imageFactory,
         string $name = null
     ) {
         parent::__construct($name);
         $this->convertorListing = $convertorListing;
+        $this->imageFactory = $imageFactory;
     }
 
     /**
@@ -48,18 +57,19 @@ class ConvertCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // phpcs:ignore
-        $image = realpath((string)$input->getArgument('image'));
+        $imagePath = realpath((string)$input->getArgument('image'));
 
         // phpcs:ignore
-        if ($image === false || !is_file($image)) {
+        if ($imagePath === false || !is_file($imagePath)) {
             $output->writeln('<error>Please supply a valid image</error>');
             return -1;
         }
 
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
-                $convertor->convert($image);
-                $output->writeln('Converted image to ' . $image);
+                $image = $this->imageFactory->createFromPath($imagePath);
+                $newImage = $convertor->convertImage($image);
+                $output->writeln('Converted image to ' . $newImage->getPath());
             } catch (ConvertorException $e) {
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
             }

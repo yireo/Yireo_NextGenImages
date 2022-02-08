@@ -26,7 +26,7 @@ class ImageCollector
     /**
      * @param ImageFactory $imageFactory
      * @param ConvertorListing $convertorListing
-     * @param Debugger $debug1ger
+     * @param Debugger $debugger
      */
     public function __construct(
         ImageFactory $imageFactory,

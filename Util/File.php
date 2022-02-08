@@ -139,7 +139,7 @@ class File
     public function convertSuffix(string $sourceFilename, string $destinationSuffix): string
     {
         $image = $this->imageFactory->createFromPath($sourceFilename);
-        return $this->targetImageFactory->get($image, $destinationSuffix)->getPath();
+        return $this->targetImageFactory->create($image, $destinationSuffix)->getPath();
     }
 
     /**
