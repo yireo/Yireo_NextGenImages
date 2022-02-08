@@ -79,7 +79,7 @@ class AbstractTestCase extends TestCase
         /** @var ConfigValueFactory $configValueFactory */
         $configValueFactory = $this->getObject(ConfigValueFactory::class);
 
-        /** @var $configValue ConfigValue */
+        /** @var ConfigValue $configValue */
         $configValue = $configValueFactory->create();
         $configValue->load('yireo_nextgenimages/settings/target_directory', 'path')
             ->setValue(TargetDirectory::CACHE)
