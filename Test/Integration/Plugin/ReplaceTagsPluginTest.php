@@ -3,10 +3,12 @@
 namespace Yireo\NextGenImages\Test\Integration\Plugin;
 
 use Magento\Framework\View\LayoutInterface;
-use Magento\TestFramework\Application;
 use Yireo\NextGenImages\Plugin\ReplaceTagsPlugin;
 use Yireo\NextGenImages\Test\Integration\AbstractTestCase;
 
+/**
+ * @magentoAppArea frontend
+ */
 class ReplaceTagsPluginTest extends AbstractTestCase
 {
     /**
@@ -15,11 +17,7 @@ class ReplaceTagsPluginTest extends AbstractTestCase
      */
     public function testIfPluginIsEnabled()
     {
-        /** @var Application $application */
-        $application = $this->objectManager->get(Application::class);
-        $application->loadArea('frontend');
         \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea('frontend');
-
 
         $this->assertDiPluginIsRegistered(
             LayoutInterface::class,
