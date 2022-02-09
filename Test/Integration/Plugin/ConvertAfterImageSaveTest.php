@@ -4,13 +4,13 @@ namespace Yireo\NextGenImages\Test\Integration\Plugin;
 
 use Magento\Framework\Image;
 use Yireo\NextGenImages\Plugin\ConvertAfterImageSave;
-use Yireo\NextGenImages\Test\Integration\AbstractTestCase;
+use Yireo\IntegrationTestHelper\Test\Integration\AbstractTestCase;
 
 class ConvertAfterImageSaveTest extends AbstractTestCase
 {
     public function testIfPluginIsEnabled()
     {
-        $this->assertDiPluginIsRegistered(
+        $this->assertInterceptorPluginIsRegistered(
             Image::class,
             ConvertAfterImageSave::class,
             'Yireo_NextGenImages::convertWebpAfterImageSave'
