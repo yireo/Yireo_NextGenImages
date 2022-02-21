@@ -25,7 +25,13 @@ class HtmlReplacerTest extends AbstractTestCase
         $this->assertEquals($html, $result);
     }
 
-    public function testReplaceWithTestImage()
+    /**
+     * @param string $originalHtml
+     * @param string $finalHtml
+     * @return void
+     * @dataProvider getArguments
+     */
+    public function testReplaceWithTestImage(string $originalHtml, string $finalHtml)
     {
         $urlConvertor = $this->getMagentoMock(UrlConvertor::class);
         $urlConvertor->method('isLocal')->willReturn(true);
@@ -45,9 +51,21 @@ class HtmlReplacerTest extends AbstractTestCase
             $pictureFactory
         );
 
-        $originalHtml = '<div><img src="/img/test.png"/></div>';
-        $finalHtml = '<div><picture><img src="/img/test.png"/></picture></div>';
         $result = $htmlReplacer->replace($originalHtml);
         $this->assertEquals($finalHtml, $result);
+    }
+
+    public function getArguments(): array
+    {
+        return [
+            [
+                '<div><img src="/img/test.png"/></div>',
+                '<div><picture><img src="/img/test.png"/></picture></div>'
+            ],
+            [
+                '<div><img src="data:image/gif;base64,foobar"/></div>',
+                '<div><img src="data:image/gif;base64,foobar"/></div>'
+            ]
+        ];
     }
 }
