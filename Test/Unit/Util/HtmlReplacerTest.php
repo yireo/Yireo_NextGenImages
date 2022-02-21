@@ -37,7 +37,10 @@ class HtmlReplacerTest extends AbstractTestCase
         $urlConvertor->method('isLocal')->willReturn(true);
 
         $imageCollector = $this->getMagentoMock(ImageCollector::class);
-        $images = [new Image($urlConvertor, '/img/test.png')];
+        $images = [
+            new Image($urlConvertor, '/img/test.png'),
+            new Image($urlConvertor, '/img/test.webp'),
+        ];
         $imageCollector->method('collect')->willReturn($images);
 
         $block = $this->getMagentoMock(Picture::class);
@@ -63,8 +66,16 @@ class HtmlReplacerTest extends AbstractTestCase
                 '<div><picture><img src="/img/test.png"/></picture></div>'
             ],
             [
+                '<div><img src="/img/test.png"/>FOOBAR</div>',
+                '<div><picture><img src="/img/test.png"/></picture>FOOBAR</div>'
+            ],
+            [
                 '<div><img src="data:image/gif;base64,foobar"/></div>',
                 '<div><img src="data:image/gif;base64,foobar"/></div>'
+            ],
+            [
+                '<div style="background-image: url(foobar.png);"></div>',
+                '<div style="background-image: url(foobar.png);"></div>'
             ]
         ];
     }

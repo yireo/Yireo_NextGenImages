@@ -25,6 +25,11 @@ class Picture extends Template
     /**
      * @var string
      */
+    private $title = '';
+
+    /**
+     * @var string
+     */
     private $altText = '';
 
     /**
@@ -36,6 +41,11 @@ class Picture extends Template
      * @var string
      */
     private $height = '';
+
+    /**
+     * @var string
+     */
+    private $style = '';
 
     /**
      * @var string
@@ -112,6 +122,25 @@ class Picture extends Template
     /**
      * @return string
      */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     *
+     * @return Picture
+     */
+    public function setTitle(string $title): Picture
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getAltText(): string
     {
         return $this->altText;
@@ -161,6 +190,24 @@ class Picture extends Template
     public function setHeight(string $height): Picture
     {
         $this->height = $height;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStyle(): string
+    {
+        return $this->style;
+    }
+
+    /**
+     * @param string $style
+     * @return Picture
+     */
+    public function setStyle(string $style): Picture
+    {
+        $this->style = $style;
         return $this;
     }
 

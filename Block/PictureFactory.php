@@ -47,11 +47,13 @@ class PictureFactory
         $block
             ->setOriginalImage($imageUrl)
             ->setImages($images)
+            ->setTitle($this->getAttributeText($htmlTag, 'title'))
             ->setAltText($this->getAttributeText($htmlTag, 'alt'))
-            ->setOriginalTag($htmlTag)
+            ->setStyle($this->getAttributeText($htmlTag, 'style'))
             ->setClass($this->getAttributeText($htmlTag, 'class'))
             ->setWidth($this->getAttributeText($htmlTag, 'width'))
             ->setHeight($this->getAttributeText($htmlTag, 'height'))
+            ->setOriginalTag($htmlTag)
             ->setLazyLoading($this->config->addLazyLoading())
             ->setIsDataSrc($isDataSrc)
             ->setDebug($this->config->isDebugging());
