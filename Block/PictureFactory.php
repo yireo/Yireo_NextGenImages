@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Block;
 
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Config\Config;
+use Yireo\NextGenImages\Image\Image;
 
 class PictureFactory
 {
@@ -30,14 +31,14 @@ class PictureFactory
     }
 
     /**
-     * @param string $imageUrl
-     * @param array $images
+     * @param Image $originalImage
+     * @param Image[] $images
      * @param string $htmlTag
      * @param bool $isDataSrc
      * @return Picture
      */
     public function create(
-        string $imageUrl,
+        Image $originalImage,
         array $images,
         string $htmlTag,
         bool $isDataSrc = false
@@ -45,7 +46,7 @@ class PictureFactory
         /** @var Picture $block */
         $block = $this->layout->createBlock(Picture::class);
         $block
-            ->setOriginalImage($imageUrl)
+            ->setOriginalImage($originalImage)
             ->setImages($images)
             ->setTitle($this->getAttributeText($htmlTag, 'title'))
             ->setAltText($this->getAttributeText($htmlTag, 'alt'))

@@ -6,6 +6,7 @@ use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageCollector;
+use Yireo\NextGenImages\Image\ImageFactory;
 use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\UrlConvertor;
@@ -17,7 +18,8 @@ class HtmlReplacerTest extends AbstractTestCase
         $htmlReplacer = new HtmlReplacer(
             $this->getMagentoMock(UrlConvertor::class),
             $this->getMagentoMock(ImageCollector::class),
-            $this->getMagentoMock(PictureFactory::class)
+            $this->getMagentoMock(PictureFactory::class),
+            $this->getMagentoMock(ImageFactory::class)
         );
 
         $html = '<div><img src="/img/test.png"/></div>';
@@ -38,8 +40,8 @@ class HtmlReplacerTest extends AbstractTestCase
 
         $imageCollector = $this->getMagentoMock(ImageCollector::class);
         $images = [
-            new Image($urlConvertor, '/img/test.png'),
-            new Image($urlConvertor, '/img/test.webp'),
+            new Image('/tmp/pub/test.png', '/test.png'),
+            new Image('/tmp/pub/test.webp', '/test.webp'),
         ];
         $imageCollector->method('collect')->willReturn($images);
 
@@ -48,10 +50,13 @@ class HtmlReplacerTest extends AbstractTestCase
         $pictureFactory = $this->getMagentoMock(PictureFactory::class);
         $pictureFactory->method('create')->willReturn($block);
 
+        $imageFactory = $this->getMagentoMock(ImageFactory::class);
+
         $htmlReplacer = new HtmlReplacer(
             $urlConvertor,
             $imageCollector,
-            $pictureFactory
+            $pictureFactory,
+            $imageFactory
         );
 
         $result = $htmlReplacer->replace($originalHtml);

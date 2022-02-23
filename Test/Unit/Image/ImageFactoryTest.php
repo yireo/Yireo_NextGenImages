@@ -15,29 +15,29 @@ class ImageFactoryTest extends TestCase
     {
         $urlConvertor = $this->getUrlConvertor();
         $objectManager = $this->getObjectManager();
-        $objectManager->method('create')->willReturn(new Image($urlConvertor, '/path/foo/bar.jpg'));
+        $objectManager->method('create')->willReturn(new Image('/tmp/pub/foo/bar.jpg', '/foo/bar.jpg'));
 
         $imageFactory = new ImageFactory($objectManager, $urlConvertor);
-        $image = $imageFactory->createFromPath('/path/foo/bar.jpg');
+        $image = $imageFactory->createFromPath('/tmp/pub/foo/bar.jpg');
 
         $this->assertInstanceOf(Image::class, $image);
-        $this->assertEquals('/path/foo/bar.jpg', $image->getPath());
+        $this->assertEquals('/tmp/pub/foo/bar.jpg', $image->getPath());
     }
 
     public function testCreateFromUrl()
     {
         $urlConvertor = $this->getUrlConvertor();
-        $urlConvertor->method('getFilenameFromUrl')->willReturn('/path/foo/bar.jpg');
-        $urlConvertor->method('getUrlFromFilename')->willReturn('/url/foo/bar.jpg');
+        $urlConvertor->method('getFilenameFromUrl')->willReturn('/tmp/pub/foo/bar.jpg');
+        $urlConvertor->method('getUrlFromFilename')->willReturn('/foo/bar.jpg');
         $objectManager = $this->getObjectManager();
-        $objectManager->method('create')->willReturn(new Image($urlConvertor, '/path/foo/bar.jpg'));
+        $objectManager->method('create')->willReturn(new Image('/tmp/pub/foo/bar.jpg', '/foo/bar.jpg'));
 
         $imageFactory = new ImageFactory($objectManager, $urlConvertor);
         $image = $imageFactory->createFromUrl('/foo/bar.jpg');
 
         $this->assertInstanceOf(Image::class, $image);
-        $this->assertEquals('/path/foo/bar.jpg', $image->getPath());
-        $this->assertEquals('/url/foo/bar.jpg', $image->getUrl());
+        $this->assertEquals('/tmp/pub/foo/bar.jpg', $image->getPath());
+        $this->assertEquals('/foo/bar.jpg', $image->getUrl());
     }
 
     private function getObjectManager(): MockObject

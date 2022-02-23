@@ -18,7 +18,7 @@ class Picture extends Template
     private $images = [];
 
     /**
-     * @var string
+     * @var Image
      */
     private $originalImage = '';
 
@@ -81,7 +81,7 @@ class Picture extends Template
     }
 
     /**
-     * @param array $images
+     * @param Image[] $images
      * @return Picture
      */
     public function setImages(array $images): Picture
@@ -101,19 +101,19 @@ class Picture extends Template
     }
 
     /**
-     * @return string
+     * @return Image
      */
-    public function getOriginalImage(): string
+    public function getOriginalImage(): Image
     {
         return $this->originalImage;
     }
 
     /**
-     * @param string $originalImage
+     * @param Image $originalImage
      *
      * @return Picture
      */
-    public function setOriginalImage(string $originalImage): Picture
+    public function setOriginalImage(Image $originalImage): Picture
     {
         $this->originalImage = $originalImage;
         return $this;
@@ -235,11 +235,11 @@ class Picture extends Template
      */
     public function getOriginalImageType(): string
     {
-        if (preg_match('/\.(jpg|jpeg)$/i', $this->getOriginalImage())) {
+        if (preg_match('/\.(jpg|jpeg)$/i', $this->getOriginalImage()->getUrl())) {
             return 'image/jpg';
         }
 
-        if (preg_match('/\.(png)$/i', $this->getOriginalImage())) {
+        if (preg_match('/\.(png)$/i', $this->getOriginalImage()->getUrl())) {
             return 'image/png';
         }
 

@@ -6,6 +6,7 @@ use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
+use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
 
 class PictureFactoryTest extends AbstractTestCase
@@ -20,7 +21,11 @@ class PictureFactoryTest extends AbstractTestCase
 
         $config = $this->getMagentoMock(Config::class);
         $pictureFactory = new PictureFactory($layout, $config);
-        $pictureBlock = $pictureFactory->create('/images/test.png', [], '<div></div>', true);
+
+        $image = $this->getMagentoMock(Image::class);
+        $image->method('getUrl')->willReturn('/images/test.png');
+
+        $pictureBlock = $pictureFactory->create($image, [], '<div></div>', true);
         $this->assertSame('/images/test.png', $pictureBlock->getUrl());
     }
 }

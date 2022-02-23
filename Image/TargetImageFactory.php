@@ -27,6 +27,7 @@ class TargetImageFactory
     /**
      * @param DirectoryList $directoryList
      * @param Config $config
+     * @param ImageFactory $imageFactory
      */
     public function __construct(
         DirectoryList $directoryList,

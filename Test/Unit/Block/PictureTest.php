@@ -2,6 +2,7 @@
 
 namespace Yireo\NextGenImages\Test\Unit\Block;
 
+use Magento\Framework\View\Element\Template\Context;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
@@ -10,7 +11,7 @@ class PictureTest extends AbstractTestCase
 {
     public function testImages()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setImages(['foobar']);
@@ -22,31 +23,35 @@ class PictureTest extends AbstractTestCase
 
     public function testOriginalImage()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
-        $pictureBlock->setOriginalImage('test');
-        $this->assertSame('test', $pictureBlock->getOriginalImage());
+        $image = new Image('/tmp/pub/images/test.png', '/images/test.png');
+        $pictureBlock->setOriginalImage($image);
+        $this->assertSame('/images/test.png', $pictureBlock->getOriginalImage()->getUrl());
     }
 
     public function testOriginalImageType()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
-        $pictureBlock->setOriginalImage('test.png');
+        $image = new Image('/tmp/pub/images/test.png', '/images/test.png');
+        $pictureBlock->setOriginalImage($image);
         $this->assertSame('image/png', $pictureBlock->getOriginalImageType());
 
-        $pictureBlock->setOriginalImage('test.jpg');
+        $image = new Image('/tmp/pub/images/test.jpg', '/images/test.jpg');
+        $pictureBlock->setOriginalImage($image);
         $this->assertSame('image/jpg', $pictureBlock->getOriginalImageType());
 
-        $pictureBlock->setOriginalImage('test.jpeg');
+        $image = new Image('/tmp/pub/images/test.jpeg', '/images/test.jpeg');
+        $pictureBlock->setOriginalImage($image);
         $this->assertSame('image/jpg', $pictureBlock->getOriginalImageType());
     }
 
     public function testOriginalTag()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setOriginalTag('test');
@@ -55,7 +60,7 @@ class PictureTest extends AbstractTestCase
 
     public function testTitle()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setTitle('test');
@@ -64,7 +69,7 @@ class PictureTest extends AbstractTestCase
 
     public function testAltText()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setAltText('test');
@@ -73,7 +78,7 @@ class PictureTest extends AbstractTestCase
 
     public function testWidth()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setWidth('test');
@@ -82,7 +87,7 @@ class PictureTest extends AbstractTestCase
 
     public function testHeight()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setHeight('test');
@@ -91,7 +96,7 @@ class PictureTest extends AbstractTestCase
 
     public function testStyle()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setStyle('test');
@@ -100,7 +105,7 @@ class PictureTest extends AbstractTestCase
 
     public function testClass()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setClass('test');
@@ -109,7 +114,7 @@ class PictureTest extends AbstractTestCase
 
     public function testDebug()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setDebug(true);
@@ -121,7 +126,7 @@ class PictureTest extends AbstractTestCase
 
     public function testLazyLoading()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setLazyLoading(true);
@@ -133,7 +138,7 @@ class PictureTest extends AbstractTestCase
 
     public function testIsDataSrc()
     {
-        $context = $this->getMagentoMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMagentoMock(Context::class);
         $pictureBlock = new Picture($context);
 
         $pictureBlock->setIsDataSrc(true);

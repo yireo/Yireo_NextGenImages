@@ -14,9 +14,4 @@ class AbstractTestCase extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
     }
-
-    public function getUrlConvertorMock(): MockObject
-    {
-        return $this->getMagentoMock(UrlConvertor::class);
-    }
 }

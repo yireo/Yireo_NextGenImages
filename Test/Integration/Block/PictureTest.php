@@ -17,12 +17,11 @@ class PictureTest extends AbstractTestCase
     {
         $this->setAreaCodeToFrontend();
 
-        $urlConvertor = $this->objectManager->get(UrlConvertor::class);
-        //$images = [new Image($urlConvertor, '/tmp/images/test.webp')];
-        $images = [];
+        $originalImage = new Image('/tmp/pub/images/test.png', '/images/test.png');
+        $images = [new Image('/tmp/pub/images/test.webp', '/images/test.webp')];
 
         $pictureFactory = $this->objectManager->create(PictureFactory::class);
-        $picture = $pictureFactory->create('/images/test.png', $images, '<img src="/images/test.png"/>');
+        $picture = $pictureFactory->create($originalImage, $images, '<img src="/images/test.png"/>');
 
         $html = $picture->toHtml();
         $this->assertNotEmpty($html);
@@ -38,12 +37,11 @@ class PictureTest extends AbstractTestCase
     {
         $this->setAreaCodeToFrontend();
 
-        $urlConvertor = $this->objectManager->get(UrlConvertor::class);
-        //$images = [new Image($urlConvertor, '/tmp/images/test.webp')];
-        $images = [];
+        $originalImage = new Image('/tmp/pub/images/test.png', '/images/test.png');
+        $images = [new Image('/tmp/pub/images/test.webp', '/images/test.webp')];
 
         $pictureFactory = $this->objectManager->create(PictureFactory::class);
-        $picture = $pictureFactory->create('/images/test.png', $images, '<img src="/images/test.png"/>');
+        $picture = $pictureFactory->create($originalImage, $images, '<img src="/images/test.png"/>');
 
         $html = $picture->toHtml();
         $this->assertNotEmpty($html);

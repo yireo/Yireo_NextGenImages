@@ -2,30 +2,28 @@
 
 namespace Yireo\NextGenImages\Image;
 
-use Yireo\NextGenImages\Util\UrlConvertor;
-
 class Image
 {
-    /**
-     * @var UrlConvertor
-     */
-    private $urlConvertor;
-
     /**
      * @var string
      */
     private $path;
 
     /**
-     * @param UrlConvertor $urlConvertor
+     * @var string
+     */
+    private $url;
+
+    /**
      * @param string $path
+     * @param string $url
      */
     public function __construct(
-        UrlConvertor $urlConvertor,
-        string $path
+        string $path,
+        string $url
     ) {
-        $this->urlConvertor = $urlConvertor;
         $this->path = $path;
+        $this->url = $url;
     }
 
     /**
@@ -41,7 +39,7 @@ class Image
      */
     public function getUrl(): string
     {
-        return $this->urlConvertor->getUrlFromFilename($this->getPath());
+        return $this->url;
     }
 
     /**
@@ -62,5 +60,13 @@ class Image
         }
 
         return 'image/png';
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getUrl();
     }
 }

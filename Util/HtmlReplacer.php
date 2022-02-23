@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Util;
 
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Image\ImageCollector;
+use Yireo\NextGenImages\Image\ImageFactory;
 
 class HtmlReplacer
 {
@@ -23,20 +24,28 @@ class HtmlReplacer
     private $pictureFactory;
 
     /**
+     * @var ImageFactory
+     */
+    private $imageFactory;
+
+    /**
      * Constructor.
      *
      * @param UrlConvertor $urlConvertor
      * @param ImageCollector $imageCollector
      * @param PictureFactory $pictureFactory
+     * @param ImageFactory $imageFactory
      */
     public function __construct(
         UrlConvertor $urlConvertor,
         ImageCollector $imageCollector,
-        PictureFactory $pictureFactory
+        PictureFactory $pictureFactory,
+        ImageFactory $imageFactory
     ) {
         $this->urlConvertor = $urlConvertor;
         $this->imageCollector = $imageCollector;
         $this->pictureFactory = $pictureFactory;
+        $this->imageFactory = $imageFactory;
     }
 
     /**
@@ -70,7 +79,8 @@ class HtmlReplacer
 
             $isDataSrc = $matches[2][$index] === 'data-src';
             $htmlTag = preg_replace('/>(.*)/msi', '>', $fullSearchMatch);
-            $pictureBlock = $this->pictureFactory->create($imageUrl, $images, $htmlTag, $isDataSrc);
+            $sourceImage = $this->imageFactory->createFromUrl($imageUrl);
+            $pictureBlock = $this->pictureFactory->create($sourceImage, $images, $htmlTag, $isDataSrc);
             $replacement = $pictureBlock->toHtml() . $nextTag;
             $html = str_replace($fullSearchMatch, $replacement, $html);
         }
