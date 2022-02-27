@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Test\Unit\Convertor;
 
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use Yireo\NextGenImages\Convertor\ConvertorInterface;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
 
@@ -21,5 +22,13 @@ class ConvertorListingTest extends TestCase
         ]);
 
         $this->assertEquals(1, count($convertorListing->getConvertors()));
+    }
+
+    public function testWithInvalidConvertorShouldFail()
+    {
+        $this->expectException(TypeError::class);
+        new ConvertorListing([
+            'this-should-not-work'
+        ]);
     }
 }

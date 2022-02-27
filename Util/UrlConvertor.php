@@ -130,7 +130,7 @@ class UrlConvertor
      */
     private function getBaseUrl(): string
     {
-        return str_replace('/index.php/', '', $this->urlModel->getBaseUrl());
+        return str_replace('/index.php/', '/', $this->urlModel->getBaseUrl());
     }
 
     /**

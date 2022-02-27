@@ -2,7 +2,9 @@
 
 namespace Yireo\NextGenImages\Test\Integration\Util;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\IntegrationTestHelper\Test\Integration\AbstractTestCase;
 use Yireo\NextGenImages\Util\UrlConvertor;
@@ -13,6 +15,7 @@ class UrlConvertorTest extends AbstractTestCase
     {
         $directoryList = $this->objectManager->get(DirectoryList::class);
         $root = $directoryList->getRoot();
+
         $urlConvertor = $this->objectManager->create(UrlConvertor::class);
 
         $filename = $urlConvertor->getFilenameFromUrl('/static/foobar.jpg');
@@ -22,6 +25,9 @@ class UrlConvertorTest extends AbstractTestCase
         $this->assertSame($root . '/pub/static/foobar.jpg', $filename);
     }
 
+    /**
+     * @return void
+     */
     public function testGetFilenameFromUrl()
     {
         $directoryList = $this->objectManager->get(DirectoryList::class);
@@ -30,7 +36,7 @@ class UrlConvertorTest extends AbstractTestCase
         $urlConvertor = $this->objectManager->create(UrlConvertor::class);
         $filename = $urlConvertor->getUrlFromFilename($root . '/pub/static/foobar.jpg');
 
-        $expectedUrl = 'http://localhost/index.php/static/foobar.jpg';
+        $expectedUrl = 'http://localhost/static/foobar.jpg';
 
         $this->assertSame($expectedUrl, $filename);
     }
