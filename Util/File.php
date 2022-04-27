@@ -15,11 +15,6 @@ use Yireo\NextGenImages\Logger\Debugger;
 class File
 {
     /**
-     * @var DirectoryList
-     */
-    private $directoryList;
-
-    /**
      * @var DriverInterface
      */
     private $fileDriver;
@@ -43,24 +38,24 @@ class File
      * @var ImageFactory
      */
     private $imageFactory;
-
+    
     /**
      * File constructor.
      *
-     * @param DirectoryList $directoryList
      * @param Filesystem $filesystem
      * @param Debugger $debugger
      * @param UrlConvertor $urlConvertor
+     * @param TargetImageFactory $targetImageFactory
+     * @param ImageFactory $imageFactory
+     * @throws FileSystemException
      */
     public function __construct(
-        DirectoryList $directoryList,
         Filesystem $filesystem,
         Debugger $debugger,
         UrlConvertor $urlConvertor,
         TargetImageFactory $targetImageFactory,
         ImageFactory $imageFactory
     ) {
-        $this->directoryList = $directoryList;
         $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
         $this->debugger = $debugger;
         $this->urlConvertor = $urlConvertor;
@@ -70,7 +65,6 @@ class File
 
     /**
      * @param string $uri
-     *
      * @return string
      * @throws ConvertorException
      */

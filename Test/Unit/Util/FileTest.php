@@ -34,7 +34,6 @@ class FileTest extends AbstractTestCase
         ]);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $urlConvertor,
@@ -55,7 +54,6 @@ class FileTest extends AbstractTestCase
         $fileDriverMock->method('isExists')->willReturn(true);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -75,7 +73,6 @@ class FileTest extends AbstractTestCase
         $fileDriverMock->method('isExists')->willReturn(false);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -96,7 +93,6 @@ class FileTest extends AbstractTestCase
         $fileDriverMock->method('stat')->willReturn(['mtime' => $now]);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -110,7 +106,6 @@ class FileTest extends AbstractTestCase
         $fileDriverMock->method('isExists')->willReturn(false);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -123,7 +118,6 @@ class FileTest extends AbstractTestCase
         $fileDriverMock->method('stat')->willReturn([]);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -147,7 +141,6 @@ class FileTest extends AbstractTestCase
         ]);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -172,7 +165,6 @@ class FileTest extends AbstractTestCase
         ]);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -197,7 +189,6 @@ class FileTest extends AbstractTestCase
         ]);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -217,7 +208,6 @@ class FileTest extends AbstractTestCase
         $fileDriverMock->method('isExists')->willReturn(false);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),
@@ -240,7 +230,6 @@ class FileTest extends AbstractTestCase
         ]);
 
         $file = new File(
-            $this->getMagentoMock(DirectoryList::class),
             $this->getFilesystemMock($fileDriverMock),
             $this->getMagentoMock(Debugger::class),
             $this->getMagentoMock(UrlConvertor::class),

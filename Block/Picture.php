@@ -20,7 +20,7 @@ class Picture extends Template
     /**
      * @var Image
      */
-    private $originalImage = '';
+    private $originalImage;
 
     /**
      * @var string
