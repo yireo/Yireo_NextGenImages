@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Same WebP image for example.jpg and example.jpeg
+- Add event observer to make sure blocks with non-zero TTL are parsed when FPC is enabled
 
 ### Added
 - Various unit tests

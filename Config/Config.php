@@ -91,12 +91,12 @@ class Config implements ArgumentInterface
     }
 
     /**
-     * @param LayoutInterface $block
+     * @param LayoutInterface $layout
      * @return bool
      */
-    public function hasFullPageCacheEnabled(LayoutInterface $block): bool
+    public function hasFullPageCacheEnabled(LayoutInterface $layout): bool
     {
-        if ($this->depersonalizeChecker->checkIfDepersonalize($block)) {
+        if ($this->depersonalizeChecker->checkIfDepersonalize($layout)) {
             return true;
         }
 
