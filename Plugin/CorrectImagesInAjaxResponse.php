@@ -66,7 +66,7 @@ class CorrectImagesInAjaxResponse
                 continue;
             }
 
-            if (!$this->isValidUrl($value)) {
+            if (!$this->isValidUrl((string)$value)) {
                 continue;
             }
 
@@ -83,7 +83,7 @@ class CorrectImagesInAjaxResponse
      */
     private function isValidUrl(string $url): bool
     {
-        if (!is_string($url)) {
+        if (empty($url)) {
             return false;
         }
 
