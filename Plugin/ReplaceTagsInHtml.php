@@ -6,7 +6,7 @@ use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\ShouldModifyOutput;
 
-class ReplaceTagsPlugin
+class ReplaceTagsInHtml
 {
     /**
      * @var HtmlReplacer
