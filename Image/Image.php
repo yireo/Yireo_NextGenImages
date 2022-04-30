@@ -8,12 +8,12 @@ class Image
      * @var string
      */
     private $path;
-
+    
     /**
      * @var string
      */
     private $url;
-
+    
     /**
      * @param string $path
      * @param string $url
@@ -25,7 +25,7 @@ class Image
         $this->path = $path;
         $this->url = $url;
     }
-
+    
     /**
      * @return string
      */
@@ -33,7 +33,7 @@ class Image
     {
         return $this->path;
     }
-
+    
     /**
      * @return string
      */
@@ -41,27 +41,35 @@ class Image
     {
         return $this->url;
     }
-
+    
     /**
      * @return string
      */
     public function getMimetype(): string
     {
-        if (preg_match('/.gif$/i', $this->getPath())) {
-            return 'image/gif';
-        }
-
-        if (preg_match('/.(jpeg|jpg)$/i', $this->getPath())) {
-            return 'image/jpeg';
-        }
-
-        if (preg_match('/.webp$/i', $this->getPath())) {
-            return 'image/webp';
-        }
-
-        return 'image/png';
+        return 'image/' . $this->getCode();
     }
-
+    
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        if (preg_match('/.gif$/i', $this->getPath())) {
+            return 'gif';
+        }
+        
+        if (preg_match('/.(jpeg|jpg)$/i', $this->getPath())) {
+            return 'jpeg';
+        }
+        
+        if (preg_match('/.webp$/i', $this->getPath())) {
+            return 'webp';
+        }
+        
+        return 'png';
+    }
+    
     /**
      * @return string
      */
