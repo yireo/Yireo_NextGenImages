@@ -49,7 +49,7 @@ class TargetImageFactory
     {
         $folder = $this->getTargetPathFromImage($image);
         $filename = $this->getTargetFilename($image, $suffix);
-        return $this->imageFactory->createFromPath($folder . $filename);
+        return $this->imageFactory->createFromPath($folder . '/' . $filename);
     }
     
     /**
@@ -89,7 +89,7 @@ class TargetImageFactory
             $mediaDirectory = $this->directoryList->getPath(DirectoryList::MEDIA);
             return $mediaDirectory . '/nextgenimages/';
         }
-    
+        
         // phpcs:ignore
         return dirname($image->getPath());
     }
