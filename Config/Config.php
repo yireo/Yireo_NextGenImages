@@ -81,6 +81,14 @@ class Config implements ArgumentInterface
 
         return TargetDirectory::SAME_AS_SOURCE;
     }
+    
+    /**
+     * @return bool
+     */
+    public function addHash(): bool
+    {
+        return (bool)$this->getValue('yireo_nextgenimages/settings/hash');
+    }
 
     /**
      * @return bool
