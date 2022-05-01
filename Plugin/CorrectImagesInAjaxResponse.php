@@ -3,18 +3,11 @@
 namespace Yireo\NextGenImages\Plugin;
 
 use Magento\Swatches\Helper\Data as SwatchesDataHelper;
-use Yireo\NextGenImages\Browser\BrowserSupport;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\ImageCollector;
-use Yireo\NextGenImages\Logger\Debugger;
 
 class CorrectImagesInAjaxResponse
 {
-    /**
-     * @var BrowserSupport
-     */
-    private $browserSupport;
-    
     /**
      * @var Config
      */
@@ -26,27 +19,16 @@ class CorrectImagesInAjaxResponse
     private $imageCollector;
     
     /**
-     * @var Debugger
-     */
-    private $debugger;
-    
-    /**
      * CorrectImagesInAjaxResponse constructor.
      *
-     * @param BrowserSupport $browserSupport
      * @param Config $config
      * @param ImageCollector $imageCollector
-     * @param Debugger $debugger
      */
     public function __construct(
-        BrowserSupport $browserSupport,
         Config $config,
-        ImageCollector $imageCollector,
-        Debugger $debugger
+        ImageCollector $imageCollector
     ) {
-        $this->browserSupport = $browserSupport;
         $this->config = $config;
-        $this->debugger = $debugger;
         $this->imageCollector = $imageCollector;
     }
     
@@ -104,22 +86,5 @@ class CorrectImagesInAjaxResponse
         }
         
         return $data;
-    }
-    
-    /**
-     * @param string $url
-     * @return bool
-     */
-    private function isValidUrl(string $url): bool
-    {
-        if (empty($url)) {
-            return false;
-        }
-        
-        if (!preg_match('/\.(jpg|png)$/', $url)) {
-            return false;
-        }
-        
-        return true;
     }
 }

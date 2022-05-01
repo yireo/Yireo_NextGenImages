@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Test\Unit\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem\DriverInterface;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Config\Source\TargetDirectory;
 use Yireo\NextGenImages\Image\TargetImageFactory;
@@ -22,7 +23,8 @@ class TargetImageFactoryTest extends AbstractTestCase
         $targetImageFactory = new TargetImageFactory(
             $this->getMagentoMock(DirectoryList::class),
             $this->getMagentoMock(Config::class),
-            $imageFactory
+            $imageFactory,
+            $this->getMagentoMock(DriverInterface::class),
         );
 
         $jpgImage = new Image('/tmp/pub/example.jpg', '/example.jpg');
@@ -44,7 +46,8 @@ class TargetImageFactoryTest extends AbstractTestCase
         $targetImageFactory = new TargetImageFactory(
             $directoryList,
             $config,
-            $imageFactory
+            $imageFactory,
+            $this->getMagentoMock(DriverInterface::class)
         );
 
         $jpgImage = new Image('/tmp/pub/example.jpg', '/example.jpg');
