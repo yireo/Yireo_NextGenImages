@@ -66,6 +66,7 @@ class TargetImageFactory
      */
     private function getTargetFilename(Image $image, string $suffix): string
     {
+        // phpcs:ignore
         $filename = basename($image->getPath());
         $path = preg_replace('/\.(jpg|jpeg|png)$/', '', $filename);
         return $path . $this->getTargetHash($image) . '.' . $suffix;
