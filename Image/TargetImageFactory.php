@@ -4,7 +4,6 @@ namespace Yireo\NextGenImages\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Filesystem\DriverInterface;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Config\Source\TargetDirectory;
 
@@ -24,10 +23,6 @@ class TargetImageFactory
      * @var ImageFactory
      */
     private $imageFactory;
-    /**
-     * @var DriverInterface
-     */
-    private $filesystemDriver;
     
     /**
      * @param DirectoryList $directoryList
@@ -37,13 +32,11 @@ class TargetImageFactory
     public function __construct(
         DirectoryList $directoryList,
         Config $config,
-        ImageFactory $imageFactory,
-        DriverInterface $filesystemDriver
+        ImageFactory $imageFactory
     ) {
         $this->directoryList = $directoryList;
         $this->config = $config;
         $this->imageFactory = $imageFactory;
-        $this->filesystemDriver = $filesystemDriver;
     }
     
     /**
@@ -96,7 +89,8 @@ class TargetImageFactory
             $mediaDirectory = $this->directoryList->getPath(DirectoryList::MEDIA);
             return $mediaDirectory . '/nextgenimages/';
         }
-        
-        return $this->filesystemDriver->getParentDirectory($image->getPath());
+    
+        // phpcs:ignore
+        return dirname($image->getPath());
     }
 }

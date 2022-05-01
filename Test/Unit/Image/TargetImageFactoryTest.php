@@ -3,7 +3,6 @@
 namespace Yireo\NextGenImages\Test\Unit\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem\DriverInterface;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Config\Source\TargetDirectory;
 use Yireo\NextGenImages\Image\TargetImageFactory;
@@ -23,12 +22,12 @@ class TargetImageFactoryTest extends AbstractTestCase
         $targetImageFactory = new TargetImageFactory(
             $this->getMagentoMock(DirectoryList::class),
             $this->getMagentoMock(Config::class),
-            $imageFactory,
-            $this->getMagentoMock(DriverInterface::class),
+            $imageFactory
         );
 
         $jpgImage = new Image('/tmp/pub/example.jpg', '/example.jpg');
         $webpImage = $targetImageFactory->create($jpgImage, 'webp');
+        $this->assertInstanceOf(Image::class, $webpImage);
         $this->assertEquals('/tmp/pub/example.webp', $webpImage->getPath());
     }
 
@@ -46,12 +45,12 @@ class TargetImageFactoryTest extends AbstractTestCase
         $targetImageFactory = new TargetImageFactory(
             $directoryList,
             $config,
-            $imageFactory,
-            $this->getMagentoMock(DriverInterface::class)
+            $imageFactory
         );
 
         $jpgImage = new Image('/tmp/pub/example.jpg', '/example.jpg');
         $webpImage = $targetImageFactory->create($jpgImage, 'webp');
+        $this->assertInstanceOf(Image::class, $webpImage);
         $this->assertEquals('/tmp/pub/example.webp', $webpImage->getPath());
     }
 }
