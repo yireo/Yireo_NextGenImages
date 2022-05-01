@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved AJAX plugin for swatches from WebP extension to NextGenImages
 - New config option for target directory
 - New config option for adding an unique hash for target images
+- Implement hash when creating target images
 
 ## [0.2.13] - 10 December 2021
 ### Fixed
