@@ -11,3 +11,4 @@ jobs:
         with:
           composer_name: ${{ secrets.COMPOSER_NAME }}
           phpstan_level: 2
+          magento_pre_install_script: .github/workflows/extdn-integration-tests-pre-install-m24.sh
