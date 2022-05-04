@@ -2,14 +2,14 @@
 
 namespace Yireo\NextGenImages\Test\Integration\Plugin;
 
-use Magento\Framework\View\LayoutInterface;
-use Yireo\NextGenImages\Plugin\ReplaceTagsPlugin;
+use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable;
+use Yireo\NextGenImages\Plugin\AddImagesToConfigurableJsonConfig;
 use Yireo\IntegrationTestHelper\Test\Integration\AbstractTestCase;
 
 /**
  * @magentoAppArea frontend
  */
-class ReplaceTagsPluginTest extends AbstractTestCase
+class AddImagesToConfigurableJsonConfigTest extends AbstractTestCase
 {
     /**
      * @magentoAppArea frontend
@@ -18,9 +18,9 @@ class ReplaceTagsPluginTest extends AbstractTestCase
     public function testIfPluginIsEnabled()
     {
         $this->assertInterceptorPluginIsRegistered(
-            LayoutInterface::class,
-            ReplaceTagsPlugin::class,
-            'Yireo_NextGenImages::replaceTags'
+            Configurable::class,
+            AddImagesToConfigurableJsonConfig::class,
+            'Yireo_NextGenImages::addImagesToConfigurableJsonConfig'
         );
     }
 }

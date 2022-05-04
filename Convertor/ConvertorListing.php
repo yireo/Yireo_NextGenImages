@@ -7,7 +7,7 @@ class ConvertorListing
     /**
      * @var ConvertorInterface[]
      */
-    private $convertors;
+    private $convertors = [];
 
     /**
      * ConvertorListing constructor.
@@ -15,7 +15,18 @@ class ConvertorListing
      */
     public function __construct(array $convertors = [])
     {
-        $this->convertors = $convertors;
+        foreach ($convertors as $convertor) {
+            $this->addConvertor($convertor);
+        }
+    }
+
+    /**
+     * @param ConvertorInterface $convertor
+     * @return void
+     */
+    public function addConvertor(ConvertorInterface $convertor)
+    {
+        $this->convertors[] = $convertor;
     }
 
     /**

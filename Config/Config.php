@@ -81,6 +81,14 @@ class Config implements ArgumentInterface
 
         return TargetDirectory::SAME_AS_SOURCE;
     }
+    
+    /**
+     * @return bool
+     */
+    public function addHash(): bool
+    {
+        return (bool)$this->getValue('yireo_nextgenimages/settings/hash');
+    }
 
     /**
      * @return bool
@@ -91,12 +99,12 @@ class Config implements ArgumentInterface
     }
 
     /**
-     * @param LayoutInterface $block
+     * @param LayoutInterface $layout
      * @return bool
      */
-    public function hasFullPageCacheEnabled(LayoutInterface $block): bool
+    public function hasFullPageCacheEnabled(LayoutInterface $layout): bool
     {
-        if ($this->depersonalizeChecker->checkIfDepersonalize($block)) {
+        if ($this->depersonalizeChecker->checkIfDepersonalize($layout)) {
             return true;
         }
 

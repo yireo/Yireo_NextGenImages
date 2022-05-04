@@ -22,7 +22,7 @@
     </virtualType>
 
     <type name="Magento\Framework\Image">
-        <plugin name="Yireo_NextGenImages::convertWebpAfterImageSave" type="Yireo\NextGenImages\Plugin\ConvertAfterImageSave"/>
+        <plugin name="Yireo_NextGenImages::convertAfterImageSave" type="Yireo\NextGenImages\Plugin\ConvertAfterImageSave"/>
     </type>
 
     <type name="Magento\Framework\Console\CommandList">

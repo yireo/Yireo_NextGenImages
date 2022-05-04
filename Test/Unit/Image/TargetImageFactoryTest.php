@@ -16,8 +16,8 @@ class TargetImageFactoryTest extends AbstractTestCase
     {
         $imageFactory = $this->getMagentoMock(ImageFactory::class);
         $imageFactory->method('createFromPath')
-            ->with($this->equalTo('foo/bar/example.webp'))
-            ->willReturn(new Image($this->getUrlConvertorMock(), 'foo/bar/example.webp'));
+            ->with($this->equalTo('/tmp/pub/example.webp'))
+            ->willReturn(new Image('/tmp/pub/example.webp', '/example.webp'));
 
         $targetImageFactory = new TargetImageFactory(
             $this->getMagentoMock(DirectoryList::class),
@@ -25,9 +25,10 @@ class TargetImageFactoryTest extends AbstractTestCase
             $imageFactory
         );
 
-        $jpgImage = new Image($this->getUrlConvertorMock(), 'foo/bar/example.jpg');
+        $jpgImage = new Image('/tmp/pub/example.jpg', '/example.jpg');
         $webpImage = $targetImageFactory->create($jpgImage, 'webp');
-        $this->assertEquals('foo/bar/example.webp', $webpImage->getPath());
+        $this->assertInstanceOf(Image::class, $webpImage);
+        $this->assertEquals('/tmp/pub/example.webp', $webpImage->getPath());
     }
 
     public function testGetWithCacheTargetDirectory()
@@ -39,9 +40,7 @@ class TargetImageFactoryTest extends AbstractTestCase
         $directoryList->method('getPath')->with($this->equalTo(DirectoryList::MEDIA))->willReturn('/tmp/pub/media');
 
         $imageFactory = $this->getMagentoMock(ImageFactory::class);
-        $imageFactory->method('createFromPath')
-            ->with($this->equalTo('/tmp/pub/media/nextgenimages/example.webp'))
-            ->willReturn(new Image($this->getUrlConvertorMock(), '/tmp/pub/media/nextgenimages/example.webp'));
+        $imageFactory->method('createFromPath')->willReturn(new Image('/tmp/pub/example.webp', '/example.webp'));
 
         $targetImageFactory = new TargetImageFactory(
             $directoryList,
@@ -49,8 +48,9 @@ class TargetImageFactoryTest extends AbstractTestCase
             $imageFactory
         );
 
-        $jpgImage = new Image($this->getUrlConvertorMock(), 'foo/bar/example.jpg');
+        $jpgImage = new Image('/tmp/pub/example.jpg', '/example.jpg');
         $webpImage = $targetImageFactory->create($jpgImage, 'webp');
-        $this->assertEquals('/tmp/pub/media/nextgenimages/example.webp', $webpImage->getPath());
+        $this->assertInstanceOf(Image::class, $webpImage);
+        $this->assertEquals('/tmp/pub/example.webp', $webpImage->getPath());
     }
 }

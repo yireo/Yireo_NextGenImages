@@ -13,20 +13,21 @@ class TargetImageFactory
      * @var DirectoryList
      */
     private $directoryList;
-
+    
     /**
      * @var Config
      */
     private $config;
-
+    
     /**
      * @var ImageFactory
      */
     private $imageFactory;
-
+    
     /**
      * @param DirectoryList $directoryList
      * @param Config $config
+     * @param ImageFactory $imageFactory
      */
     public function __construct(
         DirectoryList $directoryList,
@@ -37,7 +38,7 @@ class TargetImageFactory
         $this->config = $config;
         $this->imageFactory = $imageFactory;
     }
-
+    
     /**
      * @param Image $image
      * @param string $suffix
@@ -46,17 +47,50 @@ class TargetImageFactory
      */
     public function create(Image $image, string $suffix): Image
     {
-        $targetPath = preg_replace('/\.(jpg|jpeg|png)$/', '.' . $suffix, $image->getPath());
-
+        $folder = $this->getTargetPathFromImage($image);
+        $filename = $this->getTargetFilename($image, $suffix);
+        return $this->imageFactory->createFromPath($folder . '/' . $filename);
+    }
+    
+    /**
+     * @param Image $image
+     * @param string $suffix
+     * @return string
+     */
+    private function getTargetFilename(Image $image, string $suffix): string
+    {
+        // phpcs:ignore
+        $filename = basename($image->getPath());
+        $path = preg_replace('/\.(jpg|jpeg|png)$/', '', $filename);
+        return $path . $this->getTargetHash($image) . '.' . $suffix;
+    }
+    
+    /**
+     * @param Image $image
+     * @return string
+     */
+    private function getTargetHash(Image $image): string
+    {
+        if ($this->config->addHash() === false) {
+            return '';
+        }
+        
+        return '-' . hash('crc32', $image->getPath());
+    }
+    
+    /**
+     * @param Image $image
+     * @return string
+     * @throws FileSystemException
+     */
+    private function getTargetPathFromImage(Image $image): string
+    {
         if ($this->config->getTargetDirectory() === TargetDirectory::CACHE) {
             $mediaDirectory = $this->directoryList->getPath(DirectoryList::MEDIA);
-            $cacheDirectory = $mediaDirectory . '/nextgenimages/';
-
-            // phpcs:ignore
-            $targetPath = $cacheDirectory . basename($targetPath);
-            return $this->imageFactory->createFromPath($targetPath);
+            return $mediaDirectory . '/nextgenimages/';
         }
-
-        return $this->imageFactory->createFromPath($targetPath);
+        
+        // phpcs:ignore
+        return dirname($image->getPath());
     }
 }

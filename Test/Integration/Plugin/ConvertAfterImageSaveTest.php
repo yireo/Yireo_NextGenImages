@@ -13,7 +13,7 @@ class ConvertAfterImageSaveTest extends AbstractTestCase
         $this->assertInterceptorPluginIsRegistered(
             Image::class,
             ConvertAfterImageSave::class,
-            'Yireo_NextGenImages::convertWebpAfterImageSave'
+            'Yireo_NextGenImages::convertAfterImageSave'
         );
     }
 }

@@ -19,6 +19,7 @@ class ImageFactory
 
     /**
      * @param ObjectManagerInterface $objectManager
+     * @param UrlConvertor $urlConvertor
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -34,7 +35,8 @@ class ImageFactory
      */
     public function createFromPath(string $path): Image
     {
-        return $this->objectManager->create(Image::class, ['path' => $path]);
+        $url = $this->urlConvertor->getUrlFromFilename($path);
+        return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $url]);
     }
 
     /**
@@ -44,6 +46,6 @@ class ImageFactory
     public function createFromUrl(string $url): Image
     {
         $path = $this->urlConvertor->getFilenameFromUrl($url);
-        return $this->objectManager->create(Image::class, ['path' => $path]);
+        return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $url]);
     }
 }

@@ -8,10 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Same WebP image for example.jpg and example.jpeg
 - Improve translating static file URLs into filenames
+- Add event observer to make sure blocks with non-zero TTL are parsed when FPC is enabled
+- Fix issues with Product Swatches
 
 ### Added
 - Various unit tests
 - Live testing for better testing
+- Moved AJAX plugin for swatches from WebP extension to NextGenImages
+- New config option for target directory
+- New config option for adding an unique hash for target images
+- Implement hash when creating target images
 
 ## [0.2.13] - 10 December 2021
 ### Fixed

@@ -2,32 +2,30 @@
 
 namespace Yireo\NextGenImages\Image;
 
-use Yireo\NextGenImages\Util\UrlConvertor;
-
 class Image
 {
-    /**
-     * @var UrlConvertor
-     */
-    private $urlConvertor;
-
     /**
      * @var string
      */
     private $path;
-
+    
     /**
-     * @param UrlConvertor $urlConvertor
+     * @var string
+     */
+    private $url;
+    
+    /**
      * @param string $path
+     * @param string $url
      */
     public function __construct(
-        UrlConvertor $urlConvertor,
-        string $path
+        string $path,
+        string $url
     ) {
-        $this->urlConvertor = $urlConvertor;
         $this->path = $path;
+        $this->url = $url;
     }
-
+    
     /**
      * @return string
      */
@@ -35,32 +33,48 @@ class Image
     {
         return $this->path;
     }
-
+    
     /**
      * @return string
      */
     public function getUrl(): string
     {
-        return $this->urlConvertor->getUrlFromFilename($this->getPath());
+        return $this->url;
     }
-
+    
     /**
      * @return string
      */
     public function getMimetype(): string
     {
+        return 'image/' . $this->getCode();
+    }
+    
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
         if (preg_match('/.gif$/i', $this->getPath())) {
-            return 'image/gif';
+            return 'gif';
         }
-
+        
         if (preg_match('/.(jpeg|jpg)$/i', $this->getPath())) {
-            return 'image/jpeg';
+            return 'jpeg';
         }
-
+        
         if (preg_match('/.webp$/i', $this->getPath())) {
-            return 'image/webp';
+            return 'webp';
         }
-
-        return 'image/png';
+        
+        return 'png';
+    }
+    
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getUrl();
     }
 }

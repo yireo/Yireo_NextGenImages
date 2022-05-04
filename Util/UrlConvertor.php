@@ -53,12 +53,14 @@ class UrlConvertor
             return true;
         }
 
-        if (strpos($url, $this->getBaseUrl()) !== false) {
+        $baseUrl = $this->getBaseUrl();
+        if (strpos($url, $baseUrl) !== false) {
             return true;
         }
 
         try {
-            if (strpos($url, $this->getMediaUrl()) !== false) {
+            $mediaUrl = $this->getMediaUrl();
+            if (strpos($url, $mediaUrl) !== false) {
                 return true;
             }
         } catch (NoSuchEntityException $e) {
@@ -137,7 +139,7 @@ class UrlConvertor
      */
     private function getBaseUrl(): string
     {
-        return $this->urlModel->getBaseUrl();
+        return str_replace('/index.php/', '/', $this->urlModel->getBaseUrl());
     }
 
     /**
