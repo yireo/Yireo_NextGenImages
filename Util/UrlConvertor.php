@@ -2,6 +2,7 @@
 
 namespace Yireo\NextGenImages\Util;
 
+use Magento\Framework\App\Filesystem\DirectoryList as FilesystemDirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
@@ -112,6 +113,14 @@ class UrlConvertor
             throw new NotFoundException((string)__('Media folder does not exist'));
         }
 
+        try {
+            if (strpos($url, $this->getStaticUrl()) !== false) {
+                return str_replace($this->getStaticUrl(), $this->getStaticFolder() . '/', $url);
+            }
+        } catch (NoSuchEntityException $e) {
+            throw new NotFoundException((string)__('Static folder does not exist'));
+        }
+
         if (strpos($url, $this->getBaseUrl()) !== false) {
             return str_replace($this->getBaseUrl(), $this->getBaseFolder() . '/', $url);
         }
@@ -144,6 +153,17 @@ class UrlConvertor
 
     /**
      * @return string
+     * @throws NoSuchEntityException
+     */
+    private function getStaticUrl(): string
+    {
+        /** @var Store $store */
+        $store = $this->storeManager->getStore();
+        return $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
+    }
+
+    /**
+     * @return string
      */
     private function getBaseFolder(): string
     {
@@ -156,6 +176,15 @@ class UrlConvertor
      */
     private function getMediaFolder(): string
     {
-        return $this->directoryList->getPath('media');
+        return $this->directoryList->getPath(FilesystemDirectoryList::MEDIA);
+    }
+
+    /**
+     * @return string
+     * @throws FileSystemException
+     */
+    private function getStaticFolder(): string
+    {
+        return $this->directoryList->getPath(FilesystemDirectoryList::STATIC_VIEW);
     }
 }

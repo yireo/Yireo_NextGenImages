@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Same WebP image for example.jpg and example.jpeg
+- Improve translating static file URLs into filenames
 
 ### Added
 - Various unit tests
