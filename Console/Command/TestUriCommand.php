@@ -3,9 +3,12 @@
 namespace Yireo\NextGenImages\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Yireo\NextGenImages\Image\ImageFactory;
+use Yireo\NextGenImages\Image\TargetImageFactory;
 use Yireo\NextGenImages\Util\File as FileUtil;
 
 class TestUriCommand extends Command
@@ -14,18 +17,33 @@ class TestUriCommand extends Command
      * @var FileUtil
      */
     private $fileUtil;
-
+    
+    /**
+     * @var TargetImageFactory
+     */
+    private $targetImageFactory;
+    /**
+     * @var ImageFactory
+     */
+    private $imageFactory;
+    
     /**
      * TestUriCommand constructor.
      * @param FileUtil $fileUtil
+     * @param TargetImageFactory $targetImageFactory
+     * @param ImageFactory $imageFactory
      * @param string|null $name
      */
     public function __construct(
         FileUtil $fileUtil,
+        TargetImageFactory $targetImageFactory,
+        ImageFactory $imageFactory,
         string $name = null
     ) {
         parent::__construct($name);
         $this->fileUtil = $fileUtil;
+        $this->targetImageFactory = $targetImageFactory;
+        $this->imageFactory = $imageFactory;
     }
 
     /**
@@ -49,18 +67,36 @@ class TestUriCommand extends Command
         $uri = (string)$input->getArgument('uri');
         $path = $this->fileUtil->resolve($uri);
 
-        $output->writeln('Source path: ' . $path);
-        $output->writeln('Source exists: ' . (int)$this->fileUtil->uriExists($uri));
-        $output->writeln('Source modification time: '.date('r', $this->fileUtil->getModificationTime($path)));
+        $rows = [];
+        $rows[] = ['Source path', $path];
+        $rows[] = ['Source exists', $this->getYesNo($this->fileUtil->uriExists($uri))];
+        $rows[] = ['Source modification time', date('r', $this->fileUtil->getModificationTime($path))];
 
-        $targetUri = $this->fileUtil->convertSuffix($uri, '.webp');
+        $image = $this->imageFactory->createFromUrl($uri);
+        $targetImage = $this->targetImageFactory->create($image, 'webp');
+        $targetUri = $targetImage->getUrl();
         $targetPath = $this->fileUtil->resolve($targetUri);
-
-        $output->writeln('Target path: ' . $targetPath);
-        $output->writeln('Target exists: ' . (int)$this->fileUtil->uriExists($targetUri));
-        $output->writeln('Target modification time: '.date('r', $this->fileUtil->getModificationTime($targetPath)));
-
-        $output->writeln('Source is newer than target: '.(int)$this->fileUtil->isNewerThan($path, $targetPath));
+    
+        $rows[] = ['Target path', $targetPath];
+        $rows[] = ['Target exists', $this->getYesNo($this->fileUtil->uriExists($targetUri))];
+        $rows[] = ['Target modification time', date('r', $this->fileUtil->getModificationTime($targetPath))];
+        
+        $rows[] = ['Source is newer than target', $this->getYesNo($this->fileUtil->isNewerThan($path, $targetPath))];
+    
+        $table = new Table($output);
+        $table->setHeaders(['Check', 'Outcome']);
+        $table->setRows($rows);
+        $table->render();
+    
         return -1;
+    }
+    
+    /**
+     * @param bool $value
+     * @return string
+     */
+    private function getYesNo(bool $value): string
+    {
+        return ($value) ? (string)__('Yes') : (string)__('No');
     }
 }
