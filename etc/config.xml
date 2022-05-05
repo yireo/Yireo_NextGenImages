@@ -15,9 +15,11 @@
                 <enabled>1</enabled>
                 <debug>0</debug>
                 <log>0</log>
-                <lazy_loading>1</lazy_loading>
                 <convert_images>1</convert_images>
+                <target_directory>same_as_source</target_directory>
+                <hash>0</hash>
                 <convert_on_save>0</convert_on_save>
+                <lazy_loading>1</lazy_loading>
             </settings>
         </yireo_nextgenimages>
     </default>
