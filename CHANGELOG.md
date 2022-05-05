@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Set sane defaults for all configuration values
 
+### Added
+- Beautify console output
+
 ## [0.3.0] - 4 May 2022
 ### Fixed
 - Same WebP image for example.jpg and example.jpeg
