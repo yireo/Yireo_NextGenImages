@@ -73,16 +73,4 @@ class AbstractTestCase extends TestCase
     {
         return $this->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
     }
-
-    protected function setConfigurationValue(string $name, string $value)
-    {
-        /** @var ConfigValueFactory $configValueFactory */
-        $configValueFactory = $this->getObject(ConfigValueFactory::class);
-
-        /** @var ConfigValue $configValue */
-        $configValue = $configValueFactory->create();
-        $configValue->load('yireo_nextgenimages/settings/target_directory', 'path') /** @phpstan-ignore-line */
-            ->setValue(TargetDirectory::CACHE) /** @phpstan-ignore-line */
-            ->setPath('yireo_nextgenimages/settings/target_directory'); /** @phpstan-ignore-line */
-    }
 }
