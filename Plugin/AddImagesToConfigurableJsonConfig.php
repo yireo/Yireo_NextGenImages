@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Plugin;
 
 use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable;
 use Magento\Framework\Serialize\SerializerInterface;
+use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Logger\Debugger;
@@ -11,6 +12,11 @@ use Yireo\Webp2\Convertor\Convertor;
 
 class AddImagesToConfigurableJsonConfig
 {
+    /**
+     * @var Config
+     */
+    private $config;
+    
     /**
      * @var SerializerInterface
      */
@@ -23,13 +29,17 @@ class AddImagesToConfigurableJsonConfig
     
     /**
      * AddImagesToConfigurableJsonConfig constructor.
+     *
+     * @param Config $config
      * @param SerializerInterface $serializer
      * @param ImageCollector $imageCollector
      */
     public function __construct(
+        Config $config,
         SerializerInterface $serializer,
         ImageCollector $imageCollector
     ) {
+        $this->config = $config;
         $this->serializer = $serializer;
         $this->imageCollector = $imageCollector;
     }
@@ -41,6 +51,10 @@ class AddImagesToConfigurableJsonConfig
      */
     public function afterGetJsonConfig(Configurable $subject, string $jsonConfig): string
     {
+        if (! $this->config->enabled()) {
+            return $jsonConfig;
+        }
+        
         $jsonData = $this->serializer->unserialize($jsonConfig);
         
         if (isset($jsonData['images'])) {
