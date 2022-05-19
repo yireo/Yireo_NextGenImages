@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Set sane defaults for all configuration values
+- Check if extension is enabled for plugin #30 (@artbambou)
 
 ### Added
 - Beautify console output
