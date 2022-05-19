@@ -101,6 +101,7 @@ class UrlConvertor
      */
     public function getFilenameFromUrl(string $url): string
     {
+        $url = html_entity_decode($url);
         $url = preg_replace('/\/static\/version([0-9]+\/)/', '/static/', $url);
 
         if ($this->isLocal($url) === false) {
