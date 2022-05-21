@@ -55,7 +55,7 @@ class PictureFactory
             ->setWidth($this->getAttributeText($htmlTag, 'width'))
             ->setHeight($this->getAttributeText($htmlTag, 'height'))
             ->setOriginalTag($htmlTag)
-            ->setLazyLoading($this->config->addLazyLoading())
+            ->setLazyLoading($this->getAttributeText($htmlTag, 'loading') == "lazy" ?: $this->config->addLazyLoading())
             ->setIsDataSrc($isDataSrc)
             ->setDebug($this->config->isDebugging());
         return $block;
