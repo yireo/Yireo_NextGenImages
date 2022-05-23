@@ -2,6 +2,7 @@
 
 namespace Yireo\NextGenImages\Image;
 
+use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Logger\Debugger;
@@ -44,8 +45,15 @@ class ImageCollector
      */
     public function collect(string $imageUrl): array
     {
-        $image = $this->imageFactory->createFromUrl($imageUrl);
         $images = [];
+
+        try {
+            $image = $this->imageFactory->createFromUrl($imageUrl);
+        } catch (NotFoundException $e) {
+            $this->debugger->debug($e->getMessage(), ['url' => $imageUrl]);
+            return $images;
+        }
+        
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
                 $images[] = $convertor->convertImage($image);
