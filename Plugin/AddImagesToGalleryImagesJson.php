@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Plugin;
 
 use Magento\Catalog\Block\Product\View\Gallery;
 use Magento\Framework\Serialize\SerializerInterface;
+use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Image\ImageCollector;
 
@@ -18,18 +19,25 @@ class AddImagesToGalleryImagesJson
      * @var ImageCollector
      */
     private $imageCollector;
-    
+    /**
+     * @var Config
+     */
+    private $config;
+
     /**
      * AddImagesToConfigurableJsonConfig constructor.
      * @param SerializerInterface $serializer
      * @param ImageCollector $imageCollector
+     * @param Config $config
      */
     public function __construct(
         SerializerInterface $serializer,
-        ImageCollector $imageCollector
+        ImageCollector $imageCollector,
+        Config $config
     ) {
         $this->serializer = $serializer;
         $this->imageCollector = $imageCollector;
+        $this->config = $config;
     }
     
     /**
@@ -39,6 +47,10 @@ class AddImagesToGalleryImagesJson
      */
     public function afterGetGalleryImagesJson(Gallery $subject, string $galleryImagesJson): string
     {
+        if (! $this->config->enabled()) {
+            return $galleryImagesJson;
+        }
+
         $jsonData = $this->serializer->unserialize($galleryImagesJson);
         $jsonData = $this->appendImages($jsonData);
         return $this->serializer->serialize($jsonData);
