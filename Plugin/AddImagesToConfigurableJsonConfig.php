@@ -54,7 +54,7 @@ class AddImagesToConfigurableJsonConfig
         if (! $this->config->enabled()) {
             return $jsonConfig;
         }
-        
+
         $jsonData = $this->serializer->unserialize($jsonConfig);
         
         if (isset($jsonData['images'])) {
