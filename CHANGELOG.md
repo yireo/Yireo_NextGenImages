@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2 June 2022
+### Fixed
+- Do not edit gallery JSON when module is disabled
+
 ## [0.3.2] - 21 May 2022
 ### Fixed
 - Fix URL-to-file conversion for URL-decoded URLs
