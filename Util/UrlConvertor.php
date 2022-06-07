@@ -10,6 +10,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Throwable;
 
 class UrlConvertor
 {
@@ -73,6 +74,7 @@ class UrlConvertor
     /**
      * @param string $filename
      * @return string
+     * @throws NotFoundException
      */
     public function getUrlFromFilename(string $filename): string
     {
@@ -94,15 +96,16 @@ class UrlConvertor
 
         throw new NotFoundException((string)__('Filename "' . $filename . '" is not matched with an URL'));
     }
-
+    
     /**
      * @param string $url
      * @return string
+     * @throws NotFoundException
      */
     public function getFilenameFromUrl(string $url): string
     {
         $url = html_entity_decode($url);
-        $url = preg_replace('/\/static\/version([0-9]+\/)/', '/static/', $url);
+        $url = preg_replace('/\/static\/version(\d+\/)/', '/static/', $url);
 
         if ($this->isLocal($url) === false) {
             throw new NotFoundException((string)__('URL "' . $url . '" does not appear to be a local file'));
@@ -112,7 +115,7 @@ class UrlConvertor
             if (strpos($url, $this->getMediaUrl()) !== false) {
                 return str_replace($this->getMediaUrl(), $this->getMediaFolder() . '/', $url);
             }
-        } catch (FileSystemException|NoSuchEntityException $e) {
+        } catch (Throwable $e) {
             throw new NotFoundException((string)__('Media folder does not exist'));
         }
 
@@ -120,7 +123,7 @@ class UrlConvertor
             if (strpos($url, $this->getStaticUrl()) !== false) {
                 return str_replace($this->getStaticUrl(), $this->getStaticFolder() . '/', $url);
             }
-        } catch (NoSuchEntityException $e) {
+        } catch (Throwable $e) {
             throw new NotFoundException((string)__('Static folder does not exist'));
         }
 
