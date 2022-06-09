@@ -48,6 +48,10 @@ class ImageFactory
      */
     public function createFromUrl(string $url): Image
     {
+        if (strpos($url, 'http') !== false) {
+            $url = explode('?', $url)[0];
+        }
+
         $path = $this->urlConvertor->getFilenameFromUrl($url);
         return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $url]);
     }
