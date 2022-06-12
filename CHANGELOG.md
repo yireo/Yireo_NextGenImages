@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 12 June 2022
+### Fixed
+- Strip query string from source image URL (@theuargb)
+
 ## [0.3.4] - 7 June 2022
 ### Fixed
 - Make sure non-existing sources don't throw exceptions
