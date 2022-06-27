@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.6] - 27 June 2022
+### Fixed
+- Handle URLs starting without protocol (//) in a better way (#34)
+
 ## [0.3.5] - 12 June 2022
 ### Fixed
 - Strip query string from source image URL (@theuargb)

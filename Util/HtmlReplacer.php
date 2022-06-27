@@ -54,7 +54,7 @@ class HtmlReplacer
      */
     public function replace(string $html): string
     {
-        $regex = '/<([^<]+)\ (data\-src|src)=\"([^\"]+)\.(png|jpg|jpeg)([^>]+)>(\s*)(<?)(\/?)([a-z]+)/msi';
+        $regex = '/<([^<]+)\ (data\-src|src)=\"([^\"]+)\.(png|jpg|jpeg)([^>]+)>(\s*)(<?)(\/?)([a-z!\-]+)/msi';
         if (preg_match_all($regex, $html, $matches) === false) {
             return $html;
         }

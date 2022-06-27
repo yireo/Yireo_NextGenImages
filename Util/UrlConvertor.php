@@ -50,17 +50,18 @@ class UrlConvertor
      */
     public function isLocal(string $url): bool
     {
-        if (!preg_match('/^https?:\/\//', $url)) {
+        $url = $this->normalizeUrl($url);
+        if (!preg_match('#^http://#', $url)) {
             return true;
         }
 
-        $baseUrl = $this->getBaseUrl();
+        $baseUrl = $this->normalizeUrl($this->getBaseUrl());
         if (strpos($url, $baseUrl) !== false) {
             return true;
         }
 
         try {
-            $mediaUrl = $this->getMediaUrl();
+            $mediaUrl = $this->normalizeUrl($this->getMediaUrl());
             if (strpos($url, $mediaUrl) !== false) {
                 return true;
             }
@@ -96,7 +97,7 @@ class UrlConvertor
 
         throw new NotFoundException((string)__('Filename "' . $filename . '" is not matched with an URL'));
     }
-    
+
     /**
      * @param string $url
      * @return string
@@ -106,6 +107,7 @@ class UrlConvertor
     {
         $url = html_entity_decode($url);
         $url = preg_replace('/\/static\/version(\d+\/)/', '/static/', $url);
+        $url = $this->normalizeUrl($url);
 
         if ($this->isLocal($url) === false) {
             throw new NotFoundException((string)__('URL "' . $url . '" does not appear to be a local file'));
@@ -192,5 +194,15 @@ class UrlConvertor
     private function getStaticFolder(): string
     {
         return $this->directoryList->getPath(FilesystemDirectoryList::STATIC_VIEW);
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    private function normalizeUrl(string $url): string
+    {
+        $url = str_replace('https://', 'http://', $url);
+        return preg_replace('#^//#', 'http://', $url);
     }
 }
