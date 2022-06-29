@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.8] - 29 June 2022
 ### Fixed
 - Make sure to keep HTTPS URLs for media intact
+- Convert static files into static URLs properly
 
 ## [0.3.7] - 29 June 2022
 ### Fixed
