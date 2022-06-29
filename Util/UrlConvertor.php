@@ -156,7 +156,7 @@ class UrlConvertor
     {
         /** @var Store $store */
         $store = $this->storeManager->getStore();
-        return $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+        return $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA));
     }
 
     /**
@@ -167,7 +167,7 @@ class UrlConvertor
     {
         /** @var Store $store */
         $store = $this->storeManager->getStore();
-        return $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
+        return $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_STATIC));
     }
 
     /**
