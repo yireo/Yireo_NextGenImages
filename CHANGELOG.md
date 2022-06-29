@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.9] - 29 June 2022
+### Fixed
+- Normalize base URL as well
+- Change html_entity_decode into escaper for PHPCS
+
 ## [0.3.8] - 29 June 2022
 ### Fixed
 - Make sure to keep HTTPS URLs for media intact

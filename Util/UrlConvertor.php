@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList as FilesystemDirectoryList;
+use Magento\Framework\Escaper;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
@@ -28,20 +29,27 @@ class UrlConvertor
      * @var DirectoryList
      */
     private $directoryList;
+    /**
+     * @var Escaper
+     */
+    private $escaper;
 
     /**
      * @param UrlInterface $urlModel
      * @param StoreManagerInterface $storeManager
      * @param DirectoryList $directoryList
+     * @param Escaper $escaper
      */
     public function __construct(
         UrlInterface $urlModel,
         StoreManagerInterface $storeManager,
-        DirectoryList $directoryList
+        DirectoryList $directoryList,
+        Escaper $escaper
     ) {
         $this->urlModel = $urlModel;
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
+        $this->escaper = $escaper;
     }
 
     /**
@@ -55,7 +63,7 @@ class UrlConvertor
             return true;
         }
 
-        $baseUrl = $this->normalizeUrl($this->getBaseUrl());
+        $baseUrl = $this->getBaseUrl();
         if (strpos($url, $baseUrl) !== false) {
             return true;
         }
@@ -96,11 +104,11 @@ class UrlConvertor
         }
 
         if (strpos($filename, $this->getBaseFolder()) !== false) {
-            return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(), $filename);
+            return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(false), $filename);
         }
 
         if (!preg_match('/^\//', $filename)) {
-            return $this->getBaseUrl() . $filename;
+            return $this->getBaseUrl(false) . $filename;
         }
 
         throw new NotFoundException((string)__('Filename "' . $filename . '" is not matched with an URL'));
@@ -113,7 +121,7 @@ class UrlConvertor
      */
     public function getFilenameFromUrl(string $url): string
     {
-        $url = html_entity_decode($url);
+        $url = $this->escaper->escapeHtml($url);
         $url = preg_replace('/\/static\/version(\d+\/)/', '/static/', $url);
         $url = $this->normalizeUrl($url);
 
@@ -149,11 +157,17 @@ class UrlConvertor
     }
 
     /**
+     * @param bool $normalizeUrl
      * @return string
      */
-    private function getBaseUrl(): string
+    private function getBaseUrl(bool $normalizeUrl = true): string
     {
-        return str_replace('/index.php/', '/', $this->urlModel->getBaseUrl());
+        $baseUrl = str_replace('/index.php/', '/', $this->urlModel->getBaseUrl());
+        if ($normalizeUrl === false) {
+            return $baseUrl;
+        }
+
+        return $this->normalizeUrl($baseUrl);
     }
 
     /**
