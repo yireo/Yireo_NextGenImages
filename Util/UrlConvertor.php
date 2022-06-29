@@ -81,7 +81,7 @@ class UrlConvertor
     {
         try {
             if (strpos($filename, $this->getMediaFolder()) !== false) {
-                return str_replace($this->getMediaFolder() . '/', $this->getMediaUrl(), $filename);
+                return str_replace($this->getMediaFolder() . '/', $this->getMediaUrl(false), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Media folder does not exist'));
@@ -152,11 +152,16 @@ class UrlConvertor
      * @return string
      * @throws NoSuchEntityException
      */
-    private function getMediaUrl(): string
+    private function getMediaUrl(bool $normalizeUrl = true): string
     {
         /** @var Store $store */
         $store = $this->storeManager->getStore();
-        return $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA));
+        $mediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+        if ($normalizeUrl === false) {
+            return $mediaUrl;
+        }
+
+        return $this->normalizeUrl($mediaUrl);
     }
 
     /**
