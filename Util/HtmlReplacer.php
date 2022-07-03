@@ -11,7 +11,7 @@ use Yireo\NextGenImages\Image\ImageFactory;
 
 class HtmlReplacer
 {
-    const MARKER_CODE = 'data-marker';
+    private const MARKER_CODE = 'data-marker';
     
     /**
      * @var UrlConvertor
@@ -83,8 +83,11 @@ class HtmlReplacer
                 continue;
             }
             
-            if (!preg_match('/<img ' . self::MARKER_CODE . '="' . $imageMarker . '"([^\>]+)>/', $html,
-                $imageHtmlMatch)) {
+            if (!preg_match(
+                '/<img ' . self::MARKER_CODE . '="' . $imageMarker . '"([^\>]+)>/',
+                $html,
+                $imageHtmlMatch
+            )) {
                 continue;
             }
             
@@ -148,6 +151,7 @@ class HtmlReplacer
     private function isAllowedByParentNode(DOMElement $node): bool
     {
         $parentNode = $node->parentNode;
+        /** @phpstan-ignore-next-line */
         return !in_array($parentNode->tagName, ['picture', 'source']);
     }
     
