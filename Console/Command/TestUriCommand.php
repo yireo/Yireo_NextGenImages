@@ -79,7 +79,9 @@ class TestUriCommand extends Command
     
         $rows[] = ['Target path', $targetPath];
         $rows[] = ['Target exists', $this->getYesNo($this->fileUtil->uriExists($targetUri))];
-        $rows[] = ['Target modification time', date('r', $this->fileUtil->getModificationTime($targetPath))];
+        $modificationTime = $this->fileUtil->getModificationTime($targetPath);
+        $modificationTimeFormatted = $modificationTime ? date('r', $modificationTime) : 'n/a';
+        $rows[] = ['Target modification time', $modificationTimeFormatted];
         
         $rows[] = ['Source is newer than target', $this->getYesNo($this->fileUtil->isNewerThan($path, $targetPath))];
     
