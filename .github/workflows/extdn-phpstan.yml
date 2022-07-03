@@ -10,5 +10,6 @@ jobs:
       - uses: docker://extdn/magento-phpstan-action:dev
         with:
           composer_name: ${{ secrets.COMPOSER_NAME }}
+          composer_version: 2
           phpstan_level: 2
           magento_pre_install_script: .github/workflows/extdn-integration-tests-pre-install-m244.sh
