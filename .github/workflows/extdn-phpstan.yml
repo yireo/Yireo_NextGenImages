@@ -7,6 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
       - uses: docker://extdn/magento-phpstan-action:dev
         with:
           composer_name: ${{ secrets.COMPOSER_NAME }}
