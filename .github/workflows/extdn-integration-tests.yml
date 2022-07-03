@@ -46,5 +46,5 @@ jobs:
           MAGENTO_VERSION: '2.4.4'
           COMPOSER_VERSION: 2
         with:
-          magento_pre_install_script: .github/workflows/extdn-integration-tests-pre-install-m24.sh
+          magento_pre_install_script: .github/workflows/extdn-integration-tests-pre-install-m244.sh
           magento_post_install_script: .github/workflows/extdn-integration-tests-post-install.sh
