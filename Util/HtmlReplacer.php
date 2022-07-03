@@ -2,32 +2,37 @@
 
 namespace Yireo\NextGenImages\Util;
 
+use DOMDocument;
+use DOMElement;
+use DOMNode;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
 
 class HtmlReplacer
 {
+    const MARKER_CODE = 'data-marker';
+    
     /**
      * @var UrlConvertor
      */
     private $urlConvertor;
-
+    
     /**
      * @var ImageCollector
      */
     private $imageCollector;
-
+    
     /**
      * @var PictureFactory
      */
     private $pictureFactory;
-
+    
     /**
      * @var ImageFactory
      */
     private $imageFactory;
-
+    
     /**
      * Constructor.
      *
@@ -47,60 +52,103 @@ class HtmlReplacer
         $this->pictureFactory = $pictureFactory;
         $this->imageFactory = $imageFactory;
     }
-
+    
     /**
      * @param string $html
      * @return string
      */
     public function replace(string $html): string
     {
-        $regex = '/<([^<]+)\ (data\-src|src)=\"([^\"]+)\.(png|jpg|jpeg)([^>]+)>(\s*)(<?)(\/?)([a-z!\-]+)/msi';
-        if (preg_match_all($regex, $html, $matches) === false) {
-            return $html;
-        }
-
-        foreach ($matches[0] as $index => $match) {
-            $nextTag = $matches[7][$index] . $matches[8][$index] . $matches[9][$index];
-            $fullSearchMatch = $matches[0][$index];
-            $imageUrl = $matches[3][$index] . '.' . $matches[4][$index];
-
-            if (!$this->isAllowedByNextTag($nextTag)) {
+        $html = $this->addImageMarkersToHtml($html);
+        $document = $this->htmlToDOMDocument($html);
+        
+        $images = $document->getElementsByTagName('img');
+        foreach ($images as $image) {
+            $imageMarker = $image->getAttribute(self::MARKER_CODE);
+            if (empty($imageMarker)) {
                 continue;
             }
-
+            
+            if (!$this->isAllowedByParentNode($image)) {
+                continue;
+            }
+            
+            $imageUrl = $image->getAttribute('src');
             if (!$this->isAllowedByImageUrl($imageUrl)) {
                 continue;
             }
-
+            
             $images = $this->imageCollector->collect($imageUrl);
             if (empty($images)) {
                 continue;
             }
-
-            $isDataSrc = $matches[2][$index] === 'data-src';
-            $htmlTag = preg_replace('/>(.*)/msi', '>', $fullSearchMatch);
+            
+            if (!preg_match('/<img '.self::MARKER_CODE.'="'.$imageMarker.'"([^\>]+)>/', $html, $imageHtmlMatch)) {
+                continue;
+            }
+            
+            $imageHtml = $imageHtmlMatch[0];
+            $newImageHtml = $this->removeImageMarker($imageHtml);
+            $isDataSrc = (bool)$image->getAttribute('data-src');
             $sourceImage = $this->imageFactory->createFromUrl($imageUrl);
-            $pictureBlock = $this->pictureFactory->create($sourceImage, $images, $htmlTag, $isDataSrc);
-            $replacement = $pictureBlock->toHtml() . $nextTag;
-            $html = str_replace($fullSearchMatch, $replacement, $html);
+            $pictureBlock = $this->pictureFactory->create($sourceImage, $images, $newImageHtml, $isDataSrc);
+            $pictureHtml = $pictureBlock->toHtml();
+            $pictureHtml = $this->removeImageMarker($pictureHtml);
+            
+            $html = str_replace($imageHtml, $pictureHtml, $html);
         }
-
+        
         return $html;
     }
-
+    
     /**
-     * @param string $nextTag
+     * @param string $html
+     * @return string
+     */
+    private function addImageMarkersToHtml(string $html): string
+    {
+        if (preg_match_all('/<img([^\>]+)>/mi', $html, $imgMatches)) {
+            $i = 1;
+            foreach ($imgMatches[0] as $imgMatch) {
+                $newTag = str_replace('<img ', '<img ' . self::MARKER_CODE . '="' . $i . '" ', $imgMatch);
+                $html = str_replace($imgMatch, $newTag, $html);
+                $i++;
+            }
+        }
+        
+        return $html;
+    }
+    
+    private function removeImageMarker(string $html): string
+    {
+        return preg_replace('/ '.self::MARKER_CODE.'="([^\"]+)"/', '', $html);
+    }
+    
+    private function htmlToDOMDocument(string $html): DOMDocument
+    {
+        $document = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $document->loadHTML(
+            mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
+            LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
+        );
+        
+        libxml_clear_errors();
+        libxml_use_internal_errors(false);
+        $document->encoding = 'utf-8';
+        return $document;
+    }
+    
+    /**
+     * @param DOMElement $node
      * @return bool
      */
-    private function isAllowedByNextTag(string $nextTag): bool
+    private function isAllowedByParentNode(DOMElement $node): bool
     {
-        if ($nextTag === '/picture' || $nextTag === '/source') {
-            return false;
-        }
-
-        return true;
+        $parentNode = $node->parentNode;
+        return !in_array($parentNode->tagName, ['picture', 'source']);
     }
-
+    
     /**
      * @param string $imageUrl
      * @return bool
@@ -110,11 +158,34 @@ class HtmlReplacer
         if (!$this->urlConvertor->isLocal($imageUrl)) {
             return false;
         }
-
+        
         if (strpos($imageUrl, '/media/captcha/') !== false) {
             return false;
         }
-
+        
         return true;
+    }
+    
+    /**
+     * @param DOMNode $node
+     * @param $name
+     * @return DOMNode|null
+     */
+    private function nextElement(DOMNode $node, $name = null): ?DOMNode
+    {
+        if (!$node) {
+            return null;
+        }
+        $next = $node->nextSibling;
+        if (!$next) {
+            return null;
+        }
+        if ($next->nodeType === 3) {
+            return self::nextElement($next, $name);
+        }
+        if ($name && $next->nodeName !== $name) {
+            return null;
+        }
+        return $next;
     }
 }
