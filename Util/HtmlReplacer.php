@@ -79,25 +79,27 @@ class HtmlReplacer
             }
             
             $images = $this->imageCollector->collect($imageUrl);
-            if (empty($images)) {
+            if (!count($images) > 0) {
                 continue;
             }
             
-            if (!preg_match('/<img '.self::MARKER_CODE.'="'.$imageMarker.'"([^\>]+)>/', $html, $imageHtmlMatch)) {
+            if (!preg_match('/<img ' . self::MARKER_CODE . '="' . $imageMarker . '"([^\>]+)>/', $html,
+                $imageHtmlMatch)) {
                 continue;
             }
             
             $imageHtml = $imageHtmlMatch[0];
-            $newImageHtml = $this->removeImageMarker($imageHtml);
-            $isDataSrc = (bool)$image->getAttribute('data-src');
-            $sourceImage = $this->imageFactory->createFromUrl($imageUrl);
-            $pictureBlock = $this->pictureFactory->create($sourceImage, $images, $newImageHtml, $isDataSrc);
-            $pictureHtml = $pictureBlock->toHtml();
-            $pictureHtml = $this->removeImageMarker($pictureHtml);
+            $pictureBlock = $this->pictureFactory->create(
+                $this->imageFactory->createFromUrl($imageUrl),
+                $images,
+                $imageHtml,
+                (bool)$image->getAttribute('data-src')
+            );
             
-            $html = str_replace($imageHtml, $pictureHtml, $html);
+            $html = str_replace($imageHtml, $pictureBlock->toHtml(), $html);
         }
         
+        $html = $this->removeImageMarker($html);
         return $html;
     }
     
@@ -121,7 +123,7 @@ class HtmlReplacer
     
     private function removeImageMarker(string $html): string
     {
-        return preg_replace('/ '.self::MARKER_CODE.'="([^\"]+)"/', '', $html);
+        return preg_replace('/ ' . self::MARKER_CODE . '="([^\"]+)"/', '', $html);
     }
     
     private function htmlToDOMDocument(string $html): DOMDocument
@@ -155,6 +157,10 @@ class HtmlReplacer
      */
     private function isAllowedByImageUrl(string $imageUrl): bool
     {
+        if (preg_match('/^data:/', $imageUrl)) {
+            return false;
+        }
+        
         if (!$this->urlConvertor->isLocal($imageUrl)) {
             return false;
         }
@@ -164,28 +170,5 @@ class HtmlReplacer
         }
         
         return true;
-    }
-    
-    /**
-     * @param DOMNode $node
-     * @param $name
-     * @return DOMNode|null
-     */
-    private function nextElement(DOMNode $node, $name = null): ?DOMNode
-    {
-        if (!$node) {
-            return null;
-        }
-        $next = $node->nextSibling;
-        if (!$next) {
-            return null;
-        }
-        if ($next->nodeType === 3) {
-            return self::nextElement($next, $name);
-        }
-        if ($name && $next->nodeName !== $name) {
-            return null;
-        }
-        return $next;
     }
 }
