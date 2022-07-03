@@ -121,7 +121,7 @@ class UrlConvertor
      */
     public function getFilenameFromUrl(string $url): string
     {
-        $url = $this->escaper->escapeHtml($url);
+        $url = (string)$this->escaper->escapeHtml($url);
         $url = preg_replace('/\/static\/version(\d+\/)/', '/static/', $url);
         $url = $this->normalizeUrl($url);
 

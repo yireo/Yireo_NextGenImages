@@ -113,8 +113,14 @@ class UrlConvertorTest extends TestCase
      */
     private function getEscaperMock(): Escaper
     {
-        return $this->getMockBuilder(Escaper::class)
+        $escaperMock = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
             ->getMock();
+    
+        $escaperMock->expects($this->any())
+            ->method('escapeHtml')
+            ->will($this->returnArgument(0));
+        
+        return $escaperMock;
     }
 }
