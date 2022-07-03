@@ -81,7 +81,11 @@ class HtmlReplacerTest extends AbstractTestCase
             [
                 '<div style="background-image: url(foobar.png);"></div>',
                 '<div style="background-image: url(foobar.png);"></div>'
-            ]
+            ],
+            [
+                '<div><img src="/img/test.png"/><img src="/img/test.png"/><img src="/img/test.png"/></div>',
+                '<div><picture><img src="/img/test.png"/></picture><picture><img src="/img/test.png"/></picture><picture><img src="/img/test.png"/></picture></div>'
+            ],
         ];
     }
 }
