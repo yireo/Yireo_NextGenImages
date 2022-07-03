@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.10] - 3 July 2022
+### Fixed
+- Don't display image timestamp if no image is there
+- Allow for multiple img tags on a row
+- Switch from complex regex to easier DOMDocument search
+- Issue with integration tests and Monolog 2.7
+- Add GitHub Actions composer cacheq
+
 ## [0.3.9] - 29 June 2022
 ### Fixed
 - Normalize base URL as well
