@@ -60,50 +60,85 @@ class HtmlReplacer
     public function replace(string $html): string
     {
         $html = $this->addImageMarkersToHtml($html);
-        $document = $this->htmlToDOMDocument($html);
-        
-        $images = $document->getElementsByTagName('img');
-        foreach ($images as $image) {
-            $imageMarker = $image->getAttribute(self::MARKER_CODE);
-            if (empty($imageMarker)) {
-                continue;
-            }
-            
-            if (!$this->isAllowedByParentNode($image)) {
-                continue;
-            }
-            
-            $imageUrl = $image->getAttribute('src');
-            if (!$this->isAllowedByImageUrl($imageUrl)) {
-                continue;
-            }
-            
-            $images = $this->imageCollector->collect($imageUrl);
-            if (!count($images) > 0) {
-                continue;
-            }
-            
-            if (!preg_match(
-                '/<img ' . self::MARKER_CODE . '="' . $imageMarker . '"([^\>]+)>/',
-                $html,
-                $imageHtmlMatch
-            )) {
-                continue;
-            }
-            
-            $imageHtml = $imageHtmlMatch[0];
-            $pictureBlock = $this->pictureFactory->create(
-                $this->imageFactory->createFromUrl($imageUrl),
-                $images,
-                $imageHtml,
-                (bool)$image->getAttribute('data-src')
-            );
-            
-            $html = str_replace($imageHtml, $pictureBlock->toHtml(), $html);
-        }
-        
+        $html = $this->replaceImageTags($html);
         $html = $this->removeImageMarker($html);
         return $html;
+    }
+    
+    /**
+     * @param string $html
+     * @return string
+     */
+    private function replaceImageTags(string $html): string
+    {
+        $document = $this->htmlToDOMDocument($html);
+        $images = $document->getElementsByTagName('img');
+        foreach ($images as $image) {
+            $imageHtml = $this->getImageHtmlFromImage($image, $html);
+            $pictureHtml = $this->getPictureHtmlFromImage($image, $html);
+            if (!empty($pictureHtml)) {
+                $html = str_replace($imageHtml, $pictureHtml, $html);
+            }
+        }
+        
+        return $html;
+    }
+    
+    /**
+     * @param DOMElement $image
+     * @param string $html
+     * @return string
+     */
+    private function getImageHtmlFromImage(DOMElement $image, string $html): string
+    {
+        $imageMarker = $image->getAttribute(self::MARKER_CODE);
+        if (empty($imageMarker)) {
+            return '';
+        }
+        
+        $regex = '/<img ' . self::MARKER_CODE . '="' . $imageMarker . '"([^\>]+)>/';
+        if (!preg_match($regex, $html, $imageHtmlMatch)) {
+            return '';
+        }
+        
+        return $imageHtmlMatch[0];
+    }
+    
+    /**
+     * @param DOMElement $image
+     * @param string $html
+     * @return string
+     */
+    private function getPictureHtmlFromImage(DOMElement $image, string $html): string
+    {
+        $imageMarker = $image->getAttribute(self::MARKER_CODE);
+        if (empty($imageMarker)) {
+            return '';
+        }
+        
+        if (!$this->isAllowedByParentNode($image)) {
+            return '';
+        }
+        
+        $imageUrl = $image->getAttribute('src');
+        if (!$this->isAllowedByImageUrl($imageUrl)) {
+            return '';
+        }
+        
+        $images = $this->imageCollector->collect($imageUrl);
+        if (!count($images) > 0) {
+            return '';
+        }
+        
+        $imageHtml = $this->getImageHtmlFromImage($image, $html);
+        $pictureBlock = $this->pictureFactory->create(
+            $this->imageFactory->createFromUrl($imageUrl),
+            $images,
+            $imageHtml,
+            (bool)$image->getAttribute('data-src')
+        );
+        
+        return $pictureBlock->toHtml();
     }
     
     /**
@@ -124,11 +159,19 @@ class HtmlReplacer
         return $html;
     }
     
+    /**
+     * @param string $html
+     * @return string
+     */
     private function removeImageMarker(string $html): string
     {
         return preg_replace('/ ' . self::MARKER_CODE . '="([^\"]+)"/', '', $html);
     }
     
+    /**
+     * @param string $html
+     * @return DOMDocument
+     */
     private function htmlToDOMDocument(string $html): DOMDocument
     {
         $document = new DOMDocument();
