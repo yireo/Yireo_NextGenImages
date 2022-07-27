@@ -175,6 +175,9 @@ class HtmlReplacer
     private function htmlToDOMDocument(string $html): DOMDocument
     {
         $document = new DOMDocument();
+        if (empty($html)) {
+            return $document;
+        }
         libxml_use_internal_errors(true);
         $document->loadHTML(
             mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
