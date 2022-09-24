@@ -42,6 +42,10 @@ class Debugger
         if ($this->config->isLogging() === false) {
             return false;
         }
+    
+        if ($this->config->isDebugging() === false) {
+            return false;
+        }
 
         if (!empty($data)) {
             $msg .= ': ' . var_export($data, true);
