@@ -2,5 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "hostRules": [
+    {
+      "matchHost": "repo.magento.com",
+      "hostType": "packagist",
+      "username": "${{ secrets.MAGENTO_MARKETPLACE_USERNAME }}",
+      "password": "${{ secrets.MAGENTO_MARKETPLACE_PASSWORD }}"
+    }
   ]
 }
