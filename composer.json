@@ -31,7 +31,7 @@
     "require-dev": {
         "phpunit/phpunit": "*",
         "composer/composer": "*@dev",
-        "phpstan/phpstan": "^0.12.32",
+        "phpstan/phpstan": "^1.0.0",
         "bitexpert/phpstan-magento": "^0.3.0",
         "yireo/magento2-integration-test-helper": "@dev"
     },
