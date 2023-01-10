@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.12] - 10 January 2023
+### Fixed
+- Remove loading="lazy" when fetchpriority="high" is present #53 @jesperingels
+
 ## [0.3.11] - 24 October 2022
 ### Fixed
 - Error 'Argument #1 () must not be empty' on PHP 8 #36 @khoimm92
