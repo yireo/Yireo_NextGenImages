@@ -12,6 +12,11 @@ $originalTag = trim($block->getOriginalTag());
 $originalTag = preg_replace('/(\/?)>$/', $lazyLoading . '\1>', $originalTag);
 
 $originalImage = $block->getOriginalImage();
+
+if (strpos($originalTag, 'fetchpriority="high"')) {
+    $lazyLoading = '';
+}
+
 $originalImageType = $block->getOriginalImageType();
 
 $srcsetAttribute = $block->getIsDataSrc() ? 'data-srcset' : 'srcset';
