@@ -147,15 +147,15 @@ class HtmlReplacer
      */
     private function addImageMarkersToHtml(string $html): string
     {
-        if (preg_match_all('/<img([^\>]+)>/mi', $html, $imgMatches)) {
-            $i = 1;
-            foreach ($imgMatches[0] as $imgMatch) {
-                $newTag = str_replace('<img ', '<img ' . self::MARKER_CODE . '="' . $i . '" ', $imgMatch);
-                $html = str_replace($imgMatch, $newTag, $html);
-                $i++;
-            }
-        }
-        
+        $i = 0;
+        $html = preg_replace_callback(
+            "/<img([^\>]+)>/mi",
+            function ($matches) use (&$i) {
+                $i += 1;
+                return str_replace('<img ', '<img ' . self::MARKER_CODE . '="' . $i . '" ', $matches[0]);
+            },
+            $html);
+
         return $html;
     }
     
