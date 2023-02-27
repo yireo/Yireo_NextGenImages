@@ -179,8 +179,16 @@ class HtmlReplacer
             return $document;
         }
         libxml_use_internal_errors(true);
+
+        $convmap = [0x80, 0x10FFFF, 0, 0x1FFFFF];
+        $encodedHtml = mb_encode_numericentity(
+            $html,
+            $convmap,
+            'UTF-8'
+        );
+
         $document->loadHTML(
-            mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
+            $encodedHtml,
             LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
         );
         
