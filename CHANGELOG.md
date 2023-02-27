@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.13] - 27 February 2023
+### Fixed
+Fix for PHP 8.2 deprecated `mb_convert_encoding` #57 @hostep
+
 ## [0.3.12] - 10 January 2023
 ### Fixed
 - Remove loading="lazy" when fetchpriority="high" is present #53 @jesperingels
