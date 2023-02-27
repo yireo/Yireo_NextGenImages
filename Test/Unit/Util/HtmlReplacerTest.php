@@ -31,7 +31,7 @@ class HtmlReplacerTest extends AbstractTestCase
      * @param string $originalHtml
      * @param string $finalHtml
      * @return void
-     * @dataProvider getArguments
+     * @dataProvider getTestReplaceWithTestImageArguments
      */
     public function testReplaceWithTestImage(string $originalHtml, string $finalHtml)
     {
@@ -63,7 +63,7 @@ class HtmlReplacerTest extends AbstractTestCase
         $this->assertEquals($finalHtml, $result);
     }
 
-    public function getArguments(): array
+    public function getTestReplaceWithTestImageArguments(): array
     {
         return [
             [
@@ -85,6 +85,10 @@ class HtmlReplacerTest extends AbstractTestCase
             [
                 '<div><img src="/img/test.png"/><img src="/img/test.png"/><img src="/img/test.png"/></div>',
                 '<div><picture><img src="/img/test.png"/></picture><picture><img src="/img/test.png"/></picture><picture><img src="/img/test.png"/></picture></div>'
+            ],
+            [
+                "<script>var imgElement = '<img src=\"...\" />';</script>",
+                "<script>var imgElement = '<img src=\"...\" />';</script>",
             ],
         ];
     }

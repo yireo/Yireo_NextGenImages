@@ -205,6 +205,10 @@ class HtmlReplacer
     private function isAllowedByParentNode(DOMElement $node): bool
     {
         $parentNode = $node->parentNode;
+        if (empty($parentNode) || empty($parentNode->tagName)) {
+            return false;
+        }
+        
         /** @phpstan-ignore-next-line */
         return !in_array($parentNode->tagName, ['picture', 'source']);
     }

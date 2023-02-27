@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.14] - 27 February 2023
+### Fixed
+- Prevent `img` in script from being parsed #133
+
 ## [0.3.13] - 27 February 2023
 ### Fixed
-Fix for PHP 8.2 deprecated `mb_convert_encoding` #57 @hostep
+- Fix for PHP 8.2 deprecated `mb_convert_encoding` #57 @hostep
 
 ## [0.3.12] - 10 January 2023
 ### Fixed
