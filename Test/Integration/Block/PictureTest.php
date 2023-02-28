@@ -25,7 +25,7 @@ class PictureTest extends AbstractTestCase
 
         $html = $picture->toHtml();
         $this->assertNotEmpty($html);
-        $this->assertStringContainsString('<source type="image/png" srcset="/images/test.png">', $html);
+        $this->assertStringContainsString('<source type="image/webp" srcset="/images/test.webp">', $html);
         $this->assertStringContainsString('<img src="/images/test.png"/>', $html);
     }
 
@@ -45,7 +45,7 @@ class PictureTest extends AbstractTestCase
 
         $html = $picture->toHtml();
         $this->assertNotEmpty($html);
-        $this->assertStringContainsString('<source type="image/png" srcset="/images/test.png">', $html);
+        $this->assertStringContainsString('<source type="image/webp" srcset="/images/test.webp">', $html);
         $this->assertStringContainsString('<img src="/images/test.png" loading="lazy" />', $html);
     }
 }
