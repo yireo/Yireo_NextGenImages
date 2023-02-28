@@ -75,12 +75,20 @@ class HtmlReplacerTest extends AbstractTestCase
                 '<div><img src="data:image/gif;base64,foobar"/></div>'
             ],
             [
+                '<div><img data-src="/test.png"/></div>',
+                '<div><picture><source type="image/png" data-srcset="/test.png"><source type="image/webp" data-srcset="/test.webp"><img data-src="/test.png" loading="lazy" /></picture></div>'
+            ],
+            [
                 '<div style="background-image: url(/test.png);"></div>',
                 '<div style="background-image: url(/test.png);"></div>'
             ],
             [
                 '<div><img src="/test.png"/><img src="/test.png"/><img src="/test.png"/></div>',
                 '<div><picture><source type="image/png" srcset="/test.png"><source type="image/webp" srcset="/test.webp"><img src="/test.png" loading="lazy" /></picture><picture><source type="image/png" srcset="/test.png"><source type="image/webp" srcset="/test.webp"><img src="/test.png" loading="lazy" /></picture><picture><source type="image/png" srcset="/test.png"><source type="image/webp" srcset="/test.webp"><img src="/test.png" loading="lazy" /></picture></div>'
+            ],
+            [
+                '<div><img style="float: right;" src="/img/test.png"/></div>',
+                '<div><picture><source type="image/png" srcset="/test.png"><source type="image/webp" srcset="/test.webp"><img style="float: right;" src="/img/test.png" loading="lazy" /></picture></div>'
             ],
             [
                 "<script>var imgElement = '<img src=\"/test.png\" />';</script>",

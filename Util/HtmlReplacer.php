@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Util;
 
@@ -120,7 +121,7 @@ class HtmlReplacer
             return '';
         }
         
-        $imageUrl = $image->getAttribute('src');
+        $imageUrl = $image->getAttribute('src') ?: $image->getAttribute('data-src');
         if (!$this->isAllowedByImageUrl($imageUrl)) {
             return '';
         }
@@ -155,7 +156,7 @@ class HtmlReplacer
                 return str_replace('<img ', '<img ' . self::MARKER_CODE . '="' . $i . '" ', $matches[0]);
             },
             $html);
-
+        
         return $html;
     }
     
@@ -179,14 +180,14 @@ class HtmlReplacer
             return $document;
         }
         libxml_use_internal_errors(true);
-
+        
         $convmap = [0x80, 0x10FFFF, 0, 0x1FFFFF];
         $encodedHtml = mb_encode_numericentity(
             $html,
             $convmap,
             'UTF-8'
         );
-
+        
         $document->loadHTML(
             $encodedHtml,
             LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
