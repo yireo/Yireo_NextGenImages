@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Remove duplicate source that matches original image
 - Also convert `data-src` when present
+- Support URLs from multiple Store Views
 
 ## [0.3.14] - 27 February 2023
 ### Fixed
