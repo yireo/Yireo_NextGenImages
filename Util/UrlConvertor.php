@@ -59,7 +59,7 @@ class UrlConvertor
     public function isLocal(string $url): bool
     {
         $url = $this->normalizeUrl($url);
-        if (!preg_match('#^http://#', $url)) {
+        if (!preg_match('#^https?://#', $url)) {
             return true;
         }
 
