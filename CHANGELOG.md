@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove duplicate source that matches original image
 - Also convert `data-src` when present
 - Support URLs from multiple Store Views
+- Ajax response plugin gets incorrect gallery images #55 @joe-vortex
 
 ## [0.3.14] - 27 February 2023
 ### Fixed

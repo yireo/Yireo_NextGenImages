@@ -74,11 +74,11 @@ class CorrectImagesInAjaxResponse
         
         foreach ($data['gallery'] as $galleryIndex => $galleryImages) {
             foreach ($types as $type) {
-                if (!isset($data[$type])) {
+                if (!isset($galleryImages[$type])) {
                     continue;
                 }
-                
-                $images = $this->imageCollector->collect($data[$type]);
+    
+                $images = $this->imageCollector->collect($galleryImages[$type]);
                 foreach ($images as $image) {
                     $data['gallery'][$galleryIndex][$type . '_' . $image->getCode()] = $image->getUrl();
                 }
