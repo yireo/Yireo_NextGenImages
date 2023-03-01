@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.16] - 01 March 2023
+### Fixed
+- Make image cache path `/media/nextgenimages/` configurable
+
 ## [0.3.15] - 28 February 2023
 ### Fixed
 - Remove duplicate source that matches original image

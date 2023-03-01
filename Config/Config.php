@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Config;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -27,6 +28,7 @@ class Config implements ArgumentInterface
      * @var StoreManagerInterface
      */
     private $storeManager;
+    private DirectoryList $directoryList;
 
     /**
      * Config constructor.
@@ -34,15 +36,19 @@ class Config implements ArgumentInterface
      * @param ScopeConfigInterface $scopeConfig
      * @param DepersonalizeChecker $depersonalizeChecker
      * @param StoreManagerInterface $storeManager
+     * @param DirectoryList $directoryList
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        DepersonalizeChecker $depersonalizeChecker,
-        StoreManagerInterface $storeManager
-    ) {
+        ScopeConfigInterface  $scopeConfig,
+        DepersonalizeChecker  $depersonalizeChecker,
+        StoreManagerInterface $storeManager,
+        DirectoryList         $directoryList
+    )
+    {
         $this->scopeConfig = $scopeConfig;
         $this->depersonalizeChecker = $depersonalizeChecker;
         $this->storeManager = $storeManager;
+        $this->directoryList = $directoryList;
     }
 
     /**
@@ -81,7 +87,23 @@ class Config implements ArgumentInterface
 
         return TargetDirectory::SAME_AS_SOURCE;
     }
-    
+
+    public function getCacheDirectoryPath(): string
+    {
+        $pubPath = $this->directoryList->getRoot() . '/pub/';
+
+        $value = trim($this->getValue('yireo_nextgenimages/settings/cache_directory'));
+        if (empty($value)) {
+            return $pubPath . '/media/nextgenimages/';
+        }
+
+        if (!is_dir($value)) {
+            return $pubPath . '/media/nextgenimages/';
+        }
+
+        return $pubPath . $value;
+    }
+
     /**
      * @return bool
      */

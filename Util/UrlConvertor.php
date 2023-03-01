@@ -103,7 +103,7 @@ class UrlConvertor
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Static folder does not exist'));
         }
-        
+
         if (strpos($filename, $this->getBaseFolder()) !== false) {
             return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(false), $filename);
         }
@@ -133,17 +133,17 @@ class UrlConvertor
         foreach ($this->storeManager->getStores() as $store) {
             $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
             if (strpos($url, $storeBaseUrl) !== false) {
-                return str_replace($storeBaseUrl, $this->getBaseFolder() . '/', $url);
+                return str_replace($storeBaseUrl, $this->getBaseFolder(), $url);
             }
             
             $storeMediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
             if (strpos($url, $storeMediaUrl) !== false) {
-                return str_replace($storeMediaUrl, $this->getMediaFolder() . '/', $url);
+                return str_replace($storeMediaUrl, $this->getMediaFolder(), $url);
             }
             
             $staticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
             if (strpos($url, $staticUrl) !== false) {
-                return str_replace($staticUrl, $this->getStaticFolder() . '/', $url);
+                return str_replace($staticUrl, $this->getStaticFolder(), $url);
             }
         }
         
@@ -217,7 +217,7 @@ class UrlConvertor
      */
     private function getMediaFolder(): string
     {
-        return $this->directoryList->getPath(FilesystemDirectoryList::MEDIA);
+        return rtrim($this->directoryList->getPath(FilesystemDirectoryList::MEDIA, '/'));
     }
     
     /**
@@ -226,7 +226,7 @@ class UrlConvertor
      */
     private function getStaticFolder(): string
     {
-        return $this->directoryList->getPath(FilesystemDirectoryList::STATIC_VIEW);
+        return rtrim($this->directoryList->getPath(FilesystemDirectoryList::STATIC_VIEW, '/'));
     }
     
     /**

@@ -89,9 +89,6 @@ class HtmlReplacerTest extends AbstractTestCase
             [
                 "<script>var imgElement = '<img src=\"...\" />';</script>",
                 "<script>var imgElement = '<img src=\"...\" />';</script>",
-            ],
-            [
-            
             ]
         ];
     }

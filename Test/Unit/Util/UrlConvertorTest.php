@@ -6,6 +6,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\UrlInterface;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +22,7 @@ class UrlConvertorTest extends TestCase
     {
         $urlConvertor = new UrlConvertor(
             $this->getUrlMock('http://localhost/'),
-            $this->getStoreManagerMock('http://cdn/'),
+            $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
             $this->getEscaperMock()
         );
@@ -75,20 +76,26 @@ class UrlConvertorTest extends TestCase
     }
 
     /**
-     * @param string $mediaBaseUrl
      * @return StoreManagerInterface
      */
-    private function getStoreManagerMock(string $mediaBaseUrl): StoreManagerInterface
+    private function getStoreManagerMock(): StoreManagerInterface
     {
         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $storeMock->method('getBaseUrl')->willReturn($mediaBaseUrl);
+        $storeMock->method('getBaseUrl')
+            ->will(
+                $this->returnValueMap([
+                    [UrlInterface::URL_TYPE_WEB, null, 'http://localhost'],
+                    [UrlInterface::URL_TYPE_MEDIA, null, 'http://cdn'],
+                    [UrlInterface::URL_TYPE_STATIC, null, 'http://static']
+                ]));
 
         $storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
+        $storeManagerMock->method('getStores')->willReturn([$storeMock]);
         $storeManagerMock->method('getStore')->willReturn($storeMock);
         return $storeManagerMock;
     }
@@ -107,7 +114,7 @@ class UrlConvertorTest extends TestCase
 
         return $directoryListMock;
     }
-    
+
     /**
      * @return Escaper
      */
@@ -116,11 +123,11 @@ class UrlConvertorTest extends TestCase
         $escaperMock = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
             ->getMock();
-    
+
         $escaperMock->expects($this->any())
             ->method('escapeHtml')
             ->will($this->returnArgument(0));
-        
+
         return $escaperMock;
     }
 }

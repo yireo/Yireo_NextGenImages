@@ -17,6 +17,7 @@
                 <log>0</log>
                 <convert_images>1</convert_images>
                 <target_directory>same_as_source</target_directory>
+                <cache_directory>media/nextgenimages/</cache_directory>
                 <hash>0</hash>
                 <convert_on_save>0</convert_on_save>
                 <lazy_loading>1</lazy_loading>
