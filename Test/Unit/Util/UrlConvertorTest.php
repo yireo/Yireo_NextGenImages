@@ -40,7 +40,7 @@ class UrlConvertorTest extends TestCase
     {
         $urlConvertor = new UrlConvertor(
             $this->getUrlMock('http://localhost/'),
-            $this->getStoreManagerMock('http://cdn/'),
+            $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
             $this->getEscaperMock()
         );
@@ -86,9 +86,9 @@ class UrlConvertorTest extends TestCase
         $storeMock->method('getBaseUrl')
             ->will(
                 $this->returnValueMap([
-                    [UrlInterface::URL_TYPE_WEB, null, 'http://localhost'],
-                    [UrlInterface::URL_TYPE_MEDIA, null, 'http://cdn'],
-                    [UrlInterface::URL_TYPE_STATIC, null, 'http://static']
+                    [UrlInterface::URL_TYPE_WEB, null, 'http://localhost/'],
+                    [UrlInterface::URL_TYPE_MEDIA, null, 'http://cdn/'],
+                    [UrlInterface::URL_TYPE_STATIC, null, 'http://static/']
                 ]));
 
         $storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
