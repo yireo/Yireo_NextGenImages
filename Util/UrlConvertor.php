@@ -31,6 +31,11 @@ class UrlConvertor
      * @var Escaper
      */
     private $escaper;
+
+    /**
+     * @var UrlModel
+     */
+    private $urlModel;
     
     /**
      * @param UrlInterface $urlModel
