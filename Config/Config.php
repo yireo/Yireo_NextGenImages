@@ -28,7 +28,11 @@ class Config implements ArgumentInterface
      * @var StoreManagerInterface
      */
     private $storeManager;
-    private DirectoryList $directoryList;
+
+    /**
+     * @var DirectoryList
+     */
+    private $directoryList;
 
     /**
      * Config constructor.
