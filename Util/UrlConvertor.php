@@ -67,17 +67,17 @@ class UrlConvertor
         }
         
         foreach ($this->storeManager->getStores() as $store) {
-            $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
+            $storeBaseUrl = $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_WEB));
             if (strpos($url, $storeBaseUrl) !== false) {
                 return true;
             }
             
-            $storeMediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+            $storeMediaUrl = $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA));
             if (strpos($url, $storeMediaUrl) !== false) {
                 return true;
             }
             
-            $storeStaticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
+            $storeStaticUrl = $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_STATIC));
             if (strpos($url, $storeStaticUrl) !== false) {
                 return true;
             }
@@ -136,17 +136,17 @@ class UrlConvertor
         }
         
         foreach ($this->storeManager->getStores() as $store) {
-            $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
+            $storeBaseUrl = $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_WEB));
             if (strpos($url, $storeBaseUrl) !== false) {
                 return str_replace($storeBaseUrl, $this->getBaseFolder() . '/', $url);
             }
             
-            $storeMediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+            $storeMediaUrl = $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA));
             if (strpos($url, $storeMediaUrl) !== false) {
                 return str_replace($storeMediaUrl, $this->getMediaFolder() . '/', $url);
             }
             
-            $staticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
+            $staticUrl = $this->normalizeUrl($store->getBaseUrl(UrlInterface::URL_TYPE_STATIC));
             if (strpos($url, $staticUrl) !== false) {
                 return str_replace($staticUrl, $this->getStaticFolder() . '/', $url);
             }
