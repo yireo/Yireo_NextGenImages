@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.19] - 16 March 2023
+### Fixed
+- Fixed HTTPS links being reset to HTTP links due to "normalization"
+
 ## [0.3.18] - 05 March 2023
 ### Fixed
 - Fix deprecated dynamic property

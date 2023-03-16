@@ -11,6 +11,12 @@ use Yireo\NextGenImages\Util\UrlConvertor;
 
 class UrlConvertorTest extends AbstractTestCase
 {
+    /**
+     * @magentoAppArea frontend
+     * @magentoConfigFixture current_store web/unsecure/base_url https://example.com/
+     * @magentoConfigFixture current_store web/secure/base_url https://example.com/
+     * @return void
+     */
     public function testGetUrlFromFilename()
     {
         $directoryList = $this->objectManager->get(DirectoryList::class);
@@ -18,14 +24,17 @@ class UrlConvertorTest extends AbstractTestCase
 
         $urlConvertor = $this->objectManager->create(UrlConvertor::class);
 
-        $filename = $urlConvertor->getFilenameFromUrl('/static/foobar.jpg');
+        $filename = $urlConvertor->getFilenameFromUrl('https://example.com/static/foobar.jpg');
         $this->assertSame($root . '/pub/static/foobar.jpg', $filename);
 
-        $filename = $urlConvertor->getFilenameFromUrl('/static/version1234/foobar.jpg');
+        $filename = $urlConvertor->getFilenameFromUrl('https://example.com/static/version1234/foobar.jpg');
         $this->assertSame($root . '/pub/static/foobar.jpg', $filename);
     }
 
     /**
+     * @magentoAppArea frontend
+     * @magentoConfigFixture current_store web/unsecure/base_url https://example.com/
+     * @magentoConfigFixture current_store web/secure/base_url https://example.com/
      * @return void
      */
     public function testGetFilenameFromUrl()
@@ -36,9 +45,7 @@ class UrlConvertorTest extends AbstractTestCase
         $urlConvertor = $this->objectManager->create(UrlConvertor::class);
         $filename = $urlConvertor->getUrlFromFilename($root . '/pub/static/foobar.jpg');
 
-        $expectedUrl = 'http://localhost/static/foobar.jpg';
-
-        $this->assertSame($expectedUrl, $filename);
+        $this->assertSame('https://example.com/static/foobar.jpg', $filename);
     }
 
     public function testGetWrongFilenameFromUrl()
