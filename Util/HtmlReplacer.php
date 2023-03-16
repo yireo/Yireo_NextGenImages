@@ -240,7 +240,7 @@ class HtmlReplacer
      * @param string $html
      * @return string
      */
-    public function replaceInlineCssBackgroundImages(string $html): string
+    private function replaceInlineCssBackgroundImages(string $html): string
     {
         /*
          * 1. regex always tries to match a whole content between the to brackets { }
