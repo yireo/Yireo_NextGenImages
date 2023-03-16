@@ -38,7 +38,7 @@ class File
      * @var ImageFactory
      */
     private $imageFactory;
-    
+
     /**
      * File constructor.
      *
@@ -50,12 +50,13 @@ class File
      * @throws FileSystemException
      */
     public function __construct(
-        Filesystem $filesystem,
-        Debugger $debugger,
-        UrlConvertor $urlConvertor,
+        Filesystem         $filesystem,
+        Debugger           $debugger,
+        UrlConvertor       $urlConvertor,
         TargetImageFactory $targetImageFactory,
-        ImageFactory $imageFactory
-    ) {
+        ImageFactory       $imageFactory
+    )
+    {
         $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
         $this->debugger = $debugger;
         $this->urlConvertor = $urlConvertor;
@@ -77,6 +78,8 @@ class File
         try {
             return $this->urlConvertor->getFilenameFromUrl($uri);
         } catch (NotFoundException $e) {
+            throw new ConvertorException($e->getMessage());
+        } catch (FileSystemException $e) {
             throw new ConvertorException($e->getMessage());
         }
     }

@@ -80,7 +80,7 @@ class UrlConvertor
     /**
      * @param string $filename
      * @return string
-     * @throws NotFoundException
+     * @throws NoSuchEntityException
      */
     public function getUrlFromFilename(string $filename): string
     {
@@ -174,7 +174,6 @@ class UrlConvertor
     }
 
     /**
-     * @param bool $normalizeUrl
      * @return string
      * @throws NoSuchEntityException
      */
