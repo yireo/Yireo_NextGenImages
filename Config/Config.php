@@ -74,6 +74,14 @@ class Config implements ArgumentInterface
     /**
      * @return bool
      */
+    public function convertCssBackgrounds(): bool
+    {
+        return (bool)$this->getValue('yireo_nextgenimages/settings/convert_css_backgrounds');
+    }
+
+    /**
+     * @return bool
+     */
     public function convertImagesOnSave(): bool
     {
         return (bool)$this->getValue('yireo_nextgenimages/settings/convert_on_save');
@@ -92,6 +100,9 @@ class Config implements ArgumentInterface
         return TargetDirectory::SAME_AS_SOURCE;
     }
 
+    /**
+     * @return string
+     */
     public function getCacheDirectoryPath(): string
     {
         $pubPath = $this->directoryList->getRoot() . '/pub/';

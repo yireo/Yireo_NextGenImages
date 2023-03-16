@@ -16,6 +16,7 @@
                 <debug>0</debug>
                 <log>0</log>
                 <convert_images>1</convert_images>
+                <convert_css_backgrounds>0</convert_css_backgrounds>
                 <target_directory>same_as_source</target_directory>
                 <cache_directory>media/nextgenimages/</cache_directory>
                 <hash>0</hash>

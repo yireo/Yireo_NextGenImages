@@ -7,6 +7,7 @@ use DOMDocument;
 use DOMElement;
 use DOMNode;
 use Yireo\NextGenImages\Block\PictureFactory;
+use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
 
@@ -33,6 +34,7 @@ class HtmlReplacer
      * @var ImageFactory
      */
     private $imageFactory;
+    private Config $config;
 
     /**
      * Constructor.
@@ -46,13 +48,15 @@ class HtmlReplacer
         UrlConvertor   $urlConvertor,
         ImageCollector $imageCollector,
         PictureFactory $pictureFactory,
-        ImageFactory   $imageFactory
+        ImageFactory   $imageFactory,
+        Config $config
     )
     {
         $this->urlConvertor = $urlConvertor;
         $this->imageCollector = $imageCollector;
         $this->pictureFactory = $pictureFactory;
         $this->imageFactory = $imageFactory;
+        $this->config = $config;
     }
 
     /**
@@ -243,6 +247,10 @@ class HtmlReplacer
      */
     private function replaceInlineCssBackgroundImages(string $html): string
     {
+        if (false === $this->config->convertCssBackgrounds()) {
+            return $html;
+        }
+
         //$regex = '/{[^}{]*background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)[^}{]}/msi';
         $regex = '/background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)/msi';
         if (preg_match_all($regex, $html, $matches) === false) {
