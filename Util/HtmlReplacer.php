@@ -34,7 +34,11 @@ class HtmlReplacer
      * @var ImageFactory
      */
     private $imageFactory;
-    private Config $config;
+
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * Constructor.
