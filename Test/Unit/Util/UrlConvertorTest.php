@@ -39,7 +39,6 @@ class UrlConvertorTest extends TestCase
     public function testGetFilenameFromUrl()
     {
         $urlConvertor = new UrlConvertor(
-            $this->getUrlMock('http://localhost/'),
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
             $this->getEscaperMock()

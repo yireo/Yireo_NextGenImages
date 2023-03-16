@@ -13,7 +13,6 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use Throwable;
 
 class UrlConvertor
 {
@@ -33,24 +32,15 @@ class UrlConvertor
     private $escaper;
 
     /**
-     * @var UrlModel
-     */
-    private $urlModel;
-
-    /**
-     * @param UrlInterface $urlModel
      * @param StoreManagerInterface $storeManager
      * @param DirectoryList $directoryList
      * @param Escaper $escaper
      */
     public function __construct(
-        UrlInterface          $urlModel,
         StoreManagerInterface $storeManager,
         DirectoryList         $directoryList,
         Escaper               $escaper
-    )
-    {
-        $this->urlModel = $urlModel;
+    ) {
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
         $this->escaper = $escaper;
@@ -124,7 +114,7 @@ class UrlConvertor
     /**
      * @param string $url
      * @return string
-     * @throws NotFoundException
+     * @throws FileSystemException
      */
     public function getFilenameFromUrl(string $url): string
     {
@@ -162,6 +152,7 @@ class UrlConvertor
 
     /**
      * @return string
+     * @throws NoSuchEntityException
      */
     private function getBaseUrl(): string
     {
@@ -209,7 +200,7 @@ class UrlConvertor
      */
     private function getMediaFolder(): string
     {
-        return rtrim($this->directoryList->getPath(FilesystemDirectoryList::MEDIA, '/'));
+        return rtrim($this->directoryList->getPath(FilesystemDirectoryList::MEDIA), '/');
     }
 
     /**
@@ -218,7 +209,7 @@ class UrlConvertor
      */
     private function getStaticFolder(): string
     {
-        return rtrim($this->directoryList->getPath(FilesystemDirectoryList::STATIC_VIEW, '/'));
+        return rtrim($this->directoryList->getPath(FilesystemDirectoryList::STATIC_VIEW), '/');
     }
 
     /**
