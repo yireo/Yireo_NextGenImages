@@ -58,6 +58,7 @@ class UrlConvertor
         }
 
         foreach ($this->storeManager->getStores() as $store) {
+            /** @var Store $store */
             $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
             if (strpos($url, $storeBaseUrl) !== false) {
                 return true;
@@ -127,6 +128,7 @@ class UrlConvertor
         }
 
         foreach ($this->storeManager->getStores() as $store) {
+            /** @var Store $store */
             $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
             if (strpos($url, $storeBaseUrl) !== false) {
                 return str_replace($storeBaseUrl, $this->getBaseFolder() . '/', $url);
