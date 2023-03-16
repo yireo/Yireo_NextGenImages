@@ -13,27 +13,27 @@ use Yireo\NextGenImages\Image\ImageFactory;
 class HtmlReplacer
 {
     private const MARKER_CODE = 'data-marker';
-    
+
     /**
      * @var UrlConvertor
      */
     private $urlConvertor;
-    
+
     /**
      * @var ImageCollector
      */
     private $imageCollector;
-    
+
     /**
      * @var PictureFactory
      */
     private $pictureFactory;
-    
+
     /**
      * @var ImageFactory
      */
     private $imageFactory;
-    
+
     /**
      * Constructor.
      *
@@ -43,17 +43,18 @@ class HtmlReplacer
      * @param ImageFactory $imageFactory
      */
     public function __construct(
-        UrlConvertor $urlConvertor,
+        UrlConvertor   $urlConvertor,
         ImageCollector $imageCollector,
         PictureFactory $pictureFactory,
-        ImageFactory $imageFactory
-    ) {
+        ImageFactory   $imageFactory
+    )
+    {
         $this->urlConvertor = $urlConvertor;
         $this->imageCollector = $imageCollector;
         $this->pictureFactory = $pictureFactory;
         $this->imageFactory = $imageFactory;
     }
-    
+
     /**
      * @param string $html
      * @return string
@@ -66,7 +67,7 @@ class HtmlReplacer
         $html = $this->removeImageMarker($html);
         return $html;
     }
-    
+
     /**
      * @param string $html
      * @return string
@@ -82,10 +83,10 @@ class HtmlReplacer
                 $html = str_replace($imageHtml, $pictureHtml, $html);
             }
         }
-        
+
         return $html;
     }
-    
+
     /**
      * @param DOMElement $image
      * @param string $html
@@ -97,15 +98,15 @@ class HtmlReplacer
         if (empty($imageMarker)) {
             return '';
         }
-        
+
         $regex = '/<img ' . self::MARKER_CODE . '="' . $imageMarker . '"([^\>]+)>/';
         if (!preg_match($regex, $html, $imageHtmlMatch)) {
             return '';
         }
-        
+
         return $imageHtmlMatch[0];
     }
-    
+
     /**
      * @param DOMElement $image
      * @param string $html
@@ -117,21 +118,21 @@ class HtmlReplacer
         if (empty($imageMarker)) {
             return '';
         }
-        
+
         if (!$this->isAllowedByParentNode($image)) {
             return '';
         }
-        
+
         $imageUrl = $image->getAttribute('src') ?: $image->getAttribute('data-src');
         if (!$this->isAllowedByImageUrl($imageUrl)) {
             return '';
         }
-        
+
         $images = $this->imageCollector->collect($imageUrl);
         if (!count($images) > 0) {
             return '';
         }
-        
+
         $imageHtml = $this->getImageHtmlFromImage($image, $html);
         $pictureBlock = $this->pictureFactory->create(
             $this->imageFactory->createFromUrl($imageUrl),
@@ -139,10 +140,10 @@ class HtmlReplacer
             $imageHtml,
             (bool)$image->getAttribute('data-src')
         );
-        
+
         return $pictureBlock->toHtml();
     }
-    
+
     /**
      * @param string $html
      * @return string
@@ -157,10 +158,10 @@ class HtmlReplacer
                 return str_replace('<img ', '<img ' . self::MARKER_CODE . '="' . $i . '" ', $matches[0]);
             },
             $html);
-        
+
         return $html;
     }
-    
+
     /**
      * @param string $html
      * @return string
@@ -169,7 +170,7 @@ class HtmlReplacer
     {
         return preg_replace('/ ' . self::MARKER_CODE . '="([^\"]+)"/', '', $html);
     }
-    
+
     /**
      * @param string $html
      * @return DOMDocument
@@ -181,25 +182,25 @@ class HtmlReplacer
             return $document;
         }
         libxml_use_internal_errors(true);
-        
+
         $convmap = [0x80, 0x10FFFF, 0, 0x1FFFFF];
         $encodedHtml = mb_encode_numericentity(
             $html,
             $convmap,
             'UTF-8'
         );
-        
+
         $document->loadHTML(
             $encodedHtml,
             LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
         );
-        
+
         libxml_clear_errors();
         libxml_use_internal_errors(false);
         $document->encoding = 'utf-8';
         return $document;
     }
-    
+
     /**
      * @param DOMElement $node
      * @return bool
@@ -210,11 +211,11 @@ class HtmlReplacer
         if (empty($parentNode) || empty($parentNode->tagName)) {
             return false;
         }
-        
+
         /** @phpstan-ignore-next-line */
         return !in_array($parentNode->tagName, ['picture', 'source']);
     }
-    
+
     /**
      * @param string $imageUrl
      * @return bool
@@ -224,15 +225,15 @@ class HtmlReplacer
         if (preg_match('/^data:/', $imageUrl)) {
             return false;
         }
-        
+
         if (!$this->urlConvertor->isLocal($imageUrl)) {
             return false;
         }
-        
+
         if (strpos($imageUrl, '/media/captcha/') !== false) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -242,19 +243,13 @@ class HtmlReplacer
      */
     private function replaceInlineCssBackgroundImages(string $html): string
     {
-        /*
-         * 1. regex always tries to match a whole content between the to brackets { }
-         * 2. property must be `background` oder `background-image`
-         * 3. image url can be given with single, double or none question marks. Also whitespaces between the bracket and the url is allowed
-         * 4. the url has to be a HTTP or a HTTPS url.
-         */
-        $regex = '/{[^}{]*background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)[^}{]}/msi';
-
+        //$regex = '/{[^}{]*background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)[^}{]}/msi';
+        $regex = '/background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)/msi';
         if (preg_match_all($regex, $html, $matches) === false) {
             return $html;
         }
 
-        foreach ($matches[2] as $index => $imageUrl) {
+        foreach ($matches[2] as $imageUrl) {
             if (!$this->isAllowedByImageUrl($imageUrl)) {
                 continue;
             }
@@ -266,7 +261,7 @@ class HtmlReplacer
             }
 
             if (isset($sourceImages[0])) {
-                $html = str_replace($imageUrl, $sourceImages[0]->getUrl(), $html, $count);
+                $html = str_replace($imageUrl, $sourceImages[0]->getUrl(), $html);
             }
         }
 

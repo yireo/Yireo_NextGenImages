@@ -79,8 +79,8 @@ class HtmlReplacerTest extends AbstractTestCase
                 '<div><img src="data:image/gif;base64,foobar"/></div>'
             ],
             [
-                '<div style="background-image: url(foobar.png);"></div>',
-                '<div style="background-image: url(foobar.png);"></div>'
+                '<div style="background-image: url(http://localhost/img/test.png);"></div>',
+                '<div style="background-image: url(/test.png);"></div>'
             ],
             [
                 '<div><img src="/img/test.png"/><img src="/img/test.png"/><img src="/img/test.png"/></div>',
@@ -92,4 +92,5 @@ class HtmlReplacerTest extends AbstractTestCase
             ]
         ];
     }
+
 }
