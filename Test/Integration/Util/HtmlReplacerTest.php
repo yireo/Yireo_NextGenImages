@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Test\Unit\Util;
 
 use Magento\Framework\App\ObjectManager;
 use Yireo\NextGenImages\Block\PictureFactory;
+use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
@@ -20,7 +21,8 @@ class HtmlReplacerTest extends AbstractTestCase
             $om->create(UrlConvertor::class),
             $om->create(ImageCollector::class),
             $om->create(PictureFactory::class),
-            $om->create(ImageFactory::class)
+            $om->create(ImageFactory::class),
+            $om->create(Config::class)
         );
 
         $html = '<div><img src="/img/test.png"/></div>';
@@ -50,7 +52,8 @@ class HtmlReplacerTest extends AbstractTestCase
             $om->create(UrlConvertor::class),
             $imageCollector,
             $om->create(PictureFactory::class),
-            $om->create(ImageFactory::class)
+            $om->create(ImageFactory::class),
+            $om->create(Config::class)
         );
 
         $resultingHtml = $htmlReplacer->replace($originalHtml);

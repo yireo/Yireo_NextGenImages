@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Test\Unit\Util;
 
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\PictureFactory;
+use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
@@ -19,7 +20,8 @@ class HtmlReplacerTest extends AbstractTestCase
             $this->getMagentoMock(UrlConvertor::class),
             $this->getMagentoMock(ImageCollector::class),
             $this->getMagentoMock(PictureFactory::class),
-            $this->getMagentoMock(ImageFactory::class)
+            $this->getMagentoMock(ImageFactory::class),
+            $this->getMagentoMock(Config::class)
         );
 
         $html = '<div><img src="/img/test.png"/></div>';
@@ -52,11 +54,15 @@ class HtmlReplacerTest extends AbstractTestCase
 
         $imageFactory = $this->getMagentoMock(ImageFactory::class);
 
+        $config = $this->getMagentoMock(Config::class);
+        $config->method('convertCssBackgrounds')->willReturn(true);
+
         $htmlReplacer = new HtmlReplacer(
             $urlConvertor,
             $imageCollector,
             $pictureFactory,
-            $imageFactory
+            $imageFactory,
+            $config
         );
 
         $result = $htmlReplacer->replace($originalHtml);
