@@ -6,7 +6,6 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\UrlInterface;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +20,6 @@ class UrlConvertorTest extends TestCase
     public function testIsLocal()
     {
         $urlConvertor = new UrlConvertor(
-            $this->getUrlMock('http://localhost/'),
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
             $this->getEscaperMock()
