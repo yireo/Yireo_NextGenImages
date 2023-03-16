@@ -96,7 +96,7 @@ class UrlConvertor
     {
         try {
             if (strpos($filename, $this->getMediaFolder()) !== false) {
-                return str_replace($this->getMediaFolder() . '/', $this->getMediaUrl(false), $filename);
+                return str_replace($this->getMediaFolder() . '/', $this->getMediaUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Media folder does not exist'));
@@ -104,18 +104,18 @@ class UrlConvertor
 
         try {
             if (strpos($filename, $this->getStaticFolder()) !== false) {
-                return str_replace($this->getStaticFolder() . '/', $this->getStaticUrl(false), $filename);
+                return str_replace($this->getStaticFolder() . '/', $this->getStaticUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Static folder does not exist'));
         }
 
         if (strpos($filename, $this->getBaseFolder()) !== false) {
-            return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(false), $filename);
+            return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(), $filename);
         }
 
         if (!preg_match('/^\//', $filename)) {
-            return $this->getBaseUrl(false) . $filename;
+            return $this->getBaseUrl() . $filename;
         }
 
         throw new NotFoundException((string)__('Filename "' . $filename . '" is not matched with an URL'));
@@ -161,34 +161,24 @@ class UrlConvertor
     }
 
     /**
-     * @param bool $normalizeUrl
      * @return string
      */
-    private function getBaseUrl(bool $normalizeUrl = true): string
+    private function getBaseUrl(): string
     {
         $store = $this->storeManager->getStore();
         $baseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
-        if ($normalizeUrl === false) {
-            return $baseUrl;
-        }
-
         return $this->normalizeUrl($baseUrl);
     }
 
     /**
-     * @param bool $normalizeUrl
      * @return string
      * @throws NoSuchEntityException
      */
-    private function getMediaUrl(bool $normalizeUrl = true): string
+    private function getMediaUrl(): string
     {
         /** @var Store $store */
         $store = $this->storeManager->getStore();
         $mediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
-        if ($normalizeUrl === false) {
-            return $mediaUrl;
-        }
-
         return $this->normalizeUrl($mediaUrl);
     }
 
@@ -197,15 +187,11 @@ class UrlConvertor
      * @return string
      * @throws NoSuchEntityException
      */
-    private function getStaticUrl(bool $normalizeUrl = true): string
+    private function getStaticUrl(): string
     {
         /** @var Store $store */
         $store = $this->storeManager->getStore();
         $staticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
-        if ($normalizeUrl === false) {
-            return $staticUrl;
-        }
-
         return $this->normalizeUrl($staticUrl);
     }
 
