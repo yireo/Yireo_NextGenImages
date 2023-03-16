@@ -60,6 +60,7 @@ class HtmlReplacer
      */
     public function replace(string $html): string
     {
+        $html = $this->replaceInlineCssBackgroundImages($html);
         $html = $this->addImageMarkersToHtml($html);
         $html = $this->replaceImageTags($html);
         $html = $this->removeImageMarker($html);
@@ -233,5 +234,42 @@ class HtmlReplacer
         }
         
         return true;
+    }
+
+    /**
+     * @param string $html
+     * @return string
+     */
+    public function replaceInlineCssBackgroundImages(string $html): string
+    {
+        /*
+         * 1. regex always tries to match a whole content between the to brackets { }
+         * 2. property must be `background` oder `background-image`
+         * 3. image url can be given with single, double or none question marks. Also whitespaces between the bracket and the url is allowed
+         * 4. the url has to be a HTTP or a HTTPS url.
+         */
+        $regex = '/{[^}{]*background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)[^}{]}/msi';
+
+        if (preg_match_all($regex, $html, $matches) === false) {
+            return $html;
+        }
+
+        foreach ($matches[2] as $index => $imageUrl) {
+            if (!$this->isAllowedByImageUrl($imageUrl)) {
+                continue;
+            }
+
+            $sourceImages = $this->imageCollector->collect($imageUrl);
+
+            if (empty($sourceImages)) {
+                continue;
+            }
+
+            if (isset($sourceImages[0])) {
+                $html = str_replace($imageUrl, $sourceImages[0]->getUrl(), $html, $count);
+            }
+        }
+
+        return $html;
     }
 }
