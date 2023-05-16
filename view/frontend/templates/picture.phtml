@@ -9,14 +9,14 @@ $class = ($block->getClass()) ? ' class="' . $block->getClass() . '"' : '';
 $lazyLoading = ($block->getLazyLoading()) ? ' loading="lazy" ' : '';
 
 $originalTag = trim($block->getOriginalTag());
-$originalTag = preg_replace('/(\/?)>$/', $lazyLoading . '\1>', $originalTag);
-
-$originalImage = $block->getOriginalImage();
 
 if (strpos($originalTag, 'fetchpriority="high"')) {
     $lazyLoading = '';
 }
 
+$originalTag = preg_replace('/(\/?)>$/', $lazyLoading . '\1>', $originalTag);
+
+$originalImage = $block->getOriginalImage();
 $originalImageType = $block->getOriginalImageType();
 
 $srcsetAttribute = $block->getIsDataSrc() ? 'data-srcset' : 'srcset';
