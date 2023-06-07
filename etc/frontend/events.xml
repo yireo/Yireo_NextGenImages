@@ -3,4 +3,8 @@
     <event name="view_block_abstract_to_html_after">
         <observer name="Yireo_NextGenImages::replaceBlockHtml" instance="Yireo\NextGenImages\Observer\ReplaceBlockHtml" />
     </event>
+
+    <event name="hyva_graphql_render_before_slider_products_query">
+        <observer name="Yireo_NextGenImages::addUrlWebpToGraphqlQuery" instance="Yireo\NextGenImages\Observer\AddUrlWebpToGraphqlQuery"/>
+    </event>
 </config>

@@ -19,7 +19,8 @@ if (strpos($originalTag, 'fetchpriority="high"')) {
 
 $originalImageType = $block->getOriginalImageType();
 
-$srcsetAttribute = $block->getIsDataSrc() ? 'data-srcset' : 'srcset';
+$srcAttribute = $block->getSrcAttribute() ?? 'src';
+$srcSetAttribute = $srcAttribute.'set';
 ?>
 <?php if ($block->getDebug()): ?>
     <!-- <?= /* @noEscape */
@@ -31,7 +32,7 @@ $class ?>>
     <?php foreach ($block->getImages() as $image): ?>
         <source type="<?= /* @noEscape */
         $image->getMimeType() ?>" <?= /* @noEscape */
-        $srcsetAttribute ?>="<?= /* @noEscape */
+        $srcSetAttribute ?>="<?= /* @noEscape */
         $image->getUrl() ?>">
     <?php endforeach; ?>
     <?= /* @noEscape */

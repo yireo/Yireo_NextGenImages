@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Unit\Util;
+namespace Yireo\NextGenImages\Test\Integration\Util;
 
 use Magento\Framework\App\ObjectManager;
 use Yireo\NextGenImages\Block\PictureFactory;
@@ -8,7 +8,7 @@ use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
-use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
+use Yireo\NextGenImages\Test\Integration\AbstractTestCase;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\UrlConvertor;
 
@@ -40,7 +40,7 @@ class HtmlReplacerTest extends AbstractTestCase
     public function testReplaceWithTestImage(string $originalHtml, string $expectedHtml)
     {
         $om = ObjectManager::getInstance();
-    
+
         $imageCollector = $this->getMagentoMock(ImageCollector::class);
         $images = [
             new Image('/tmp/pub/test.png', '/test.png'),
@@ -96,7 +96,15 @@ class HtmlReplacerTest extends AbstractTestCase
             [
                 "<script>var imgElement = '<img src=\"/test.png\" />';</script>",
                 "<script>var imgElement = '<img src=\"/test.png\" />';</script>",
-            ]
+            ],
+            [
+                '<div><img :src="/img/test.png"/></div>',
+                '<div><picture><source type="image/png" :srcset="/test.png"><source type="image/webp" :srcset="/test.webp"><img :src="/img/test.png" loading="lazy" /></picture></div>'
+            ],
+            [
+                '<div><img :data-src="/img/test.png"/></div>',
+                '<div><picture><source type="image/png" :data-srcset="/test.png"><source type="image/webp" :data-srcset="/test.webp"><img :data-src="/img/test.png" loading="lazy" /></picture></div>'
+            ],
         ];
     }
 }

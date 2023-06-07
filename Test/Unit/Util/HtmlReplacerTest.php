@@ -31,11 +31,11 @@ class HtmlReplacerTest extends AbstractTestCase
 
     /**
      * @param string $originalHtml
-     * @param string $finalHtml
+     * @param string $expectedHtml
      * @return void
      * @dataProvider getTestReplaceWithTestImageArguments
      */
-    public function testReplaceWithTestImage(string $originalHtml, string $finalHtml)
+    public function testReplaceWithTestImage(string $originalHtml, string $expectedHtml)
     {
         $urlConvertor = $this->getMagentoMock(UrlConvertor::class);
         $urlConvertor->method('isLocal')->willReturn(true);
@@ -48,7 +48,8 @@ class HtmlReplacerTest extends AbstractTestCase
         $imageCollector->method('collect')->willReturn($images);
 
         $block = $this->getMagentoMock(Picture::class);
-        $block->method('toHtml')->willReturn('<picture><img src="/img/test.png"/></picture>');
+        $block->method('toHtml')->willReturn('<DUMMYPICTURE/>');
+
         $pictureFactory = $this->getMagentoMock(PictureFactory::class);
         $pictureFactory->method('create')->willReturn($block);
 
@@ -65,8 +66,8 @@ class HtmlReplacerTest extends AbstractTestCase
             $config
         );
 
-        $result = $htmlReplacer->replace($originalHtml);
-        $this->assertEquals($finalHtml, $result);
+        $actualHtml = $htmlReplacer->replace($originalHtml);
+        $this->assertEquals($expectedHtml, $actualHtml);
     }
 
     public function getTestReplaceWithTestImageArguments(): array
@@ -74,15 +75,23 @@ class HtmlReplacerTest extends AbstractTestCase
         return [
             [
                 '<div><img src="/img/test.png"/></div>',
-                '<div><picture><img src="/img/test.png"/></picture></div>'
+                '<div><DUMMYPICTURE/></div>'
             ],
             [
                 '<div><img src="/img/test.png"/>FOOBAR</div>',
-                '<div><picture><img src="/img/test.png"/></picture>FOOBAR</div>'
+                '<div><DUMMYPICTURE/>FOOBAR</div>'
+            ],
+            [
+                '<div><img :src="/img/test.png"/>FOOBAR</div>',
+                '<div><DUMMYPICTURE/>FOOBAR</div>'
+            ],
+            [
+                '<div><img :data-src="/img/test.png"/>FOOBAR</div>',
+                '<div><DUMMYPICTURE/>FOOBAR</div>'
             ],
             [
                 '<div><img src="data:image/gif;base64,foobar"/></div>',
-                '<div><img src="data:image/gif;base64,foobar"/></div>'
+                '<div><DUMMYPICTURE/></div>'
             ],
             [
                 '<div style="background-image: url(http://localhost/img/test.png);"></div>',
@@ -90,13 +99,16 @@ class HtmlReplacerTest extends AbstractTestCase
             ],
             [
                 '<div><img src="/img/test.png"/><img src="/img/test.png"/><img src="/img/test.png"/></div>',
-                '<div><picture><img src="/img/test.png"/></picture><picture><img src="/img/test.png"/></picture><picture><img src="/img/test.png"/></picture></div>'
+                '<div><DUMMYPICTURE/><DUMMYPICTURE/><DUMMYPICTURE/></div>'
             ],
             [
                 "<script>var imgElement = '<img src=\"...\" />';</script>",
                 "<script>var imgElement = '<img src=\"...\" />';</script>",
-            ]
+            ],
+            [
+                '<div @click="fullscreen = false; $nextTick(() => calcPageSize())"><img src="/img/test.png"/></div>',
+                '<div @click="fullscreen = false; $nextTick(() => calcPageSize())"><DUMMYPICTURE/></div>'
+            ],
         ];
     }
-
 }

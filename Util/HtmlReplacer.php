@@ -5,7 +5,6 @@ namespace Yireo\NextGenImages\Util;
 
 use DOMDocument;
 use DOMElement;
-use DOMNode;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\ImageCollector;
@@ -131,7 +130,7 @@ class HtmlReplacer
             return '';
         }
 
-        $imageUrl = $image->getAttribute('src') ?: $image->getAttribute('data-src');
+        $imageUrl = $this->getImageUrlFromElement($image);
         if (!$this->isAllowedByImageUrl($imageUrl)) {
             return '';
         }
@@ -146,7 +145,7 @@ class HtmlReplacer
             $this->imageFactory->createFromUrl($imageUrl),
             $images,
             $imageHtml,
-            (bool)$image->getAttribute('data-src')
+            $this->getSrcAttributeFromElement($image)
         );
 
         return $pictureBlock->toHtml();
@@ -230,6 +229,10 @@ class HtmlReplacer
      */
     private function isAllowedByImageUrl(string $imageUrl): bool
     {
+        if (empty($imageUrl)) {
+            return false;
+        }
+
         if (preg_match('/^data:/', $imageUrl)) {
             return false;
         }
@@ -278,5 +281,56 @@ class HtmlReplacer
         }
 
         return $html;
+    }
+
+    /**
+     * @param DOMElement $image
+     * @return string
+     */
+    private function getImageUrlFromElement(DOMElement $image): string
+    {
+        $attributes = $this->getAllowedSrcAttributes();
+        foreach ($attributes as $attribute) {
+            $imageUrl = $image->getAttribute($attribute);
+            if (!empty($imageUrl)) {
+                break;
+            }
+        }
+
+        if (!$this->isAllowedByImageUrl($imageUrl)) {
+            return '';
+        }
+
+        return $imageUrl;
+    }
+
+    /**
+     * @param DOMElement $image
+     * @return string
+     */
+    private function getSrcAttributeFromElement(DOMElement $image): string
+    {
+        $attributes = $this->getAllowedSrcAttributes();
+        foreach ($attributes as $attribute) {
+            $imageUrl = $image->getAttribute($attribute);
+            if (!empty($imageUrl)) {
+                return $attribute;
+            }
+        }
+
+        return 'src';
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getAllowedSrcAttributes(): array
+    {
+        return [
+            'src',
+            'data-src',
+            ':src',
+            ':data-src'
+        ];
     }
 }

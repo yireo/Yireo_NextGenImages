@@ -68,9 +68,9 @@ class Picture extends Template
     private $lazyLoading = true;
 
     /**
-     * @var bool
+     * @var string
      */
-    private $isDataSrc = false;
+    private $srcAttribute = 'src';
 
     /**
      * @return Image[]
@@ -257,9 +257,10 @@ class Picture extends Template
     /**
      * @param bool $debug
      */
-    public function setDebug(bool $debug): void
+    public function setDebug(bool $debug): Picture
     {
         $this->debug = $debug;
+        return $this;
     }
 
     /**
@@ -278,7 +279,6 @@ class Picture extends Template
     public function setClass(string $class): Picture
     {
         $this->class = $class;
-
         return $this;
     }
 
@@ -297,26 +297,24 @@ class Picture extends Template
     public function setLazyLoading(bool $lazyLoading): Picture
     {
         $this->lazyLoading = $lazyLoading;
-
         return $this;
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function getIsDataSrc(): bool
+    public function getSrcAttribute(): string
     {
-        return $this->isDataSrc;
+        return $this->srcAttribute;
     }
 
     /**
-     * @param bool $isDataSrc
+     * @param string $srcAttribute
      * @return $this
      */
-    public function setIsDataSrc(bool $isDataSrc): Picture
+    public function setSrcAttribute(string $srcAttribute): Picture
     {
-        $this->isDataSrc = $isDataSrc;
-
+        $this->srcAttribute = $srcAttribute;
         return $this;
     }
 }

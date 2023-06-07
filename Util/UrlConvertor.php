@@ -149,6 +149,11 @@ class UrlConvertor
             return $this->getBaseFolder() . $url;
         }
 
+        // @todo: https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-yireo-next-gen-images/-/blob/main/src/Plugin/UrlConvertorPlugin.php#L17
+        if (preg_match('/image\.(img|full|thumb|url)/m', $url)) {
+            return $url;
+        }
+
         throw new NotFoundException((string)__('URL "' . $url . '" is not matched with a local file'));
     }
 

@@ -41,7 +41,7 @@ class PictureFactory
         Image $originalImage,
         array $images,
         string $htmlTag,
-        bool $isDataSrc = false
+        string $srcAttribute = 'src'
     ): Picture {
         /** @var Picture $block */
         $block = $this->layout->createBlock(Picture::class);
@@ -56,7 +56,7 @@ class PictureFactory
             ->setHeight($this->getAttributeText($htmlTag, 'height'))
             ->setOriginalTag($htmlTag)
             ->setLazyLoading($this->getAttributeText($htmlTag, 'loading') == "lazy" ?: $this->config->addLazyLoading())
-            ->setIsDataSrc($isDataSrc)
+            ->setSrcAttribute($srcAttribute)
             ->setDebug($this->config->isDebugging());
         return $block;
     }

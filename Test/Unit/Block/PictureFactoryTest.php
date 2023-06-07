@@ -25,7 +25,7 @@ class PictureFactoryTest extends AbstractTestCase
         $image = $this->getMagentoMock(Image::class);
         $image->method('getUrl')->willReturn('/images/test.png');
 
-        $pictureBlock = $pictureFactory->create($image, [], '<div></div>', true);
+        $pictureBlock = $pictureFactory->create($image, [], '<div></div>', 'src');
         $this->assertSame('/images/test.png', $pictureBlock->getUrl());
     }
 }
