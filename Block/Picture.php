@@ -287,6 +287,10 @@ class Picture extends Template
      */
     public function getLazyLoading(): bool
     {
+        if (stristr($this->getOriginalTag(), 'fetchpriority="high"')) {
+            return false;
+        }
+
         return $this->lazyLoading;
     }
 
