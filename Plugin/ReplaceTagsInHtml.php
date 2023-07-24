@@ -17,7 +17,7 @@ class ReplaceTagsInHtml
      * @var ShouldModifyOutput
      */
     private $shouldModifyOutput;
-    
+
     /**
      * ReplaceTags constructor.
      *

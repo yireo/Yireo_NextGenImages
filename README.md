@@ -30,4 +30,7 @@ A module `Foo_Bar` could add a `etc/di.xml` file to add a new convertor (a class
     - AVIF
     - JPEG XL
     - WebP2
-
+- Hyva compatibility
+  - Hyva\YireoNextGenImages\Plugin\UrlConvertorPlugin (`image\.(img|full|thumb|url`)
+  - Hyva\YireoNextGenImages\Plugin\ConverterPlugin (`img|full|thumb|url`)
+  - Hyva\YireoNextGenImages\Plugin\HtmlReplacerPlugin (`:src`): NOT NEEDED?

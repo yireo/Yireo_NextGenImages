@@ -43,9 +43,9 @@ class PictureFactory
         string $htmlTag,
         string $srcAttribute = 'src'
     ): Picture {
-        /** @var Picture $block */
-        $block = $this->layout->createBlock(Picture::class);
-        $block
+        /** @var Picture $picture */
+        $picture = $this->layout->createBlock(Picture::class);
+        $picture
             ->setOriginalImage($originalImage)
             ->setImages($images)
             ->setTitle($this->getAttributeText($htmlTag, 'title'))
@@ -58,7 +58,7 @@ class PictureFactory
             ->setLazyLoading($this->getAttributeText($htmlTag, 'loading') == "lazy" ?: $this->config->addLazyLoading())
             ->setSrcAttribute($srcAttribute)
             ->setDebug($this->config->isDebugging());
-        return $block;
+        return $picture;
     }
 
     /**

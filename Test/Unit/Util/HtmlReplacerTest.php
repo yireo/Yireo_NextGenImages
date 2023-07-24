@@ -91,7 +91,7 @@ class HtmlReplacerTest extends AbstractTestCase
             ],
             [
                 '<div><img src="data:image/gif;base64,foobar"/></div>',
-                '<div><DUMMYPICTURE/></div>'
+                '<div><img src="data:image/gif;base64,foobar"/></div>'
             ],
             [
                 '<div style="background-image: url(http://localhost/img/test.png);"></div>',
@@ -102,12 +102,12 @@ class HtmlReplacerTest extends AbstractTestCase
                 '<div><DUMMYPICTURE/><DUMMYPICTURE/><DUMMYPICTURE/></div>'
             ],
             [
-                "<script>var imgElement = '<img src=\"...\" />';</script>",
-                "<script>var imgElement = '<img src=\"...\" />';</script>",
+                "<div><script>var imgElement = '<img src=\"...\" />';</script></div>",
+                "<div><script>var imgElement = '<img src=\"...\" />';</script></div>",
             ],
             [
-                '<div @click="fullscreen = false; $nextTick(() => calcPageSize())"><img src="/img/test.png"/></div>',
-                '<div @click="fullscreen = false; $nextTick(() => calcPageSize())"><DUMMYPICTURE/></div>'
+                '<div><div @click="fullscreen = false; $nextTick(() => calcPageSize())"><img src="/img/test.png"/></div></div>',
+                '<div><div @click="fullscreen = false; $nextTick(() => calcPageSize())"><DUMMYPICTURE/></div></div>'
             ],
         ];
     }

@@ -18,22 +18,22 @@ class ReplaceBlockHtml implements ObserverInterface
      * @var HtmlReplacer
      */
     private $htmlReplacer;
-    
+
     /**
      * @var ShouldModifyOutput
      */
     private $shouldModifyOutput;
-    
+
     /**
      * @var LayoutInterface
      */
     private $layout;
-    
+
     /**
      * @var Config
      */
     private $config;
-    
+
     /**
      * ReplaceTags constructor.
      *
@@ -53,22 +53,26 @@ class ReplaceBlockHtml implements ObserverInterface
         $this->layout = $layout;
         $this->config = $config;
     }
-    
+
+    /**
+     * @param Observer $observer
+     * @return void
+     */
     public function execute(Observer $observer)
     {
         $block = $observer->getEvent()->getBlock();
         if (!$block->getData('ttl')) {
             return;
         }
-        
+
         if (!$this->config->hasFullPageCacheEnabled($this->layout)) {
             return;
         }
-    
+
         if ($this->shouldModifyOutput->shouldModifyOutput($this->layout) === false) {
             return;
         }
-    
+
         $transport = $observer->getEvent()->getTransport();
         $html = $this->htmlReplacer->replace($transport->getHtml());
         $transport->setHtml($html);
