@@ -14,12 +14,30 @@ use Yireo\NextGenImages\Image\ImageFactory;
 class HtmlReplacer
 {
     private const MARKER_CODE = 'data-marker';
-    private UrlConvertor $urlConvertor;
-    private ImageCollector $imageCollector;
-    private PictureFactory $pictureFactory;
-    private ImageFactory $imageFactory;
-    private Config $config;
-    private ConvertorListing $convertorListing;
+    /**
+     * @var UrlConvertor
+     */
+    private $urlConvertor;
+    /**
+     * @var ImageCollector
+     */
+    private $imageCollector;
+    /**
+     * @var PictureFactory
+     */
+    private $pictureFactory;
+    /**
+     * @var ImageFactory
+     */
+    private $imageFactory;
+    /**
+     * @var Config
+     */
+    private $config;
+    /**
+     * @var ConvertorListing
+     */
+    private $convertorListing;
 
     /**
      * Constructor.
