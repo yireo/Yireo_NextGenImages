@@ -7,37 +7,19 @@ use DOMDocument;
 use DOMElement;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
+use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
 
 class HtmlReplacer
 {
     private const MARKER_CODE = 'data-marker';
-
-    /**
-     * @var UrlConvertor
-     */
-    private $urlConvertor;
-
-    /**
-     * @var ImageCollector
-     */
-    private $imageCollector;
-
-    /**
-     * @var PictureFactory
-     */
-    private $pictureFactory;
-
-    /**
-     * @var ImageFactory
-     */
-    private $imageFactory;
-
-    /**
-     * @var Config
-     */
-    private $config;
+    private UrlConvertor $urlConvertor;
+    private ImageCollector $imageCollector;
+    private PictureFactory $pictureFactory;
+    private ImageFactory $imageFactory;
+    private Config $config;
+    private ConvertorListing $convertorListing;
 
     /**
      * Constructor.
@@ -46,20 +28,22 @@ class HtmlReplacer
      * @param ImageCollector $imageCollector
      * @param PictureFactory $pictureFactory
      * @param ImageFactory $imageFactory
+     * @param Config $config
      */
     public function __construct(
         UrlConvertor   $urlConvertor,
         ImageCollector $imageCollector,
         PictureFactory $pictureFactory,
         ImageFactory   $imageFactory,
-        Config $config
-    )
-    {
+        Config $config,
+        ConvertorListing $convertorListing
+    ) {
         $this->urlConvertor = $urlConvertor;
         $this->imageCollector = $imageCollector;
         $this->pictureFactory = $pictureFactory;
         $this->imageFactory = $imageFactory;
         $this->config = $config;
+        $this->convertorListing = $convertorListing;
     }
 
     /**
@@ -71,8 +55,7 @@ class HtmlReplacer
         $html = $this->replaceInlineCssBackgroundImages($html);
         $html = $this->addImageMarkersToHtml($html);
         $html = $this->replaceImageTags($html);
-        $html = $this->removeImageMarker($html);
-        return $html;
+        return $this->removeImageMarker($html);
     }
 
     /**
@@ -230,6 +213,10 @@ class HtmlReplacer
     private function isAllowedByImageUrl(string $imageUrl): bool
     {
         if (empty($imageUrl)) {
+            return false;
+        }
+
+        if (!preg_match('/\.(jpg|jpeg|png)$/', $imageUrl)) {
             return false;
         }
 
