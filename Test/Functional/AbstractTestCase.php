@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Live;
+namespace Yireo\NextGenImages\Test\Functional;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\ValueFactory as ConfigValueFactory;

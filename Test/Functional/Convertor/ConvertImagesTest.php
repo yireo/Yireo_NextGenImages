@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Live\Convertor;
+namespace Yireo\NextGenImages\Test\Functional\Convertor;
 
 use Yireo\NextGenImages\Convertor\ConvertorInterface;
 use Yireo\NextGenImages\Exception\ConvertorException;
-use Yireo\NextGenImages\Test\Live\AbstractTestCase;
+use Yireo\NextGenImages\Test\Functional\AbstractTestCase;
 
 class ConvertImagesTest extends AbstractTestCase
 {
@@ -12,7 +12,10 @@ class ConvertImagesTest extends AbstractTestCase
     {
         $searchPath = $this->getDirectoryList()->getRoot() . '/dev/tests/nextgenimages';
         $files = glob($searchPath . '/*');
-        $this->assertNotEmpty($files, $searchPath);
+        if (empty($files)) {
+            $this->markTestSkipped('No images found');
+            return;
+        }
 
         $convertors = $this->getConvertors();
         $this->assertNotEmpty($convertors);

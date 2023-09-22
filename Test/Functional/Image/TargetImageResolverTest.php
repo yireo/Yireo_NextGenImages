@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Live\Image;
+namespace Yireo\NextGenImages\Test\Functional\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Yireo\NextGenImages\Image\ImageFactory;
 use Yireo\NextGenImages\Image\TargetImageFactory;
-use Yireo\NextGenImages\Test\Live\AbstractTestCase;
+use Yireo\NextGenImages\Test\Functional\AbstractTestCase;
 
 class TargetImageResolverTest extends AbstractTestCase
 {
@@ -29,7 +29,7 @@ class TargetImageResolverTest extends AbstractTestCase
         $webpImage = $targetImageFactory->create($image, 'webp');
 
         $mediaPath = $this->getDirectoryList()->getPath(DirectoryList::MEDIA);
-        $webpImagePath = $mediaPath . '/nextgenimages/training-erin.webp';
+        $webpImagePath = $mediaPath . '/wysiwyg/training/training-erin.webp';
         $this->assertEquals($webpImagePath, $webpImage->getPath());
     }
 
