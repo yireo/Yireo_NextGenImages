@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Allow to configure skipped layout handles via DI type of `ShouldModifyOutput`
+
 ### Fixed
 - Field in admin is `cache_directory_path` instead of `cache_directory` #154
 
