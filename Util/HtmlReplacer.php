@@ -163,7 +163,7 @@ class HtmlReplacer
             "/<img([^\>]+)>/mi",
             function ($matches) use (&$i) {
                 $i += 1;
-                return str_replace('<img ', '<img ' . self::MARKER_CODE . '="' . $i . '" ', $matches[0]);
+                return str_replace('<img', '<img ' . self::MARKER_CODE . '="' . $i . '"', $matches[0]);
             },
             $html);
 
