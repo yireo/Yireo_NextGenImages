@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix issue where image is not replaced with `img` tag opening plus newline
 - Field in admin is `cache_directory_path` instead of `cache_directory` #154
+- Quick hack for supporting `/pub/` in URLs
 
 ## [0.4.1] - 15 August 2023
 ### Fixed

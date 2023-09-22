@@ -121,6 +121,7 @@ class UrlConvertor
     {
         $url = (string)$this->escaper->escapeHtml($url);
         $url = preg_replace('/\/static\/version(\d+\/)/', '/static/', $url);
+        $url = str_replace('/pub/', '/', $url);
         $url = $this->normalizeUrl($url);
 
         if ($this->isLocal($url) === false) {
