@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Add warning about Hyva_YireoNextGenImages because docs are not read
+
 ## [0.4.1] - 15 August 2023
 ### Fixed
 - Make sure only PNG and JPG are being picked up
