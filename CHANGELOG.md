@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Add warning about Hyva_YireoNextGenImages because docs are not read
 
+## [0.5.0] - 22 September 2023
+### Added
+- Dispatch all-purpose Hyva `gallery-init` event to modify component data
+- Allow to configure skipped layout handles via DI type of `ShouldModifyOutput`
+
+### Fixed
+- Fix issue where image is not replaced with `img` tag opening plus newline
+- Field in admin is `cache_directory_path` instead of `cache_directory` #154
+- Quick hack for supporting `/pub/` in URLs
+
 ## [0.4.1] - 15 August 2023
 ### Fixed
 - Make sure only PNG and JPG are being picked up

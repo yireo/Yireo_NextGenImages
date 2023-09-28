@@ -53,9 +53,9 @@
                         <field id="*/*/enabled">1</field>
                     </depends>
                 </field>
-                <field id="cache_directory_path" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Media cache directory path</label>
-                    <comment>Path of media cache directory</comment>
+                <field id="cache_directory" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Media cache directory</label>
+                    <comment>Where to save caches</comment>
                     <depends>
                         <field id="*/*/enabled">1</field>
                         <field id="*/*/target_directory">cache</field>

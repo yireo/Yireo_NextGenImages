@@ -1,0 +1,9 @@
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('initGallery', () => {
+            const galleryInitData = initGallery();
+            document.dispatchEvent(new CustomEvent('gallery-init', {detail: galleryInitData}));
+            return galleryInitData;
+        });
+    });
+</script>

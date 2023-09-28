@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Yireo\NextGenImages\Test\Live\Image;
+namespace Yireo\NextGenImages\Test\Functional\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Yireo\NextGenImages\Image\ImageFactory;
-use Yireo\NextGenImages\Test\Live\AbstractTestCase;
+use Yireo\NextGenImages\Test\Functional\AbstractTestCase;
 
 class ImageTest extends AbstractTestCase
 {

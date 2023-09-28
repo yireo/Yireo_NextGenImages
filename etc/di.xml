@@ -33,4 +33,13 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Yireo\NextGenImages\Util\ShouldModifyOutput">
+        <arguments>
+            <argument name="skippedHandles" xsi:type="array">
+                <item name="webp_skip" xsi:type="string">webp_skip</item>
+                <item name="nextgenimages_skip" xsi:type="string">nextgenimages_skip</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
