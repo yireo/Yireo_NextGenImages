@@ -4,3 +4,10 @@ declare(strict_types=1);
 /** @var $block \Yireo\NextGenImages\Block\Adminhtml\System\Config\ModuleVersion */
 ?>
 <?= /* @noEscape */ $block->getModuleVersion() ?>
+
+<?php if ($block->hasHyvaYireoNextGenImages()): ?>
+    <div class="message message-warning">
+        <?= /* @noEscape */
+        __('Please Hyva_YireoNextGenImages as soon as possible') ?>
+    </div>
+<?php endif; ?>

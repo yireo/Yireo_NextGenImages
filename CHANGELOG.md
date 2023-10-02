@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Add warning about Hyva_YireoNextGenImages because docs are not read
+
 ## [0.5.0] - 22 September 2023
 ### Added
 - Dispatch all-purpose Hyva `gallery-init` event to modify component data

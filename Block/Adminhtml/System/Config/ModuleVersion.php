@@ -150,4 +150,14 @@ class ModuleVersion extends Field
 
         return '';
     }
+    
+    public function hasHyvaYireoNextGenImages(): bool
+    {
+        $module = $this->moduleList->getOne('Hyva_YireoNextGenImages');
+        if (!empty($module)) {
+            return true;
+        }
+        
+        return false;
+    }
 }
