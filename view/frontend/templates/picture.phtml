@@ -12,7 +12,6 @@ $originalTag = trim($block->getOriginalTag());
 $originalTag = preg_replace('/(\/?)>$/', $lazyLoading . '\1>', $originalTag);
 
 $originalImage = $block->getOriginalImage();
-
 $originalImageType = $block->getOriginalImageType();
 
 $srcAttribute = $block->getSrcAttribute() ?? 'src';
@@ -25,11 +24,13 @@ $srcSetAttribute = $srcAttribute.'set';
 
 <picture<?= /* @noEscape */
 $class ?>>
+    <!-- <?= $block->getOriginalAttributesAsString() ?> -->
     <?php foreach ($block->getImages() as $image): ?>
         <source type="<?= /* @noEscape */
         $image->getMimeType() ?>" <?= /* @noEscape */
         $srcSetAttribute ?>="<?= /* @noEscape */
-        $image->getUrl() ?>">
+        $image->getUrl() ?>" <?= /* @noEscape */
+        $block->getOriginalAttributesAsString() ?>>
     <?php endforeach; ?>
     <?= /* @noEscape */
     $originalTag ?>

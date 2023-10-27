@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Util;
 
-use DOMDocument;
 use DOMElement;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
@@ -14,30 +13,41 @@ use Yireo\NextGenImages\Image\ImageFactory;
 class HtmlReplacer
 {
     private const MARKER_CODE = 'data-marker';
+
     /**
      * @var UrlConvertor
      */
     private $urlConvertor;
+
     /**
      * @var ImageCollector
      */
     private $imageCollector;
+
     /**
      * @var PictureFactory
      */
     private $pictureFactory;
+
     /**
      * @var ImageFactory
      */
     private $imageFactory;
+
     /**
      * @var Config
      */
     private $config;
+
     /**
      * @var ConvertorListing
      */
     private $convertorListing;
+
+    /**
+     * @var DomUtils
+     */
+    private $domUtils;
 
     /**
      * Constructor.
@@ -47,6 +57,8 @@ class HtmlReplacer
      * @param PictureFactory $pictureFactory
      * @param ImageFactory $imageFactory
      * @param Config $config
+     * @param ConvertorListing $convertorListing
+     * @param DomUtils $domUtils
      */
     public function __construct(
         UrlConvertor   $urlConvertor,
@@ -54,7 +66,8 @@ class HtmlReplacer
         PictureFactory $pictureFactory,
         ImageFactory   $imageFactory,
         Config $config,
-        ConvertorListing $convertorListing
+        ConvertorListing $convertorListing,
+        DomUtils $domUtils
     ) {
         $this->urlConvertor = $urlConvertor;
         $this->imageCollector = $imageCollector;
@@ -62,6 +75,7 @@ class HtmlReplacer
         $this->imageFactory = $imageFactory;
         $this->config = $config;
         $this->convertorListing = $convertorListing;
+        $this->domUtils = $domUtils;
     }
 
     /**
@@ -82,7 +96,7 @@ class HtmlReplacer
      */
     private function replaceImageTags(string $html): string
     {
-        $document = $this->htmlToDOMDocument($html);
+        $document = $this->domUtils->htmlToDOMDocument($html);
         $images = $document->getElementsByTagName('img');
         foreach ($images as $image) {
             $imageHtml = $this->getImageHtmlFromImage($image, $html);
@@ -177,36 +191,6 @@ class HtmlReplacer
     private function removeImageMarker(string $html): string
     {
         return preg_replace('/ ' . self::MARKER_CODE . '="([^\"]+)"/', '', $html);
-    }
-
-    /**
-     * @param string $html
-     * @return DOMDocument
-     */
-    private function htmlToDOMDocument(string $html): DOMDocument
-    {
-        $document = new DOMDocument();
-        if (empty($html)) {
-            return $document;
-        }
-        libxml_use_internal_errors(true);
-
-        $convmap = [0x80, 0x10FFFF, 0, 0x1FFFFF];
-        $encodedHtml = mb_encode_numericentity(
-            $html,
-            $convmap,
-            'UTF-8'
-        );
-
-        $document->loadHTML(
-            $encodedHtml,
-            LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
-        );
-
-        libxml_clear_errors();
-        libxml_use_internal_errors(false);
-        $document->encoding = 'utf-8';
-        return $document;
     }
 
     /**

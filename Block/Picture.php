@@ -2,6 +2,9 @@
 
 namespace Yireo\NextGenImages\Block;
 
+use DOMDocument;
+use DOMNode;
+use Exception;
 use Magento\Framework\View\Element\Template;
 use Yireo\NextGenImages\Image\Image;
 
@@ -87,6 +90,7 @@ class Picture extends Template
     public function setImages(array $images): Picture
     {
         $this->images = $images;
+
         return $this;
     }
 
@@ -97,6 +101,7 @@ class Picture extends Template
     public function addImage(Image $image): Picture
     {
         $this->images[] = $image;
+
         return $this;
     }
 
@@ -116,6 +121,7 @@ class Picture extends Template
     public function setOriginalImage(Image $originalImage): Picture
     {
         $this->originalImage = $originalImage;
+
         return $this;
     }
 
@@ -135,6 +141,7 @@ class Picture extends Template
     public function setTitle(string $title): Picture
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -154,6 +161,7 @@ class Picture extends Template
     public function setAltText(string $altText): Picture
     {
         $this->altText = $altText;
+
         return $this;
     }
 
@@ -172,6 +180,7 @@ class Picture extends Template
     public function setWidth(string $width): Picture
     {
         $this->width = $width;
+
         return $this;
     }
 
@@ -190,6 +199,7 @@ class Picture extends Template
     public function setHeight(string $height): Picture
     {
         $this->height = $height;
+
         return $this;
     }
 
@@ -208,6 +218,7 @@ class Picture extends Template
     public function setStyle(string $style): Picture
     {
         $this->style = $style;
+
         return $this;
     }
 
@@ -227,7 +238,50 @@ class Picture extends Template
     public function setOriginalTag(string $originalTag): Picture
     {
         $this->originalTag = $originalTag;
+
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalAttributesAsString(): string
+    {
+        return implode(' ', $this->getOriginalAttributes());
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOriginalAttributes(): array
+    {
+        $attributes = [];
+        $originalNode = $this->getDomElementFromHtmlTag($this->getOriginalTag());
+        if (!$originalNode instanceof DOMNode) {
+            return $attributes;
+        }
+
+        foreach ($originalNode->attributes as $attribute) {
+            $name = $attribute->nodeName;
+            if (in_array($name, ['img', 'src', ':src', 'srcset', ':srcset', 'class'])) {
+                continue;
+            }
+
+            $value = $attribute->nodeValue;
+            if (empty($value)) {
+                continue;
+            }
+
+            $attributes[] = $name.'="'.$value.'"';
+        }
+
+        if (preg_match_all('/@([^=]+)=\"([^\"]+)\"/', $this->getOriginalTag(), $matches)) {
+            foreach ($matches[0] as $match) {
+                $attributes[] = $match;
+            }
+        }
+
+        return $attributes;
     }
 
     /**
@@ -260,6 +314,7 @@ class Picture extends Template
     public function setDebug(bool $debug): Picture
     {
         $this->debug = $debug;
+
         return $this;
     }
 
@@ -279,6 +334,7 @@ class Picture extends Template
     public function setClass(string $class): Picture
     {
         $this->class = $class;
+
         return $this;
     }
 
@@ -301,6 +357,7 @@ class Picture extends Template
     public function setLazyLoading(bool $lazyLoading): Picture
     {
         $this->lazyLoading = $lazyLoading;
+
         return $this;
     }
 
@@ -319,6 +376,35 @@ class Picture extends Template
     public function setSrcAttribute(string $srcAttribute): Picture
     {
         $this->srcAttribute = $srcAttribute;
+
         return $this;
+    }
+
+    /**
+     * @param string $html
+     * @return DomNode|null
+     * @todo Migrate this to DomUtils
+     */
+    private function getDomElementFromHtmlTag(string $html): ?DomNode
+    {
+        $document = new DOMDocument();
+        libxml_use_internal_errors(true);
+
+        $convmap = [0x80, 0x10FFFF, 0, 0x1FFFFF];
+        $encodedHtml = mb_encode_numericentity(
+            $html,
+            $convmap,
+            'UTF-8'
+        );
+
+        $document->loadHTML(
+            $encodedHtml,
+            LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
+        );
+
+        libxml_clear_errors();
+        libxml_use_internal_errors(false);
+
+        return $document->getElementsByTagName('*')->item(0);
     }
 }
