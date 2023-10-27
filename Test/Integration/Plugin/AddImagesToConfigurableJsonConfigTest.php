@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Test\Integration\Plugin;
 
 use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable;
+use Yireo\IntegrationTestHelper\Test\Integration\Traits\AssertTableHasRecordCount;
 use Yireo\NextGenImages\Plugin\AddImagesToConfigurableJsonConfig;
 use Yireo\IntegrationTestHelper\Test\Integration\AbstractTestCase;
 
