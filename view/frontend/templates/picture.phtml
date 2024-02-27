@@ -3,13 +3,13 @@
 use Yireo\NextGenImages\Block\Picture;
 
 /** @var $block Picture */
-$width = ($block->getWidth()) ? ' width="' . $block->getWidth() . '"' : '';
-$height = ($block->getHeight()) ? ' height="' . $block->getHeight() . '"' : '';
-$class = ($block->getClass()) ? ' class="' . $block->getClass() . '"' : '';
+$width = ($block->getWidth()) ? ' width="'.$block->getWidth().'"' : '';
+$height = ($block->getHeight()) ? ' height="'.$block->getHeight().'"' : '';
+$class = ($block->getClass()) ? ' class="'.$block->getClass().'"' : '';
 $lazyLoading = ($block->getLazyLoading()) ? ' loading="lazy" ' : '';
 
 $originalTag = trim($block->getOriginalTag());
-$originalTag = preg_replace('/(\/?)>$/', $lazyLoading . '\1>', $originalTag);
+$originalTag = preg_replace('/(\/?)>$/', $lazyLoading.'\1>', $originalTag);
 
 $originalImage = $block->getOriginalImage();
 $originalImageType = $block->getOriginalImageType();
@@ -24,13 +24,14 @@ $srcSetAttribute = $srcAttribute.'set';
 
 <picture<?= /* @noEscape */
 $class ?>>
-    <!-- <?= $block->getOriginalAttributesAsString() ?> -->
+    <?php if ($block->getDebug()): ?>
+        <!-- <?= $block->getOriginalAttributesAsString() ?> -->
+    <?php endif; ?>
     <?php foreach ($block->getImages() as $image): ?>
-        <source type="<?= /* @noEscape */
-        $image->getMimeType() ?>" <?= /* @noEscape */
-        $srcSetAttribute ?>="<?= /* @noEscape */
-        $image->getUrl() ?>" <?= /* @noEscape */
-        $block->getOriginalAttributesAsString() ?>>
+        <source type="<?= /* @noEscape */ $image->getMimeType() ?>"
+        <?= /* @noEscape */ $srcSetAttribute ?>="<?= /* @noEscape */ $image->getUrl() ?>"
+        <?= /* @noEscape */ $block->getOriginalAttributesAsString() ?>
+        >
     <?php endforeach; ?>
     <?= /* @noEscape */
     $originalTag ?>
