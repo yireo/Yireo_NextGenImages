@@ -87,7 +87,10 @@ class TargetImageFactory
     private function getTargetPathFromImage(Image $image): string
     {
         if ($this->config->getTargetDirectory() === TargetDirectory::CACHE) {
-            return $this->config->getCacheDirectoryPath();
+            $relativeImagePath = str_replace($this->directoryList->getRoot(), '', dirname($image->getPath()));
+            $relativeImagePath = str_replace('/pub', '', $relativeImagePath);
+            $relativeImagePath = preg_replace('#^/#', '', $relativeImagePath); // remove leading slash
+            return $this->config->getCacheDirectoryPath() . $relativeImagePath;
         }
 
         // phpcs:ignore
