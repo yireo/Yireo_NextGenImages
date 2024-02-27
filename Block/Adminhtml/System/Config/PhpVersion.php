@@ -7,18 +7,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class PhpVersion extends Field
 {
-    /**
-     * Override to set a different PHTML template
-     *
-     * @return $this
-     */
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-        $this->setTemplate('config/php_version.phtml');
-
-        return $this;
-    }
+    protected $_template = 'config/php_version.phtml';
 
     /**
      * Override to render the template instead of the regular output

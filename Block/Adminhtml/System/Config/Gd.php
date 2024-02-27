@@ -7,18 +7,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Gd extends Field
 {
-    /**
-     * Override to set a different PHTML template
-     *
-     * @return $this
-     */
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-            $this->setTemplate('config/gd.phtml');
-
-        return $this;
-    }
+    protected $_template = 'config/gd.phtml';
 
     /**
      * Override to render the template instead of the regular output

@@ -15,6 +15,8 @@ use Magento\Backend\Block\Template\Context;
 
 class ModuleVersion extends Field
 {
+    protected $_template = 'config/module_version.phtml';
+
     /**
      * @var ComponentRegistrar
      */
@@ -72,19 +74,6 @@ class ModuleVersion extends Field
         $this->serializer = $serializer;
         $this->directoryReadFactory = $directoryReadFactory;
         $this->moduleName = $moduleName;
-    }
-
-    /**
-     * Override to set a different PHTML template
-     *
-     * @return $this
-     */
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-        $this->setTemplate('config/module_version.phtml');
-
-        return $this;
     }
 
     /**
@@ -150,14 +139,14 @@ class ModuleVersion extends Field
 
         return '';
     }
-    
+
     public function hasHyvaYireoNextGenImages(): bool
     {
         $module = $this->moduleList->getOne('Hyva_YireoNextGenImages');
         if (!empty($module)) {
             return true;
         }
-        
+
         return false;
     }
 }
