@@ -4,7 +4,6 @@ namespace Yireo\NextGenImages\Block;
 
 use DOMDocument;
 use DOMNode;
-use Exception;
 use Magento\Framework\View\Element\Template;
 use Yireo\NextGenImages\Image\Image;
 
@@ -263,7 +262,7 @@ class Picture extends Template
 
         foreach ($originalNode->attributes as $attribute) {
             $name = $attribute->nodeName;
-            if (in_array($name, ['img', 'src', ':src', 'srcset', ':srcset', 'class'])) {
+            if (in_array($name, ['img', 'data-src', 'src', ':data-src', ':src', 'data-srcset', 'srcset', ':srcset', ':data-srcset', 'class'])) {
                 continue;
             }
 
@@ -381,6 +380,14 @@ class Picture extends Template
     }
 
     /**
+     * @return string
+     */
+    public function toHtml()
+    {
+        return $this->stripWhitespaces((string)parent::toHtml());
+    }
+
+    /**
      * @param string $html
      * @return DomNode|null
      * @todo Migrate this to DomUtils
@@ -406,5 +413,15 @@ class Picture extends Template
         libxml_use_internal_errors(false);
 
         return $document->getElementsByTagName('*')->item(0);
+    }
+
+    private function stripWhitespaces(string $html): string
+    {
+        $html = preg_replace('/(\s+)</m', '<', $html);
+        $html = preg_replace('/(\s+)>/m', '>', $html);
+        $html = preg_replace('/(\s+)/m', ' ', $html);
+        $html = str_replace("\n", "", $html);
+        $html = trim($html);
+        return $html;
     }
 }
