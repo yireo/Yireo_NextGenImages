@@ -38,6 +38,7 @@ class TargetImageFactoryTest extends AbstractTestCase
 
         $directoryList = $this->getMagentoMock(DirectoryList::class);
         $directoryList->method('getPath')->with($this->equalTo(DirectoryList::MEDIA))->willReturn('/tmp/pub/media');
+        $directoryList->method('getRoot')->willReturn('/tmp');
 
         $imageFactory = $this->getMagentoMock(ImageFactory::class);
         $imageFactory->method('createFromPath')->willReturn(new Image('/tmp/pub/example.webp', '/example.webp'));
