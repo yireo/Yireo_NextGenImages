@@ -6,8 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 27 February 2024
 ### Fixed
 - Add warning about Hyva_YireoNextGenImages because docs are not read
+- Check for image extension in entire url instead of only at the end #72 @jesperingels
+- Remove data-src and data-srcset from original attributes in sources
+- Remove all whitespaces in image output
+- Fix broken integration tests due to modified constructor
+- Add relative-path of source image to target-path if target is cache-folder #62 @rommelfreddy
 
 ## [0.5.0] - 22 September 2023
 ### Added
