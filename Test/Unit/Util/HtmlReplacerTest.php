@@ -24,7 +24,6 @@ class HtmlReplacerTest extends AbstractTestCase
             $this->getMagentoMock(PictureFactory::class),
             $this->getMagentoMock(ImageFactory::class),
             $this->getMagentoMock(Config::class),
-            $this->getMagentoMock(ConvertorListing::class),
             $this->getMagentoMock(DomUtils::class)
         );
 
@@ -68,7 +67,6 @@ class HtmlReplacerTest extends AbstractTestCase
             $pictureFactory,
             $imageFactory,
             $config,
-            $this->getMagentoMock(ConvertorListing::class),
             $this->getMagentoMock(DomUtils::class)
         );
 

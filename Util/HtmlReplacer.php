@@ -40,11 +40,6 @@ class HtmlReplacer
     private $config;
 
     /**
-     * @var ConvertorListing
-     */
-    private $convertorListing;
-
-    /**
      * @var DomUtils
      */
     private $domUtils;
@@ -57,7 +52,6 @@ class HtmlReplacer
      * @param PictureFactory $pictureFactory
      * @param ImageFactory $imageFactory
      * @param Config $config
-     * @param ConvertorListing $convertorListing
      * @param DomUtils $domUtils
      */
     public function __construct(
@@ -66,7 +60,6 @@ class HtmlReplacer
         PictureFactory $pictureFactory,
         ImageFactory   $imageFactory,
         Config $config,
-        ConvertorListing $convertorListing,
         DomUtils $domUtils
     ) {
         $this->urlConvertor = $urlConvertor;
@@ -74,7 +67,6 @@ class HtmlReplacer
         $this->pictureFactory = $pictureFactory;
         $this->imageFactory = $imageFactory;
         $this->config = $config;
-        $this->convertorListing = $convertorListing;
         $this->domUtils = $domUtils;
     }
 
@@ -204,7 +196,6 @@ class HtmlReplacer
             return false;
         }
 
-        /** @phpstan-ignore-next-line */
         return !in_array($parentNode->tagName, ['picture', 'source']);
     }
 
@@ -279,6 +270,7 @@ class HtmlReplacer
     private function getImageUrlFromElement(DOMElement $image): string
     {
         $attributes = $this->getAllowedSrcAttributes();
+        $imageUrl = '';
         foreach ($attributes as $attribute) {
             $imageUrl = $image->getAttribute($attribute);
             if (!empty($imageUrl)) {

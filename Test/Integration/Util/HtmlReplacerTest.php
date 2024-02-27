@@ -25,7 +25,6 @@ class HtmlReplacerTest extends AbstractTestCase
             $om->create(PictureFactory::class),
             $om->create(ImageFactory::class),
             $om->create(Config::class),
-            $om->create(ConvertorListing::class),
             $om->create(DomUtils::class)
         );
 
@@ -58,7 +57,6 @@ class HtmlReplacerTest extends AbstractTestCase
             $om->create(PictureFactory::class),
             $om->create(ImageFactory::class),
             $om->create(Config::class),
-            $om->create(ConvertorListing::class),
             $om->create(DomUtils::class)
         );
 
