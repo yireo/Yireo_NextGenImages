@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 4 April 2024
+### Fixed
+- Compatibility with Magento >=2.4.7-beta3
+
 ## [0.5.1] - 27 February 2024
 ### Fixed
-- Add warning about Hyva_YireoNextGenImages because docs are not read
+- Add warning about `Hyva_YireoNextGenImages` because docs are not read
 - Check for image extension in entire url instead of only at the end #72 @jesperingels
 - Remove data-src and data-srcset from original attributes in sources
 - Remove all whitespaces in image output
