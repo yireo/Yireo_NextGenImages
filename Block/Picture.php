@@ -271,7 +271,12 @@ class Picture extends Template
                 continue;
             }
 
-            $attributes[] = $name.'="'.$value.'"';
+            if (strstr('"', $value)) {
+                $attributes[] = $name.'=\''.$value.'\'';
+            } else {
+                $attributes[] = $name.'="'.$value.'"';
+            }
+
         }
 
         if (preg_match_all('/@([^=]+)=\"([^\"]+)\"/', $this->getOriginalTag(), $matches)) {
