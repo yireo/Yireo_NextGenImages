@@ -5,6 +5,7 @@ namespace Yireo\NextGenImages\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\PageCache\Model\DepersonalizeChecker;
@@ -14,25 +15,11 @@ use Yireo\NextGenImages\Config\Source\TargetDirectory;
 
 class Config implements ArgumentInterface
 {
-    /**
-     * @var ScopeConfigInterface
-     */
     private $scopeConfig;
-
-    /**
-     * @var DepersonalizeChecker
-     */
     private $depersonalizeChecker;
-
-    /**
-     * @var StoreManagerInterface
-     */
     private $storeManager;
-
-    /**
-     * @var DirectoryList
-     */
     private $directoryList;
+    private $filesystemDriver;
 
     /**
      * Config constructor.
@@ -43,16 +30,17 @@ class Config implements ArgumentInterface
      * @param DirectoryList $directoryList
      */
     public function __construct(
-        ScopeConfigInterface  $scopeConfig,
-        DepersonalizeChecker  $depersonalizeChecker,
+        ScopeConfigInterface $scopeConfig,
+        DepersonalizeChecker $depersonalizeChecker,
         StoreManagerInterface $storeManager,
-        DirectoryList         $directoryList
-    )
-    {
+        DirectoryList $directoryList,
+        DriverInterface $filesystemDriver
+    ) {
         $this->scopeConfig = $scopeConfig;
         $this->depersonalizeChecker = $depersonalizeChecker;
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
+        $this->filesystemDriver = $filesystemDriver;
     }
 
     /**
@@ -105,18 +93,18 @@ class Config implements ArgumentInterface
      */
     public function getCacheDirectoryPath(): string
     {
-        $pubPath = $this->directoryList->getRoot() . '/pub/';
+        $pubPath = $this->directoryList->getRoot().'/pub/';
 
         $value = trim($this->getValue('yireo_nextgenimages/settings/cache_directory'));
         if (empty($value)) {
-            return $pubPath . '/media/nextgenimages/';
+            return $pubPath.'/media/nextgenimages/';
         }
 
-        if (!is_dir($value)) {
-            return $pubPath . '/media/nextgenimages/';
+        if (false === $this->filesystemDriver->isDirectory($value)) {
+            return $pubPath.'/media/nextgenimages/';
         }
 
-        return $pubPath . $value;
+        return $pubPath.$value;
     }
 
     /**

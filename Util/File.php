@@ -50,13 +50,12 @@ class File
      * @throws FileSystemException
      */
     public function __construct(
-        Filesystem         $filesystem,
-        Debugger           $debugger,
-        UrlConvertor       $urlConvertor,
+        Filesystem $filesystem,
+        Debugger $debugger,
+        UrlConvertor $urlConvertor,
         TargetImageFactory $targetImageFactory,
-        ImageFactory       $imageFactory
-    )
-    {
+        ImageFactory $imageFactory
+    ) {
         $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
         $this->debugger = $debugger;
         $this->urlConvertor = $urlConvertor;
@@ -136,6 +135,7 @@ class File
     public function convertSuffix(string $sourceFilename, string $destinationSuffix): string
     {
         $image = $this->imageFactory->createFromPath($sourceFilename);
+
         return $this->targetImageFactory->create($image, $destinationSuffix)->getPath();
     }
 
@@ -159,6 +159,7 @@ class File
             return 0;
         } catch (FileSystemException $e) {
             $this->debugger->debug($e->getMessage(), ['filePath' => $filePath]);
+
             return 0;
         }
     }

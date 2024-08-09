@@ -4,25 +4,16 @@ namespace Yireo\NextGenImages\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Config\Source\TargetDirectory;
 
 class TargetImageFactory
 {
-    /**
-     * @var DirectoryList
-     */
     private $directoryList;
-
-    /**
-     * @var Config
-     */
     private $config;
-
-    /**
-     * @var ImageFactory
-     */
     private $imageFactory;
+    private $filesystemDriver;
 
     /**
      * @param DirectoryList $directoryList
@@ -31,13 +22,14 @@ class TargetImageFactory
      */
     public function __construct(
         DirectoryList $directoryList,
-        Config        $config,
-        ImageFactory  $imageFactory
-    )
-    {
+        Config $config,
+        ImageFactory $imageFactory,
+        DriverInterface $filesystemDriver
+    ) {
         $this->directoryList = $directoryList;
         $this->config = $config;
         $this->imageFactory = $imageFactory;
+        $this->filesystemDriver = $filesystemDriver;
     }
 
     /**
@@ -50,7 +42,8 @@ class TargetImageFactory
     {
         $folder = $this->getTargetPathFromImage($image);
         $filename = $this->getTargetFilename($image, $suffix);
-        return $this->imageFactory->createFromPath($folder . '/' . $filename);
+
+        return $this->imageFactory->createFromPath($folder.'/'.$filename);
     }
 
     /**
@@ -63,7 +56,8 @@ class TargetImageFactory
         // phpcs:ignore
         $filename = basename($image->getPath());
         $path = preg_replace('/\.(jpg|jpeg|png)$/', '', $filename);
-        return $path . $this->getTargetHash($image) . '.' . $suffix;
+
+        return $path.$this->getTargetHash($image).'.'.$suffix;
     }
 
     /**
@@ -76,7 +70,7 @@ class TargetImageFactory
             return '';
         }
 
-        return '-' . hash('crc32', $image->getPath());
+        return '-'.hash('crc32', $image->getPath());
     }
 
     /**
@@ -87,10 +81,12 @@ class TargetImageFactory
     private function getTargetPathFromImage(Image $image): string
     {
         if ($this->config->getTargetDirectory() === TargetDirectory::CACHE) {
-            $relativeImagePath = str_replace($this->directoryList->getRoot(), '', dirname($image->getPath()));
+            $pathRoot = $this->filesystemDriver->getParentDirectory($image->getPath());
+            $relativeImagePath = str_replace($this->directoryList->getRoot(), '', $pathRoot);
             $relativeImagePath = str_replace('/pub', '', $relativeImagePath);
             $relativeImagePath = preg_replace('#^/#', '', $relativeImagePath); // remove leading slash
-            return $this->config->getCacheDirectoryPath() . $relativeImagePath;
+
+            return $this->config->getCacheDirectoryPath().$relativeImagePath;
         }
 
         // phpcs:ignore

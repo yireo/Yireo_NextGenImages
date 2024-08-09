@@ -6,7 +6,6 @@ namespace Yireo\NextGenImages\Util;
 use DOMElement;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
-use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
 
@@ -55,10 +54,10 @@ class HtmlReplacer
      * @param DomUtils $domUtils
      */
     public function __construct(
-        UrlConvertor   $urlConvertor,
+        UrlConvertor $urlConvertor,
         ImageCollector $imageCollector,
         PictureFactory $pictureFactory,
-        ImageFactory   $imageFactory,
+        ImageFactory $imageFactory,
         Config $config,
         DomUtils $domUtils
     ) {
@@ -79,6 +78,7 @@ class HtmlReplacer
         $html = $this->replaceInlineCssBackgroundImages($html);
         $html = $this->addImageMarkersToHtml($html);
         $html = $this->replaceImageTags($html);
+
         return $this->removeImageMarker($html);
     }
 
@@ -113,7 +113,7 @@ class HtmlReplacer
             return '';
         }
 
-        $regex = '/<img ' . self::MARKER_CODE . '="' . $imageMarker . '"([^\>]+)>/';
+        $regex = '/<img '.self::MARKER_CODE.'="'.$imageMarker.'"([^\>]+)>/';
         if (!preg_match($regex, $html, $imageHtmlMatch)) {
             return '';
         }
@@ -168,10 +168,12 @@ class HtmlReplacer
         $html = preg_replace_callback(
             "/<img([^\>]+)>/mi",
             function ($matches) use (&$i) {
-                $i += 1;
-                return str_replace('<img', '<img ' . self::MARKER_CODE . '="' . $i . '"', $matches[0]);
+                $i++;
+
+                return str_replace('<img', '<img '.self::MARKER_CODE.'="'.$i.'"', $matches[0]);
             },
-            $html);
+            $html
+        );
 
         return $html;
     }
@@ -182,7 +184,7 @@ class HtmlReplacer
      */
     private function removeImageMarker(string $html): string
     {
-        return preg_replace('/ ' . self::MARKER_CODE . '="([^\"]+)"/', '', $html);
+        return preg_replace('/ '.self::MARKER_CODE.'="([^\"]+)"/', '', $html);
     }
 
     /**
@@ -238,7 +240,6 @@ class HtmlReplacer
             return $html;
         }
 
-        //$regex = '/{[^}{]*background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)[^}{]}/msi';
         $regex = '/background(-image)?:\s*url\(\s*[\'"]?(https?:\/\/[^")]+\.(png|jpg|jpeg))[\'"]?\s*\)/msi';
         if (preg_match_all($regex, $html, $matches) === false) {
             return $html;
@@ -311,7 +312,7 @@ class HtmlReplacer
             'src',
             'data-src',
             ':src',
-            ':data-src'
+            ':data-src',
         ];
     }
 }

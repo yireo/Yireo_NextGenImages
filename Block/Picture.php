@@ -276,9 +276,22 @@ class Picture extends Template
             return $attributes;
         }
 
+        $skipAttributes = [
+            'img',
+            'data-src',
+            'src',
+            ':data-src',
+            ':src',
+            'data-srcset',
+            'srcset',
+            ':srcset',
+            ':data-srcset',
+            'class',
+        ];
+
         foreach ($originalNode->attributes as $attribute) {
             $name = $attribute->nodeName;
-            if (in_array($name, ['img', 'data-src', 'src', ':data-src', ':src', 'data-srcset', 'srcset', ':srcset', ':data-srcset', 'class'])) {
+            if (in_array($name, $skipAttributes)) {
                 continue;
             }
 
@@ -443,6 +456,7 @@ class Picture extends Template
         $html = preg_replace('/(\s+)/m', ' ', $html);
         $html = str_replace("\n", "", $html);
         $html = trim($html);
+
         return $html;
     }
 }
