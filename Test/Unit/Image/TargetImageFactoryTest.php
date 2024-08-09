@@ -19,6 +19,7 @@ class TargetImageFactoryTest extends AbstractTestCase
             ->with($this->equalTo('/tmp/pub/example.webp'))
             ->willReturn(new Image('/tmp/pub/example.webp', '/example.webp'));
 
+        // @phpstan-ignore-next-line
         $targetImageFactory = new TargetImageFactory(
             $this->getMagentoMock(DirectoryList::class),
             $this->getMagentoMock(Config::class),
@@ -43,6 +44,7 @@ class TargetImageFactoryTest extends AbstractTestCase
         $imageFactory = $this->getMagentoMock(ImageFactory::class);
         $imageFactory->method('createFromPath')->willReturn(new Image('/tmp/pub/example.webp', '/example.webp'));
 
+        // @phpstan-ignore-next-line
         $targetImageFactory = new TargetImageFactory(
             $directoryList,
             $config,

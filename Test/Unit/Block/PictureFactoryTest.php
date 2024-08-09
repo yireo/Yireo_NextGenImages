@@ -20,6 +20,8 @@ class PictureFactoryTest extends AbstractTestCase
         $layout->method('createBlock')->willReturn($pictureBlock);
 
         $config = $this->getMagentoMock(Config::class);
+
+        // @phpstan-ignore-next-line
         $pictureFactory = new PictureFactory($layout, $config);
 
         $image = $this->getMagentoMock(Image::class);
