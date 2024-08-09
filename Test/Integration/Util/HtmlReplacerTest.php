@@ -95,7 +95,7 @@ class HtmlReplacerTest extends AbstractTestCase
             ],
             [
                 '<div><img style="float: right;" src="/img/test.png"/></div>',
-                '<div><picture><source type="image/png" srcset="/test.png" style="float: right;"><source type="image/webp" srcset="/test.webp" style="float: right;"><img style="float: right;" src="/img/test.png" loading="lazy" /></picture></div>'
+                '<div><picture><source type="image/png" srcset="/test.png"><source type="image/webp" srcset="/test.webp"><img style="float: right;" src="/img/test.png" loading="lazy" /></picture></div>'
             ],
             [
                 "<script>var imgElement = '<img src=\"/test.png\" />';</script>",

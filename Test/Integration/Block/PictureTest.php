@@ -21,12 +21,18 @@ class PictureTest extends AbstractTestCase
         $images = [new Image('/tmp/pub/images/test.webp', '/images/test.webp')];
 
         $pictureFactory = $this->objectManager->create(PictureFactory::class);
-        $picture = $pictureFactory->create($originalImage, $images, '<img src="/images/test.png"/>');
+        $picture = $pictureFactory->create($originalImage, $images, '<img src="/images/test.png" class="foobar" fetchpriority="high"/>');
 
         $html = $picture->toHtml();
         $this->assertNotEmpty($html);
         $this->assertStringContainsString('<source type="image/webp" srcset="/images/test.webp"', $html);
-        $this->assertStringContainsString('<img src="/images/test.png"/>', $html);
+        $this->assertStringContainsString('<img src="/images/test.png" class="foobar" fetchpriority="high"/>', $html);
+
+        preg_match_all('#<source ([^>]+)>#msi', $html, $matches);
+        foreach ($matches[0] as $match) {
+            $this->assertStringNotContainsString('class="foobar"', $match);
+            $this->assertStringNotContainsString('fetchpriority="high"', $match);
+        }
     }
 
     /**

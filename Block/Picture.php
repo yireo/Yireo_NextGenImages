@@ -249,6 +249,22 @@ class Picture extends Template
         return implode(' ', $this->getOriginalAttributes());
     }
 
+    public function getSourceAttributesAsString(): string
+    {
+        $allowedSourceAttributes = ['media', 'sizes'];
+        $sourceAttributes = [];
+        foreach ($this->getOriginalAttributes() as $originalAttribute) {
+            $originalAttributeArray = explode('=', $originalAttribute);
+            if (false === in_array($originalAttributeArray[0], $allowedSourceAttributes)) {
+                continue;
+            }
+
+            $sourceAttributes[] = $originalAttribute;
+        }
+
+        return implode(' ', $sourceAttributes);
+    }
+
     /**
      * @return string[]
      */

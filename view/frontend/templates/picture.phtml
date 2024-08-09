@@ -30,7 +30,7 @@ $class ?>>
     <?php foreach ($block->getImages() as $image): ?>
         <source type="<?= /* @noEscape */ $image->getMimeType() ?>"
         <?= /* @noEscape */ $srcSetAttribute ?>="<?= /* @noEscape */ $image->getUrl() ?>"
-        <?= /* @noEscape */ $block->getOriginalAttributesAsString() ?>
+        <?= /* @noEscape */ $block->getSourceAttributesAsString() ?>
         >
     <?php endforeach; ?>
     <?= /* @noEscape */
