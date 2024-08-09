@@ -38,7 +38,7 @@ class ConvertImagesTest extends AbstractTestCase
     private function copyFixturesToTestFolder(string $testFolder)
     {
         $sourceFolder = __DIR__.'/../fixtures/images';
-        @mkdir($testFolder);
+        mkdir($testFolder);
 
         $files = glob($sourceFolder.'/*');
         foreach ($files as $file) {
