@@ -4,7 +4,9 @@ namespace Yireo\NextGenImages\Config;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -19,7 +21,7 @@ class Config implements ArgumentInterface
     private $depersonalizeChecker;
     private $storeManager;
     private $directoryList;
-    private $filesystemDriver;
+    private $fileDriver;
 
     /**
      * Config constructor.
@@ -34,13 +36,14 @@ class Config implements ArgumentInterface
         DepersonalizeChecker $depersonalizeChecker,
         StoreManagerInterface $storeManager,
         DirectoryList $directoryList,
-        DriverInterface $filesystemDriver
+        Filesystem $filesystem,
+
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->depersonalizeChecker = $depersonalizeChecker;
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
-        $this->filesystemDriver = $filesystemDriver;
+        $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
     }
 
     /**
@@ -100,8 +103,11 @@ class Config implements ArgumentInterface
             return $pubPath.'/media/nextgenimages/';
         }
 
-        if (false === $this->filesystemDriver->isDirectory($value)) {
-            return $pubPath.'/media/nextgenimages/';
+        try {
+            if (false === $this->fileDriver->isDirectory($value)) {
+                return $pubPath.'/media/nextgenimages/';
+            }
+        } catch (FileSystemException $e) {
         }
 
         return $pubPath.$value;

@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\DriverInterface;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Config\Source\TargetDirectory;
@@ -13,7 +14,7 @@ class TargetImageFactory
     private $directoryList;
     private $config;
     private $imageFactory;
-    private $filesystemDriver;
+    private $fileDriver;
 
     /**
      * @param DirectoryList $directoryList
@@ -24,12 +25,12 @@ class TargetImageFactory
         DirectoryList $directoryList,
         Config $config,
         ImageFactory $imageFactory,
-        DriverInterface $filesystemDriver
+        Filesystem $filesystem
     ) {
         $this->directoryList = $directoryList;
         $this->config = $config;
         $this->imageFactory = $imageFactory;
-        $this->filesystemDriver = $filesystemDriver;
+        $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
     }
 
     /**
@@ -81,7 +82,7 @@ class TargetImageFactory
     private function getTargetPathFromImage(Image $image): string
     {
         if ($this->config->getTargetDirectory() === TargetDirectory::CACHE) {
-            $pathRoot = $this->filesystemDriver->getParentDirectory($image->getPath());
+            $pathRoot = $this->fileDriver->getParentDirectory($image->getPath());
             $relativeImagePath = str_replace($this->directoryList->getRoot(), '', $pathRoot);
             $relativeImagePath = str_replace('/pub', '', $relativeImagePath);
             $relativeImagePath = preg_replace('#^/#', '', $relativeImagePath); // remove leading slash
