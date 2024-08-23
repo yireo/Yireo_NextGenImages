@@ -4,6 +4,10 @@
         <plugin name="Yireo_NextGenImages::replaceTagsInHtml" type="Yireo\NextGenImages\Plugin\ReplaceTagsInHtml"/>
     </type>
 
+    <type name="Magento\Framework\View\Element\Template">
+        <plugin name="Yireo_NextGenImages::addCspInlineScripts" type="Yireo\NextGenImages\Plugin\AddCspInlineScripts"/>
+    </type>
+
     <type name="Magento\Swatches\Helper\Data">
         <plugin name="Yireo_NextGenImages::correctImagesInAjaxResponse" type="Yireo\NextGenImages\Plugin\CorrectImagesInAjaxResponse"/>
     </type>

@@ -1,7 +1,7 @@
 {
     "name": "yireo/magento2-next-gen-images",
     "license": "OSL-3.0",
-    "version": "0.5.4",
+    "version": "0.5.5",
     "type": "magento2-module",
     "homepage": "https://www.yireo.com/software/magento-extensions/next-gen-images",
     "description": "Magento 2 module to add NextGen images support to the Magento frontend",
@@ -22,6 +22,7 @@
         "magento/module-config": "^101.0.0|^101.1.0",
         "magento/module-store": "^101.0.0",
         "magento/module-page-cache": "^100.0",
+        "yireo/magento2-csp-utilities": "^1.0",
         "psr/log": "^1 || ^2 || ^3",
         "php": ">=7.4.0",
         "ext-dom": "*",
