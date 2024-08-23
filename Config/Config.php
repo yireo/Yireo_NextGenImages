@@ -36,7 +36,7 @@ class Config implements ArgumentInterface
         DepersonalizeChecker $depersonalizeChecker,
         StoreManagerInterface $storeManager,
         DirectoryList $directoryList,
-        Filesystem $filesystem,
+        Filesystem $filesystem
 
     ) {
         $this->scopeConfig = $scopeConfig;
