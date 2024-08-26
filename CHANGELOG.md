@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.6] - 26 August 2024
+### Fixed
+- Wrong composer dependencies
+
 ## [0.5.5] - 23 August 2024
 ### Fixed
 - Add CSP nonces to inline scripts
