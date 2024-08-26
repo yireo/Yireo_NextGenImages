@@ -1,8 +1,0 @@
-parameters:
-    parallel:
-        jobSize: 20
-        maximumNumberOfProcesses: 32
-        minimumNumberOfJobsPerProcess: 2
-    excludes_analyse:
-        - vendor/*/*/Test/*
-        - Test/*
