@@ -34,7 +34,7 @@ class PictureFactory
      * @param Image $originalImage
      * @param Image[] $images
      * @param string $htmlTag
-     * @param bool $isDataSrc
+     * @param string $srcAttribute
      * @return Picture
      */
     public function create(

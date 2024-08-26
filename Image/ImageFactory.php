@@ -2,21 +2,16 @@
 
 namespace Yireo\NextGenImages\Image;
 
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\NextGenImages\Util\UrlConvertor;
 
 class ImageFactory
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
+    private ObjectManagerInterface $objectManager;
 
-    /**
-     * @var UrlConvertor
-     */
-    private $urlConvertor;
+    private UrlConvertor $urlConvertor;
 
     /**
      * @param ObjectManagerInterface $objectManager
@@ -33,7 +28,7 @@ class ImageFactory
     /**
      * @param string $path
      * @return Image
-     * @throws NotFoundException
+     * @throws NoSuchEntityException
      */
     public function createFromPath(string $path): Image
     {
@@ -44,7 +39,7 @@ class ImageFactory
     /**
      * @param string $url
      * @return Image
-     * @throws NotFoundException
+     * @throws FileSystemException
      */
     public function createFromUrl(string $url): Image
     {
