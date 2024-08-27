@@ -1,8 +1,17 @@
-<script>
+<?php
+/**
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+$script = <<<JS
+    'use strict'
     document.addEventListener('alpine:init', () => {
         Alpine.data('initGallery', () => {
             const galleryInitData = initGallery();
             document.dispatchEvent(new CustomEvent('gallery-init', {detail: galleryInitData}));
             return galleryInitData;
         });
-    });</script>
+    });
+JS;
+
+echo $secureRenderer->renderTag('script', [], $script, false);
