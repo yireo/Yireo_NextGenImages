@@ -98,7 +98,7 @@ class UrlConvertor
         try {
             $staticFolder =  $this->getStaticFolder();
             $realStaticFolder = realpath($staticFolder);
-            if (strpos($filename, $realStaticFolder) !== false) {
+            if (str_contains($filename, $realStaticFolder)) {
                 return str_replace($this->getStaticFolder() . '/', $this->getStaticUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
@@ -107,7 +107,7 @@ class UrlConvertor
 
         $baseFolder = $this->getBaseFolder();
         $realBaseFolder = realpath($baseFolder);
-        if (strpos($filename, $realBaseFolder) !== false) {
+        if (str_contains($filename, $realBaseFolder)) {
             return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(), $filename);
         }
 
