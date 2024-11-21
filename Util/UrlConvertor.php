@@ -86,22 +86,28 @@ class UrlConvertor
     public function getUrlFromFilename(string $filename): string
     {
         try {
-            if (strpos($filename, $this->getMediaFolder()) !== false) {
-                return str_replace($this->getMediaFolder() . '/', $this->getMediaUrl(), $filename);
+            $mediaFolder =  $this->getMediaFolder();
+            $realMediaFolder = realpath($mediaFolder);
+            if (str_contains($filename, $realMediaFolder)) {
+                return str_replace($mediaFolder . '/', $this->getMediaUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Media folder does not exist'));
         }
 
         try {
-            if (strpos($filename, $this->getStaticFolder()) !== false) {
+            $staticFolder =  $this->getStaticFolder();
+            $realStaticFolder = realpath($staticFolder);
+            if (strpos($filename, $realStaticFolder) !== false) {
                 return str_replace($this->getStaticFolder() . '/', $this->getStaticUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Static folder does not exist'));
         }
 
-        if (strpos($filename, $this->getBaseFolder()) !== false) {
+        $baseFolder = $this->getBaseFolder();
+        $realBaseFolder = realpath($baseFolder);
+        if (strpos($filename, $realBaseFolder) !== false) {
             return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(), $filename);
         }
 
