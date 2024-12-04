@@ -88,6 +88,7 @@ class HtmlReplacer
      */
     private function replaceImageTags(string $html): string
     {
+        $html = $this->maskAngleBracketsInsideQuotes($html);
         $document = $this->domUtils->htmlToDOMDocument($html);
         $images = $document->getElementsByTagName('img');
         foreach ($images as $image) {
@@ -98,7 +99,7 @@ class HtmlReplacer
             }
         }
 
-        return $html;
+        return $this->unmaskAngleBracketsInsideQuotes($html);
     }
 
     /**
@@ -314,5 +315,27 @@ class HtmlReplacer
             ':src',
             ':data-src',
         ];
+    }
+
+    /**
+     * Masks angle brackets inside double quotes
+     *
+     * @param string $html
+     * @return string
+     */
+    private function maskAngleBracketsInsideQuotes(string $html): string
+    {
+        return preg_replace('/"([^"]+)>([^"]+)"/', '"$1&gt;$2"', $html);
+    }
+
+    /**
+     * Unmasks the above masked angle brackets
+     *
+     * @param string $html
+     * @return string
+     */
+    private function unmaskAngleBracketsInsideQuotes(string $html): string
+    {
+        return preg_replace('/"([^"]+)&gt;([^"]+)"/', '"$1>$2"', $html);
     }
 }
