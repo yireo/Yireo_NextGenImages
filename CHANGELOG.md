@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.9] - 4 December 2024
+### Fixed
+- Masks and unmasks angle brackets quotes #83 @wilfriedwolf
+- Command next-gen-images:convert not working if images are on shared folders #80 @wilfriedwolf
+
 ## [0.5.8] - 24 October 2024
 ### Fixed
 - Add funding
