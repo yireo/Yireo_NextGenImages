@@ -88,7 +88,7 @@ class HtmlReplacer
      */
     private function replaceImageTags(string $html): string
     {
-        $html = $this->maskAngleBracketsInsideQuotes($html);
+        //$html = $this->maskAngleBracketsInsideQuotes($html);
         $document = $this->domUtils->htmlToDOMDocument($html);
         $images = $document->getElementsByTagName('img');
         foreach ($images as $image) {
@@ -99,7 +99,8 @@ class HtmlReplacer
             }
         }
 
-        return $this->unmaskAngleBracketsInsideQuotes($html);
+        //$html = $this->unmaskAngleBracketsInsideQuotes($html);
+        return $html;
     }
 
     /**
