@@ -25,7 +25,6 @@
         "magento/module-store": "^100.0|^101.0",
         "magento/module-swatches": "^100.0",
         "magento/module-page-cache": "^100.0",
-        "yireo/magento2-csp-utilities": "^1.0",
         "psr/log": "^1 || ^2 || ^3",
         "php": ">=7.4.0",
         "ext-dom": "*",
