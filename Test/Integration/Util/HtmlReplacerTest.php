@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Test\Integration\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Filesystem\Driver\File;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\Image;
@@ -228,7 +229,8 @@ class HtmlReplacerTest extends AbstractTestCase
         $fixtureFolder = __DIR__.'/../fixtures/images/';
 
         $tmpFolder = $directoryList->getRoot().'/pub/media/tmp';
-        @mkdir($tmpFolder);
+        $fileDriver = $om->get(File::class);
+        $fileDriver->createDirectory($tmpFolder);
 
         foreach ($images as $image) {
             copy($fixtureFolder.'/'.$image, $tmpFolder.'/'.$image);
