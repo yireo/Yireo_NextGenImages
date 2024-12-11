@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.10] - 11 December 2024
+### Fixed
+- Fix issues from #83
+- Better integration tests
+
 ## [0.5.9] - 4 December 2024
 ### Fixed
 - Masks and unmasks angle brackets quotes #83 @wilfriedwolf
