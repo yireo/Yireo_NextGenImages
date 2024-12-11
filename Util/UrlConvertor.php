@@ -38,8 +38,8 @@ class UrlConvertor
      */
     public function __construct(
         StoreManagerInterface $storeManager,
-        DirectoryList         $directoryList,
-        Escaper               $escaper
+        DirectoryList $directoryList,
+        Escaper $escaper
     ) {
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
@@ -86,20 +86,20 @@ class UrlConvertor
     public function getUrlFromFilename(string $filename): string
     {
         try {
-            $mediaFolder =  $this->getMediaFolder();
+            $mediaFolder = $this->getMediaFolder();
             $realMediaFolder = realpath($mediaFolder);
             if (str_contains($filename, $realMediaFolder)) {
-                return str_replace($mediaFolder . '/', $this->getMediaUrl(), $filename);
+                return str_replace($mediaFolder.'/', $this->getMediaUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Media folder does not exist'));
         }
 
         try {
-            $staticFolder =  $this->getStaticFolder();
+            $staticFolder = $this->getStaticFolder();
             $realStaticFolder = realpath($staticFolder);
             if (str_contains($filename, $realStaticFolder)) {
-                return str_replace($this->getStaticFolder() . '/', $this->getStaticUrl(), $filename);
+                return str_replace($this->getStaticFolder().'/', $this->getStaticUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
             throw new NotFoundException((string)__('Static folder does not exist'));
@@ -108,14 +108,14 @@ class UrlConvertor
         $baseFolder = $this->getBaseFolder();
         $realBaseFolder = realpath($baseFolder);
         if (str_contains($filename, $realBaseFolder)) {
-            return str_replace($this->getBaseFolder() . '/', $this->getBaseUrl(), $filename);
+            return str_replace($this->getBaseFolder().'/', $this->getBaseUrl(), $filename);
         }
 
         if (!preg_match('/^\//', $filename)) {
-            return $this->getBaseUrl() . $filename;
+            return $this->getBaseUrl().$filename;
         }
 
-        throw new NotFoundException((string)__('Filename "' . $filename . '" is not matched with an URL'));
+        throw new NotFoundException((string)__('Filename "'.$filename.'" is not matched with an URL'));
     }
 
     /**
@@ -131,29 +131,29 @@ class UrlConvertor
         $url = $this->normalizeUrl($url);
 
         if ($this->isLocal($url) === false) {
-            throw new NotFoundException((string)__('URL "' . $url . '" does not appear to be a local file'));
+            throw new NotFoundException((string)__('URL "'.$url.'" does not appear to be a local file'));
         }
 
         foreach ($this->storeManager->getStores() as $store) {
             /** @var Store $store */
             $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
             if (strpos($url, $storeBaseUrl) !== false) {
-                return str_replace($storeBaseUrl, $this->getBaseFolder() . '/', $url);
+                return str_replace($storeBaseUrl, $this->getBaseFolder().'/', $url);
             }
 
             $storeMediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
             if (strpos($url, $storeMediaUrl) !== false) {
-                return str_replace($storeMediaUrl, $this->getMediaFolder() . '/', $url);
+                return str_replace($storeMediaUrl, $this->getMediaFolder().'/', $url);
             }
 
             $staticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
             if (strpos($url, $staticUrl) !== false) {
-                return str_replace($staticUrl, $this->getStaticFolder() . '/', $url);
+                return str_replace($staticUrl, $this->getStaticFolder().'/', $url);
             }
         }
 
         if (preg_match('/^\//', $url)) {
-            return $this->getBaseFolder() . $url;
+            return $this->getBaseFolder().$url;
         }
 
         // @todo: https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-yireo-next-gen-images/-/blob/main/src/Plugin/UrlConvertorPlugin.php#L17
@@ -161,7 +161,7 @@ class UrlConvertor
             return $url;
         }
 
-        throw new NotFoundException((string)__('URL "' . $url . '" is not matched with a local file'));
+        throw new NotFoundException((string)__('URL "'.$url.'" is not matched with a local file'));
     }
 
     /**
@@ -172,6 +172,7 @@ class UrlConvertor
     {
         $store = $this->storeManager->getStore();
         $baseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
+
         return $this->normalizeUrl($baseUrl);
     }
 
@@ -184,6 +185,7 @@ class UrlConvertor
         /** @var Store $store */
         $store = $this->storeManager->getStore();
         $mediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+
         return $this->normalizeUrl($mediaUrl);
     }
 
@@ -196,6 +198,7 @@ class UrlConvertor
         /** @var Store $store */
         $store = $this->storeManager->getStore();
         $staticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
+
         return $this->normalizeUrl($staticUrl);
     }
 
@@ -204,7 +207,7 @@ class UrlConvertor
      */
     private function getBaseFolder(): string
     {
-        return $this->directoryList->getRoot() . '/pub';
+        return $this->directoryList->getRoot().'/pub';
     }
 
     /**
@@ -232,6 +235,7 @@ class UrlConvertor
     private function normalizeUrl(string $url): string
     {
         $url = str_replace('/index.php/', '/', $url);
+
         return preg_replace('#^//#', 'http://', $url);
     }
 }
