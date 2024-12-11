@@ -48,6 +48,7 @@ class HtmlReplacerTest extends AbstractTestCase
             new Image('/tmp/pub/test.png', '/test.png'),
             new Image('/tmp/pub/test.webp', '/test.webp'),
         ];
+
         $imageCollector->method('collect')->willReturn($images);
 
         $block = $this->getMagentoMock(Picture::class);
@@ -112,6 +113,10 @@ class HtmlReplacerTest extends AbstractTestCase
             [
                 '<div><div @click="fullscreen = false; $nextTick(() => calcPageSize())"><img src="/img/test.png"/></div></div>',
                 '<div><div @click="fullscreen = false; $nextTick(() => calcPageSize())"><img src="/img/test.png"/></div></div>'
+            ],
+            [
+                '<img src="test1.jpg">test<span>test</span><img src="test2.jpg">',
+                '<img src="test1.jpg">test<span>test</span><img src="test2.jpg">',
             ],
         ];
     }
