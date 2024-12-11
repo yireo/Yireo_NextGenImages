@@ -326,7 +326,7 @@ class HtmlReplacer
      */
     private function maskAngleBracketsInsideQuotes(string $html): string
     {
-        return preg_replace('/"([^"]+)>([^"]+)"/', '"$1&gt;$2"', $html);
+        return preg_replace('/"([^">]+)>([^"]+)"/', '"$1&gt;$2"', $html);
     }
 
     /**
