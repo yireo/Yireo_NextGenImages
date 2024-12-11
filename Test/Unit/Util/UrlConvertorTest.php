@@ -5,6 +5,7 @@ namespace Yireo\NextGenImages\Test\Unit\Util;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -22,7 +23,8 @@ class UrlConvertorTest extends TestCase
         $urlConvertor = new UrlConvertor(
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
-            $this->getEscaperMock()
+            $this->getEscaperMock(),
+            $this->createMock(File::class)
         );
 
         $this->assertTrue($urlConvertor->isLocal('/media/test.png'));
@@ -39,7 +41,8 @@ class UrlConvertorTest extends TestCase
         $urlConvertor = new UrlConvertor(
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
-            $this->getEscaperMock()
+            $this->getEscaperMock(),
+            $this->createMock(File::class)
         );
 
         $this->assertSame(
