@@ -9,6 +9,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Magento\Store\Model\Store;
@@ -30,6 +31,7 @@ class UrlConvertor
      * @var Escaper
      */
     private $escaper;
+    private FileDriver $fileDriver;
 
     /**
      * @param StoreManagerInterface $storeManager
@@ -39,11 +41,13 @@ class UrlConvertor
     public function __construct(
         StoreManagerInterface $storeManager,
         DirectoryList $directoryList,
-        Escaper $escaper
+        Escaper $escaper,
+        FileDriver $fileDriver
     ) {
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
         $this->escaper = $escaper;
+        $this->fileDriver = $fileDriver;
     }
 
     /**
@@ -87,7 +91,7 @@ class UrlConvertor
     {
         try {
             $mediaFolder = $this->getMediaFolder();
-            $realMediaFolder = realpath($mediaFolder);
+            $realMediaFolder = $this->fileDriver->getRealPath($mediaFolder);
             if (str_contains($filename, $realMediaFolder)) {
                 return str_replace($mediaFolder.'/', $this->getMediaUrl(), $filename);
             }
@@ -97,7 +101,7 @@ class UrlConvertor
 
         try {
             $staticFolder = $this->getStaticFolder();
-            $realStaticFolder = realpath($staticFolder);
+            $realStaticFolder = $this->fileDriver->getRealPath($staticFolder);
             if (str_contains($filename, $realStaticFolder)) {
                 return str_replace($this->getStaticFolder().'/', $this->getStaticUrl(), $filename);
             }
@@ -106,7 +110,7 @@ class UrlConvertor
         }
 
         $baseFolder = $this->getBaseFolder();
-        $realBaseFolder = realpath($baseFolder);
+        $realBaseFolder = $this->fileDriver->getRealPath($baseFolder);
         if (str_contains($filename, $realBaseFolder)) {
             return str_replace($this->getBaseFolder().'/', $this->getBaseUrl(), $filename);
         }
