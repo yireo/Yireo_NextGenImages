@@ -6,7 +6,6 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
-use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
@@ -151,6 +150,24 @@ class HtmlReplacerTest extends AbstractTestCase
                 .'<source type="image/jpeg" srcset="/media/tmp/test2.jpg">'
                 .'<source type="image/webp" srcset="/media/tmp/test2.webp">'
                 .'<img src="/media/tmp/test2.jpg" loading="lazy" />'
+                .'</picture>'
+                .'</div>',
+            ],
+            [
+                '<div>'
+                .'<img src="/media/tmp/test1.jpg" @click="$nextTick(() => blah())"/>'
+                .'<img src="/media/tmp/test2.jpg" @click="$nextTick(() => blah())"/>'
+                .'</div>',
+                '<div>'
+                .'<picture>'
+                .'<source type="image/jpeg" srcset="/media/tmp/test1.jpg">'
+                .'<source type="image/webp" srcset="/media/tmp/test1.webp">'
+                .'<img src="/media/tmp/test1.jpg" @click="$nextTick(() => blah())" loading="lazy" />'
+                .'</picture>'
+                .'<picture>'
+                .'<source type="image/jpeg" srcset="/media/tmp/test2.jpg">'
+                .'<source type="image/webp" srcset="/media/tmp/test2.webp">'
+                .'<img src="/media/tmp/test2.jpg" @click="$nextTick(() => blah())" loading="lazy" />'
                 .'</picture>'
                 .'</div>',
             ],
