@@ -428,6 +428,10 @@ class Picture extends Template
      */
     private function getDomElementFromHtmlTag(string $html): ?DomNode
     {
+        if (empty($html)) {
+            return null;
+        }
+
         $document = new DOMDocument();
         libxml_use_internal_errors(true);
 
