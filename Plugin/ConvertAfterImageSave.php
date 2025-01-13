@@ -58,11 +58,11 @@ class ConvertAfterImageSave
     public function afterSave(Image $subject, $return, $destination = null)
     {
         if (!$this->config->enabled()) {
-            return;
+            return $return;
         }
 
         if (!$this->config->convertImagesOnSave()) {
-            return;
+            return $return;
         }
 
         $image = $this->imageFactory->createFromPath((string)$destination);
