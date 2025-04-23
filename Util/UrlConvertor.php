@@ -92,7 +92,7 @@ class UrlConvertor
         try {
             $mediaFolder = $this->getMediaFolder();
             $realMediaFolder = $this->fileDriver->getRealPath($mediaFolder);
-            if (str_contains($filename, $realMediaFolder)) {
+            if (strpos($filename, $realMediaFolder)) {
                 return str_replace($mediaFolder.'/', $this->getMediaUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
@@ -102,7 +102,7 @@ class UrlConvertor
         try {
             $staticFolder = $this->getStaticFolder();
             $realStaticFolder = $this->fileDriver->getRealPath($staticFolder);
-            if (str_contains($filename, $realStaticFolder)) {
+            if (strpos($filename, $realStaticFolder)) {
                 return str_replace($this->getStaticFolder().'/', $this->getStaticUrl(), $filename);
             }
         } catch (FileSystemException|NoSuchEntityException $e) {
@@ -111,7 +111,7 @@ class UrlConvertor
 
         $baseFolder = $this->getBaseFolder();
         $realBaseFolder = $this->fileDriver->getRealPath($baseFolder);
-        if (str_contains($filename, $realBaseFolder)) {
+        if (strpos($filename, $realBaseFolder)) {
             return str_replace($this->getBaseFolder().'/', $this->getBaseUrl(), $filename);
         }
 
