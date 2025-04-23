@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.13] - 23 April 2025
+### Fixed
+- Fix issue with `str_contains` under PHP 7.4
+- Fixed implicitly declared nullable arguments, improves compatibility with PHP 8.4
+
 ## [0.5.12] - 19 February 2025
 ### Fixed
 - Issue with `LIBXML_HTML_NOIMPLIED` and templates with multiple roots Yireo_Webp2#175
