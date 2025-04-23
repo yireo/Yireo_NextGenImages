@@ -111,7 +111,7 @@ class UrlConvertor
 
         $baseFolder = $this->getBaseFolder();
         $realBaseFolder = $this->fileDriver->getRealPath($baseFolder);
-        if (strpos($filename, $realBaseFolder)) {
+        if (strpos($filename, $realBaseFolder) !== false) {
             return str_replace($this->getBaseFolder().'/', $this->getBaseUrl(), $filename);
         }
 
