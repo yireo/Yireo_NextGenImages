@@ -122,7 +122,7 @@ class HtmlReplacer
             return '';
         }
 
-        $regex = '/<img '.self::MARKER_CODE.'="'.$imageMarker.'"([^>"]*)(?:"[^"]*"[^>"]*)*>/';
+        $regex = '/<img '.self::MARKER_CODE.'="'.$imageMarker.'"([^\>]+)>/';
         if (!preg_match($regex, $html, $imageHtmlMatch)) {
             return '';
         }
@@ -145,15 +145,35 @@ class HtmlReplacer
         if (!$this->isAllowedByParentNode($image)) {
             return '';
         }
+        
+        $imageSrcSet = $image->getAttribute('srcset');
+        if ($imageSrcSet) {
+            $srcSetImages = explode(',', $imageSrcSet);
+            $imageUrls = [];
+            foreach ($srcSetImages as $srcSetImage) {
+                $pieces = explode(' ', trim($srcSetImage));
+                if (isset($pieces[1])) {
+                    $descriptor = $pieces[1];
+                    $imageUrls[$descriptor] = $pieces[0];
+                } else {
+                    $descriptor = 0;
+                    $imageUrl = $imageUrls[$descriptor] = $pieces[0];
+                }
+            }
+            $images = $this->imageCollector->collect($imageUrls);
+            if (!count($images) > 0) {
+                return '';
+            }
+        } else {
+            $imageUrl = $this->getImageUrlFromElement($image);
+            if (!$this->isAllowedByImageUrl($imageUrl)) {
+                return '';
+            }
 
-        $imageUrl = $this->getImageUrlFromElement($image);
-        if (!$this->isAllowedByImageUrl($imageUrl)) {
-            return '';
-        }
-
-        $images = $this->imageCollector->collect($imageUrl);
-        if (!count($images) > 0) {
-            return '';
+            $images = $this->imageCollector->collect($imageUrl);
+            if (!count($images) > 0) {
+                return '';
+            }
         }
 
         $imageHtml = $this->getImageHtmlFromImage($image, $html);
@@ -280,6 +300,7 @@ class HtmlReplacer
     private function getImageUrlFromElement(DOMElement $image): string
     {
         $attributes = $this->getAllowedSrcAttributes();
+
         $imageUrl = '';
         foreach ($attributes as $attribute) {
             $imageUrl = $image->getAttribute($attribute);
