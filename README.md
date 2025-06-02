@@ -26,6 +26,13 @@ A module `Foo_Bar` could add a `etc/di.xml` file to add a new convertor (a class
 ### Can I skip lazy loading of images?
 Yes, just add `fetchpriority="high"` to the image HTML of your choice.
 
+### Can I call upon the convertor directly?
+Yes, you can. You can inject the class `Yireo\NextGenImages\Image\ImageCollector` as a block argument via the XML layout (or alternatively use the LokiComponents `$viewModelFactory` or the Hyva `$viewModels` to instantiate it) and then call upon it as follows:
+
+```php
+$images = $this->imageCollector->collect($imageUrl);
+```
+
 # Roadmap
 - Move CLI into separate module
 - Move frontend into separate module
