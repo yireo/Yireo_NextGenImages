@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.14] - 24 July 2025
+### Fixed
+- Add `Yireo_IntegrationTestHelper` as dep
+- Allow replacing images in AJAX (AHAH) requests as well
+- Add PHP 8.4 testing
+
 ## [0.5.13] - 23 April 2025
 ### Fixed
 - Fix issue with `str_contains` under PHP 7.4
