@@ -82,8 +82,12 @@ class Image
 
     public function getGdImage(): ?GdImage
     {
+        if (false === file_exists($this->getPath())) {
+            return null;
+        }
+
         if (str_ends_with($this->getPath(), '.jpeg') || str_ends_with($this->getPath(), '.jpg')) {
-            return imagecreatefromjpg($this->getPath());
+            return imagecreatefromjpeg($this->getPath());
         }
 
         if (str_ends_with($this->getPath(), '.png')) {
