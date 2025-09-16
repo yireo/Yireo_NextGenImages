@@ -42,6 +42,26 @@ class ImageFactoryTest extends TestCase
         $this->assertEquals('/foo/bar.jpg', $image->getUrl());
     }
 
+    public function testCreateFromUrlWithMultipleUrls()
+    {
+        $urlConvertor = $this->getUrlConvertor();
+        $urlConvertor->method('getFilenameFromUrl')->willReturn('/tmp/pub/foo/bar.jpg');
+        $urlConvertor->method('getUrlFromFilename')->willReturn('/foo/bar.jpg');
+        $objectManager = $this->getObjectManager();
+        $objectManager->method('create')->willReturn(
+            new Image('/tmp/pub/foo/bar.jpg', '/foo/bar.jpg', '/foo/bar.jpg,/baz/qux.jpg 500w')
+        );
+        
+        // @phpstan-ignore-next-line
+        $imageFactory = new ImageFactory($objectManager, $urlConvertor);
+        $image = $imageFactory->createFromUrl(['/foo/bar.jpg', '500w' => '/baz/qux.jpg']);
+        
+        $this->assertInstanceOf(Image::class, $image);
+        $this->assertEquals('/tmp/pub/foo/bar.jpg', $image->getPath());
+        $this->assertEquals('/foo/bar.jpg', $image->getUrl());
+        $this->assertEquals('/foo/bar.jpg,/baz/qux.jpg 500w', $image->getSrcSet());
+    }
+
     private function getObjectManager(): MockObject
     {
         return $this->getMockBuilder(ObjectManagerInterface::class)

@@ -20,6 +20,12 @@ class ImageTest extends AbstractTestCase
         $this->assertEquals('/media/foobar.jpg', $image->getUrl());
     }
 
+    public function testGetSrcSet()
+    {
+        $image = new Image('/tmp/pub/foobar.jpg', '/media/foobar.jpg', '/foo/bar.jpg,/baz/qux.jpg 500w');
+        $this->assertEquals('/foo/bar.jpg,/baz/qux.jpg 500w', $image->getSrcSet());
+    }
+
     public function testGetMimetype()
     {
         $image = new Image('/tmp/pub/foobar.gif', 'foobar.gif');
