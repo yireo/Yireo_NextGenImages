@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.15] - 22 October 2025
+### Fixed
+- Fix PHP call
+- Add helper-method for fetching GdImage
+
 ## [0.5.14] - 24 July 2025
 ### Fixed
 - Add `Yireo_IntegrationTestHelper` as dep
