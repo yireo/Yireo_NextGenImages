@@ -17,25 +17,25 @@
         }
     ],
     "require": {
+        "ext-dom": "*",
+        "ext-gd": "*",
+        "ext-pcre": "*",
         "magento/framework": "^101.0.1|^101.1|^102.0|^103.0",
         "magento/module-backend": "^100.0|^101.0|^102.0",
         "magento/module-catalog": "^100.0|^101.0|^102.0|^103.0|^104.0",
         "magento/module-config": "^101.0",
         "magento/module-configurable-product": "^100.0",
+        "magento/module-page-cache": "^100.0",
         "magento/module-store": "^100.0|^101.0",
         "magento/module-swatches": "^100.0",
-        "magento/module-page-cache": "^100.0",
-        "yireo/magento2-csp-utilities": "^1.0",
-        "psr/log": "^1 || ^2 || ^3",
         "php": ">=7.4.0",
-        "ext-dom": "*",
-        "ext-pcre": "*",
-        "ext-gd": "*"
+        "psr/log": "^1 || ^2 || ^3",
+        "yireo/magento2-csp-utilities": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0|^10.0|^11.0",
-        "phpstan/phpstan": "^0.12.32",
         "bitexpert/phpstan-magento": "^0.3.0",
+        "phpstan/phpstan": "^0.12.32",
+        "phpunit/phpunit": "^9.0|^10.0|^11.0",
         "yireo/magento2-integration-test-helper": "@dev"
     },
     "suggest": {
