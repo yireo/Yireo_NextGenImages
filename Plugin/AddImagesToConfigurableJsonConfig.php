@@ -16,17 +16,17 @@ class AddImagesToConfigurableJsonConfig
      * @var Config
      */
     private $config;
-    
+
     /**
      * @var SerializerInterface
      */
     private $serializer;
-    
+
     /**
      * @var ImageCollector
      */
     private $imageCollector;
-    
+
     /**
      * AddImagesToConfigurableJsonConfig constructor.
      *
@@ -43,7 +43,7 @@ class AddImagesToConfigurableJsonConfig
         $this->serializer = $serializer;
         $this->imageCollector = $imageCollector;
     }
-    
+
     /**
      * @param Configurable $subject
      * @param string $jsonConfig
@@ -56,15 +56,15 @@ class AddImagesToConfigurableJsonConfig
         }
 
         $jsonData = $this->serializer->unserialize($jsonConfig);
-        
+
         if (isset($jsonData['images'])) {
             $jsonData['images'] = $this->appendImages($jsonData['images']);
         }
-        
+
         $jsonConfig = $this->serializer->serialize($jsonData);
         return $jsonConfig;
     }
-    
+
     /**
      * @param array $images
      * @return array
@@ -77,19 +77,19 @@ class AddImagesToConfigurableJsonConfig
                     if (empty($imageData[$imageType])) {
                         continue;
                     }
-                    
+
                     $newImages = $this->imageCollector->collect($imageData[$imageType]);
                     foreach ($newImages as $newImage) {
                         $imageData[$imageType . '_' . $newImage->getCode()] = $newImage->getUrl();
                     }
                 }
-                
+
                 $imagesData[$imageDataIndex] = $imageData;
             }
-            
+
             $images[$id] = $imagesData;
         }
-        
+
         return $images;
     }
 }
