@@ -2,9 +2,11 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:module:View/Layout:etc/page_configuration.xsd">
     <body>
-        <referenceContainer name="content">
-            <block name="yireo_nextgenimages.category-additions"
-                   template="Yireo_NextGenImages::hyva/category-additions.phtml" />
+        <referenceContainer name="before.body.end">
+            <block
+                name="yireo_nextgenimages.category-additions"
+                template="Yireo_NextGenImages::hyva/category-additions.phtml"
+            />
         </referenceContainer>
     </body>
 </page>
