@@ -1,3 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
-/** @version 0.5.15 */ /** @var $block \Yireo\NextGenImages\Block\Adminhtml\System\Config\PhpVersion */ ?> <?= /* @noEscape */ $block->getPhpVersion() ?>
+/** @version 0.5.15 */
+/** @var $block PhpVersion */
+
+use Yireo\NextGenImages\Block\Adminhtml\System\Config\PhpVersion;
+
+?>
+
+<?= /* @noEscape */ $block->getPhpVersion() ?>
