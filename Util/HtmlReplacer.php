@@ -96,13 +96,16 @@ class HtmlReplacer
 
         $document = $this->domUtils->htmlToDOMDocument($html);
         $images = $document->getElementsByTagName('img');
+        
+        $replacements = [];
         foreach ($images as $image) {
             $imageHtml = $this->getImageHtmlFromImage($image, $html);
             $pictureHtml = $this->getPictureHtmlFromImage($image, $html);
             if (!empty($pictureHtml)) {
-                $html = str_replace($imageHtml, $pictureHtml, $html);
+                $replacements[$imageHtml] = $pictureHtml;
             }
         }
+        $html = strtr($html, $replacements);
 
         $html = str_replace('<yireo_nextgenimages>', '', $html);
         $html = str_replace('</yireo_nextgenimages>', '', $html);
