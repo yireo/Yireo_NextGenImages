@@ -6,6 +6,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.15] - 22 October 2025
+### Fixed
+- Fix PHP call
+- Add helper-method for fetching GdImage
+
+## [0.5.14] - 24 July 2025
+### Fixed
+- Add `Yireo_IntegrationTestHelper` as dep
+- Allow replacing images in AJAX (AHAH) requests as well
+- Add PHP 8.4 testing
+
+## [0.5.13] - 23 April 2025
+### Fixed
+- Fix issue with `str_contains` under PHP 7.4
+- Fixed implicitly declared nullable arguments, improves compatibility with PHP 8.4
+
+## [0.5.12] - 19 February 2025
+### Fixed
+- Issue with `LIBXML_HTML_NOIMPLIED` and templates with multiple roots Yireo_Webp2#175
+
+## [0.5.11] - 11 February 2025
+### Fixed
+- Fix possible warning with DOM loading
+
 ## [0.5.10] - 11 December 2024
 ### Fixed
 - Fix issues from #83

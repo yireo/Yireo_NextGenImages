@@ -31,7 +31,7 @@ class ConvertCommand extends Command
     public function __construct(
         ConvertorListing $convertorListing,
         ImageFactory $imageFactory,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
         $this->convertorListing = $convertorListing;

@@ -3,27 +3,28 @@
 namespace Yireo\NextGenImages\Image;
 
 use Magento\Framework\View\Asset\File\NotFoundException;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Logger\Debugger;
 
-class ImageCollector
+class ImageCollector implements ArgumentInterface
 {
     /**
      * @var ImageFactory
      */
     private $imageFactory;
-    
+
     /**
      * @var ConvertorListing
      */
     private $convertorListing;
-    
+
     /**
      * @var Debugger
      */
     private $debugger;
-    
+
     /**
      * @param ImageFactory $imageFactory
      * @param ConvertorListing $convertorListing
@@ -38,7 +39,7 @@ class ImageCollector
         $this->convertorListing = $convertorListing;
         $this->debugger = $debugger;
     }
-    
+
     /**
      * @param string|array $imageUrl
      * @return Image[]
@@ -50,7 +51,7 @@ class ImageCollector
         } catch (NotFoundException $exception) {
             return [];
         }
-        
+
         $images = [];
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
@@ -60,7 +61,7 @@ class ImageCollector
                 continue;
             }
         }
-        
+
         return $images;
     }
 }

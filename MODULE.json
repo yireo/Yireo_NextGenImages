@@ -1,0 +1,116 @@
+{
+    "sequence": [
+        "Magento_Backend",
+        "Magento_Catalog",
+        "Magento_Config",
+        "Magento_ConfigurableProduct",
+        "Magento_PageCache",
+        "Magento_Store",
+        "Magento_Swatches",
+        "Yireo_CspUtilities",
+        "Yireo_IntegrationTestHelper"
+    ],
+    "modules": [
+        "Magento_Backend",
+        "Magento_Catalog",
+        "Magento_CatalogInventory",
+        "Magento_Checkout",
+        "Magento_Cms",
+        "Magento_Config",
+        "Magento_ConfigurableProduct",
+        "Magento_Csp",
+        "Magento_Customer",
+        "Magento_Directory",
+        "Magento_Eav",
+        "Magento_Indexer",
+        "Magento_LayeredNavigation",
+        "Magento_MediaStorage",
+        "Magento_Msrp",
+        "Magento_PageCache",
+        "Magento_Quote",
+        "Magento_Sales",
+        "Magento_Store",
+        "Magento_Swatches",
+        "Magento_Theme",
+        "Yireo_CspUtilities",
+        "Yireo_IntegrationTestHelper"
+    ],
+    "components": [],
+    "config": [
+        {
+            "path": "yireo_nextgenimages\/settings\/funding",
+            "label": "Settings > Funding",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/enabled",
+            "label": "Settings > Enabled",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/debug",
+            "label": "Settings > Debugging",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/log",
+            "label": "Settings > Logging",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/convert_images",
+            "label": "Settings > Convert images",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/convert_css_backgrounds",
+            "label": "Settings > Convert CSS backgrounds",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/target_directory",
+            "label": "Settings > Target directory",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/cache_directory",
+            "label": "Settings > Media cache directory",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/hash",
+            "label": "Settings > Add image hash",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/convert_on_save",
+            "label": "Settings > Convert images on save",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/lazy_loading",
+            "label": "Settings > Add lazy loading attribute",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/php_version",
+            "label": "Settings > PHP version",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/module_version",
+            "label": "Settings > Module version",
+            "description": ""
+        },
+        {
+            "path": "yireo_nextgenimages\/settings\/gd",
+            "label": "Settings > GD support",
+            "description": ""
+        }
+    ],
+    "tests": {
+        "unit": 37,
+        "integration": 12,
+        "functional": 0
+    }
+}

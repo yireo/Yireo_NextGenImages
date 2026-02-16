@@ -1,1 +1,15 @@
-<script></script>
+<script>
+    (function () {
+        const originalInitProductItemImage = initProductItemImage;
+        window.initProductItemImage = function (...componentArgs) {
+            const result = originalInitProductItemImage(...componentArgs);
+            const originalUpdateImage = result.updateImage;
+            result.updateImage = function(...methodArgs) {
+                originalUpdateImage.call(this, ...methodArgs);
+                document.dispatchEvent(new CustomEvent('after-product-item-image-update', {detail: this.$el}));
+            };
+
+            return result;
+        };
+    })();
+</script>

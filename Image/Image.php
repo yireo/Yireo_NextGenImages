@@ -2,18 +2,20 @@
 
 namespace Yireo\NextGenImages\Image;
 
+use GdImage;
+
 class Image
 {
     /**
      * @var string
      */
     private $path;
-    
+
     /**
      * @var string
      */
     private $url;
-    
+
     /**
      * @var ?string
      */
@@ -33,7 +35,7 @@ class Image
         $this->url = $url;
         $this->srcSet = $srcSet;
     }
-    
+
     /**
      * @return string
      */
@@ -41,7 +43,7 @@ class Image
     {
         return $this->path;
     }
-    
+
     /**
      * @return string
      */
@@ -49,7 +51,7 @@ class Image
     {
         return $this->url;
     }
-    
+
     /**
      * @return ?string
      */
@@ -73,7 +75,7 @@ class Image
     {
         return 'image/' . $this->getCode();
     }
-    
+
     /**
      * @return string
      */
@@ -82,23 +84,40 @@ class Image
         if (preg_match('/.gif$/i', $this->getPath())) {
             return 'gif';
         }
-        
+
         if (preg_match('/.(jpeg|jpg)$/i', $this->getPath())) {
             return 'jpeg';
         }
-        
+
         if (preg_match('/.webp$/i', $this->getPath())) {
             return 'webp';
         }
-        
+
         return 'png';
     }
-    
+
     /**
      * @return string
      */
     public function __toString(): string
     {
         return $this->getUrl();
+    }
+
+    public function getGdImage(): ?GdImage
+    {
+        if (false === file_exists($this->getPath())) {
+            return null;
+        }
+
+        if (str_ends_with($this->getPath(), '.jpeg') || str_ends_with($this->getPath(), '.jpg')) {
+            return imagecreatefromjpeg($this->getPath());
+        }
+
+        if (str_ends_with($this->getPath(), '.png')) {
+            return imagecreatefrompng($this->getPath());
+        }
+
+        return null;
     }
 }

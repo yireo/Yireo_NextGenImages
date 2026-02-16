@@ -79,6 +79,14 @@ class HtmlReplacerTest extends AbstractTestCase
     {
         return [
             [
+                'foobar',
+                'foobar',
+            ],
+            [
+                '<p>foobar</p><p>foobar</p>',
+                '<p>foobar</p><p>foobar</p>',
+            ],
+            [
                 '<div><img src="/img/test.png"/></div>',
                 '<div><img src="/img/test.png"/></div>'
             ],

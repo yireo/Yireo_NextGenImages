@@ -17,7 +17,7 @@ class TestUriCommand extends Command
      * @var FileUtil
      */
     private $fileUtil;
-    
+
     /**
      * @var TargetImageFactory
      */
@@ -26,7 +26,7 @@ class TestUriCommand extends Command
      * @var ImageFactory
      */
     private $imageFactory;
-    
+
     /**
      * TestUriCommand constructor.
      * @param FileUtil $fileUtil
@@ -38,7 +38,7 @@ class TestUriCommand extends Command
         FileUtil $fileUtil,
         TargetImageFactory $targetImageFactory,
         ImageFactory $imageFactory,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
         $this->fileUtil = $fileUtil;
@@ -76,23 +76,23 @@ class TestUriCommand extends Command
         $targetImage = $this->targetImageFactory->create($image, 'webp');
         $targetUri = $targetImage->getUrl();
         $targetPath = $this->fileUtil->resolve($targetUri);
-    
+
         $rows[] = ['Target path', $targetPath];
         $rows[] = ['Target exists', $this->getYesNo($this->fileUtil->uriExists($targetUri))];
         $modificationTime = $this->fileUtil->getModificationTime($targetPath);
         $modificationTimeFormatted = $modificationTime ? date('r', $modificationTime) : 'n/a';
         $rows[] = ['Target modification time', $modificationTimeFormatted];
-        
+
         $rows[] = ['Source is newer than target', $this->getYesNo($this->fileUtil->isNewerThan($path, $targetPath))];
-    
+
         $table = new Table($output);
         $table->setHeaders(['Check', 'Outcome']);
         $table->setRows($rows);
         $table->render();
-    
+
         return -1;
     }
-    
+
     /**
      * @param bool $value
      * @return string

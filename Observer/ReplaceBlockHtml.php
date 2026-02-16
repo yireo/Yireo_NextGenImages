@@ -2,8 +2,11 @@
 
 namespace Yireo\NextGenImages\Observer;
 
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\View\Element\AbstractBlock;
+use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Util\HtmlReplacer;
@@ -33,6 +36,7 @@ class ReplaceBlockHtml implements ObserverInterface
      * @var Config
      */
     private $config;
+    private RequestInterface $request;
 
     /**
      * ReplaceTags constructor.
@@ -46,12 +50,14 @@ class ReplaceBlockHtml implements ObserverInterface
         HtmlReplacer $htmlReplacer,
         ShouldModifyOutput $shouldModifyOutput,
         LayoutInterface $layout,
-        Config $config
+        Config $config,
+        RequestInterface $request
     ) {
         $this->htmlReplacer = $htmlReplacer;
         $this->shouldModifyOutput = $shouldModifyOutput;
         $this->layout = $layout;
         $this->config = $config;
+        $this->request = $request;
     }
 
     /**
@@ -61,11 +67,8 @@ class ReplaceBlockHtml implements ObserverInterface
     public function execute(Observer $observer)
     {
         $block = $observer->getEvent()->getBlock();
-        if (!$block->getData('ttl')) {
-            return;
-        }
 
-        if (!$this->config->hasFullPageCacheEnabled($this->layout)) {
+        if (false === $this->shouldModify($block)) {
             return;
         }
 
@@ -76,5 +79,41 @@ class ReplaceBlockHtml implements ObserverInterface
         $transport = $observer->getEvent()->getTransport();
         $html = $this->htmlReplacer->replace($transport->getHtml());
         $transport->setHtml($html);
+    }
+
+    private function shouldModify(BlockInterface $block): bool
+    {
+        if ($this->isFullPageCacheBlock($block)) {
+            return true;
+        }
+
+        if ($this->isAjax()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isFullPageCacheBlock(BlockInterface $block): bool
+    {
+        if (false === $block instanceof AbstractBlock) {
+            return false;
+        }
+
+        if (false === (bool)$block->getData('ttl')) {
+            return false;
+        }
+
+        if (false === !$this->config->hasFullPageCacheEnabled($this->layout)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isAjax(): bool
+    {
+        $value = $this->request->getHeader('X-Alpine-Request');
+        return in_array($value, [1, 'true', true]);
     }
 }

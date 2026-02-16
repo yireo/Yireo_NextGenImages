@@ -1,0 +1,9 @@
+<script>
+    (function() {
+        const originalInitConfigurableOptions = initConfigurableOptions;
+        window.initConfigurableOptions = function(productId, optionConfig) {
+            document.dispatchEvent(new CustomEvent('configurable-options-init', {detail: optionConfig}));
+            return originalInitConfigurableOptions(productId, optionConfig);
+        }
+    })();
+</script>

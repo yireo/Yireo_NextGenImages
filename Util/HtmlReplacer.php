@@ -88,6 +88,12 @@ class HtmlReplacer
      */
     private function replaceImageTags(string $html): string
     {
+        if (empty($html)) {
+            return $html;
+        }
+
+        $html = '<yireo_nextgenimages>'.$html.'</yireo_nextgenimages>';
+
         $document = $this->domUtils->htmlToDOMDocument($html);
         $images = $document->getElementsByTagName('img');
         foreach ($images as $image) {
@@ -97,6 +103,9 @@ class HtmlReplacer
                 $html = str_replace($imageHtml, $pictureHtml, $html);
             }
         }
+
+        $html = str_replace('<yireo_nextgenimages>', '', $html);
+        $html = str_replace('</yireo_nextgenimages>', '', $html);
 
         return $html;
     }

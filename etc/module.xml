@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
     <module name="Yireo_NextGenImages">
         <sequence>
             <module name="Magento_Backend"/>
@@ -11,6 +10,7 @@
             <module name="Magento_Store"/>
             <module name="Magento_Swatches"/>
             <module name="Yireo_CspUtilities"/>
+            <module name="Yireo_IntegrationTestHelper"/>
         </sequence>
     </module>
 </config>

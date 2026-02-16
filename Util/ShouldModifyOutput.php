@@ -13,12 +13,13 @@ class ShouldModifyOutput
     private $config;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $skippedHandles = [];
 
     /**
      * @param Config $config
+     * @param string[] $skippedHandles
      */
     public function __construct(
         Config $config,
@@ -56,6 +57,9 @@ class ShouldModifyOutput
         return true;
     }
 
+    /**
+     * @return string[]
+     */
     public function getSkippedHandles(): array
     {
         return $this->skippedHandles;
