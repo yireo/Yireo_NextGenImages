@@ -17,15 +17,23 @@ class Image
     private $url;
 
     /**
+     * @var ?string
+     */
+    private $srcSet = null;
+
+    /**
      * @param string $path
      * @param string $url
+     * @param ?string $srcSet
      */
     public function __construct(
         string $path,
-        string $url
+        string $url,
+        ?string $srcSet = null
     ) {
         $this->path = $path;
         $this->url = $url;
+        $this->srcSet = $srcSet;
     }
 
     /**
@@ -44,6 +52,22 @@ class Image
         return $this->url;
     }
 
+    /**
+     * @return ?string
+     */
+    public function getSrcSet(): ?string
+    {
+        return $this->srcSet;
+    }
+    
+    /**
+     * @param ?string
+     */
+    public function setSrcSet(?string $srcSet): void
+    {
+        $this->srcSet = $srcSet;
+    }
+    
     /**
      * @return string
      */

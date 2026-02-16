@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Magento\Framework\Escaper;
+use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\Picture;
 
 /** @version 0.5.15 */
@@ -16,22 +16,19 @@ $originalTag = preg_replace('/(\/?)>$/', $lazyLoading.'\1>', $originalTag);
 $originalImage = $block->getOriginalImage();
 $originalImageType = $block->getOriginalImageType();
 $srcAttribute = $block->getSrcAttribute() ?? 'src';
-$srcSetAttribute = $srcAttribute.'set'; ?>
-
-<?php if ($block->getDebug()): ?>
-    <!-- <?= /* @noEscape */ $block->getOriginalTag() ?> -->
-<?php endif; ?>
-
+$srcSetAttribute = $srcAttribute.'set'; 
+?>
 <picture<?= /* @noEscape */ $class ?>>
     <?php if ($block->getDebug()): ?>
         <!-- <?= $escaper->escapeHtml($block->getOriginalAttributesAsString()) ?> -->
     <?php endif; ?>
+  
     <?php foreach ($block->getImages() as $image): ?>
-        <source type="<?= /* @noEscape */
-        $image->getMimeType() ?>" <?= /* @noEscape */
-        $srcSetAttribute ?>="<?= /* @noEscape */
-        $image->getUrl() ?>" <?= /* @noEscape */
-        $block->getSourceAttributesAsString() ?> >
+        <source 
+            type="<?= /* @noEscape */ $image->getMimeType() ?>" 
+            <?= /* @noEscape */ $srcSetAttribute ?>="<?= /* @noEscape */ $image->getSrcSet() ?: $image->getUrl() ?>" 
+            <?= /* @noEscape */ $block->getSourceAttributesAsString() ?>
+        >
     <?php endforeach; ?>
     <?= /* @noEscape */ $originalTag ?>
 </picture>

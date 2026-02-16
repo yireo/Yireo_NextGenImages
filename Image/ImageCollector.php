@@ -41,10 +41,10 @@ class ImageCollector implements ArgumentInterface
     }
 
     /**
-     * @param string $imageUrl
+     * @param string|array $imageUrl
      * @return Image[]
      */
-    public function collect(string $imageUrl): array
+    public function collect($imageUrl): array
     {
         try {
             $image = $this->imageFactory->createFromUrl($imageUrl);

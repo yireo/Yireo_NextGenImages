@@ -37,17 +37,35 @@ class ImageFactory
     }
 
     /**
-     * @param string $url
+     * @param array|string $url
      * @return Image
      * @throws FileSystemException
      */
-    public function createFromUrl(string $url): Image
+    public function createFromUrl($url): Image
+    {
+        $urls = is_array($url) ? $url : [$url];
+        $baseUrl = $this->cleanUrl($urls[0] ?? '');
+        $srcSet = $this->getSrcSet($urls);
+        $path = $this->urlConvertor->getFilenameFromUrl($baseUrl);
+        return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $baseUrl, 'srcSet' => $srcSet]);
+    }
+    
+    private function cleanUrl(string $url): string
     {
         if (strpos($url, 'http') !== false) {
-            $url = explode('?', $url)[0];
+            return explode('?', $url)[0];
         }
-
-        $path = $this->urlConvertor->getFilenameFromUrl($url);
-        return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $url]);
+        
+        return $url;
+    }
+    
+    private function getSrcSet(array $urls): string
+    {
+        $srcSetPieces = [];
+        foreach ($urls as $key => $url) {
+            $srcSetPieces[] = $this->cleanUrl($url) . ($key !== 0 ? (' ' . $key) : '');
+        }
+        
+        return implode(',', $srcSetPieces);
     }
 }
