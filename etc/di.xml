@@ -42,4 +42,15 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Yireo\NextGenImages\Convertor\ConvertorInterface">
+        <plugin name="Yireo_NextGenImages::convertorInterface" type="Yireo\NextGenImages\Plugin\Convertor\ConvertorInterface" />
+    </type>
+
+    <type name="Yireo\NextGenImages\Util\File">
+        <plugin name="Yireo_NextGenImages::file" type="Yireo\NextGenImages\Plugin\Util\File" />
+    </type>
+    <type name="Yireo\NextGenImages\Util\UrlConvertor">
+        <plugin name="Yireo_NextGenImages::urlConvertor" type="Yireo\NextGenImages\Plugin\Util\UrlConvertor" />
+    </type>
 </config>
