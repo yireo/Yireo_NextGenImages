@@ -1,19 +1,27 @@
-name: Magento 2 Unit Tests
+name: Magento 2 DI compilation
 on: ['push', 'pull_request']
 
 jobs:
-  unit-tests:
-    name: Magento 2 Unit Tests
+  compile:
+    name: Magento 2 DI compilation
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        magento_version: ['2.4.7-p7', '2.4.8-p1', '2.4.8-p4', '2.4.9']
     container:
-        image: yireo/magento2installed:2.4.8-p3
+      image: yireo/magento2installed:${{ matrix.magento_version }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Detecting unit tests
+      - name: Testing for MODULE.json file
         run: |
-          test -d $GITHUB_WORKSPACE/Test/Unit || echo "SKIP_JOB=true" >> $GITHUB_ENV
+          (test -f MODULE.json || echo "SKIP_JOB=true" >> $GITHUB_ENV) || true
+
+      - name: Check Magento version
+        if: env.SKIP_JOB != 'true'
+        run: |
+          jq -e --arg v "${{ matrix.magento_version }}" '.skip_magento_versions[]? | select(. == $v)' MODULE.json && echo "SKIP_JOB=true" >> $GITHUB_ENV || true
 
       - name: Cleanup PHP
         if: env.SKIP_JOB != 'true'
@@ -23,15 +31,16 @@ jobs:
       - name: Setting up module variables
         if: env.SKIP_JOB != 'true'
         run: |
-          echo COMPOSER_NAME=`jq '.name' $GITHUB_WORKSPACE/composer.json -r` >> $GITHUB_ENV
-          echo MAGENTO_MODULE=`jq '.module_name' $GITHUB_WORKSPACE/MODULE.json -r` >> $GITHUB_ENV
+          echo COMPOSER_NAME=`jq '.name' composer.json -r` >> $GITHUB_ENV
+          echo MAGENTO_MODULE=`jq '.module_name' MODULE.json -r` >> $GITHUB_ENV
 
       - name: Configure GitLab
         if: env.SKIP_JOB != 'true'
         run: |
           test -n "${{ secrets.GITLAB_TOKEN }}" || exit 0
           cd /tmp/magento
-          composer config --auth gitlab-token.gitlab.yireo.com "${{ secrets.GITLAB_TOKEN }}"
+          composer config gitlab-domains gitlab.yireo.com
+          composer config --global --auth gitlab-token.gitlab.yireo.com "${{ secrets.GITLAB_TOKEN }}"
           composer config repositories.loki-third-party composer https://gitlab.yireo.com/api/v4/group/loki-third-party/-/packages/composer/packages.json
           composer config repositories.loki-checkout composer https://gitlab.yireo.com/api/v4/group/loki-checkout/-/packages/composer/packages.json
           composer config repositories.loki-checkout-dev composer https://gitlab.yireo.com/api/v4/group/loki-checkout-dev/-/packages/composer/packages.json
@@ -53,14 +62,15 @@ jobs:
       - name: Add module source
         if: env.SKIP_JOB != 'true'
         run: |
-          cp -R $GITHUB_WORKSPACE /tmp/magento/package-source
+          cp -R ${GITHUB_WORKSPACE} /tmp/magento/package-source
           cd /tmp/magento
           composer config repositories.local-source path package-source/
-          composer require -n --prefer-source -- $COMPOSER_NAME:@dev
+          composer require -n --prefer-source ${COMPOSER_NAME}:@dev
 
-      - name: Run Magento 2 Unit Tests
+      - name: Run Magento 2 compilation
         if: env.SKIP_JOB != 'true'
         run: |
-          cd /tmp/magento/dev/tests/unit/
-          php -d memory_limit=-1 ../../../vendor/bin/phpunit -c phpunit.xml.dist ../../../vendor/$COMPOSER_NAME/Test/Unit
+          cd /tmp/magento
+          bin/magento module:enable --all
+          php -dzend.enable_gc=0 -drealpath_cache_size=64M -drealpath_cache_ttl=7200 -dopcache.enable_cli=1 -dopcache.memory_consumption=512 -dopcache.interned_strings_buffer=64 -dopcache.max_accelerated_files=100000 -dmemory_limit=-1 bin/magento setup:di:compile
 
