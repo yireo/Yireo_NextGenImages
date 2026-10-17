@@ -78,8 +78,8 @@ class TmpFileCopier
             $content = $this->remoteDirectoryWrite->getDriver()->fileGetContents($filePath);
 
             if ($this->tmpDirectoryWrite->getDriver()->filePutContents($tmpPath, $content) >= 0) {
+                $this->tmpFiles[$filePath] = $tmpPath;
                 $filePath = $tmpPath;
-                $this->tmpFiles[$tmpPath] = $tmpPath;
             }
         }
 
