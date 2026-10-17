@@ -28,6 +28,11 @@ class FakeWebpConvertor implements ConvertorInterface
         self::$sourceExistedLocally = [];
     }
 
+    public function getFormat(): string
+    {
+        return 'webp';
+    }
+
     public function convertImage(Image $image): Image
     {
         self::$calls++;

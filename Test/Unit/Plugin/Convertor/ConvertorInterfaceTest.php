@@ -93,7 +93,7 @@ class ConvertorInterfaceTest extends AbstractTestCase
         };
 
         $plugin = $this->createPlugin();
-        $result = $plugin->aroundConvertImage($this->getSubject(), $proceed, $this->getSourceImage());
+        $result = $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImage());
         $this->assertSame(self::TMP_ROOT.'/'.self::TARGET_RELATIVE, $result->getPath());
     }
 
@@ -169,7 +169,7 @@ class ConvertorInterfaceTest extends AbstractTestCase
         };
 
         $plugin = $this->createPlugin();
-        $plugin->aroundConvertImage($this->getSubject(), $proceed, $this->getSourceImage());
+        $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImage());
         $this->assertTrue($proceedCalled, 'Convertor should decide what happens to a missing source image');
     }
 
@@ -195,7 +195,57 @@ class ConvertorInterfaceTest extends AbstractTestCase
         $this->assertStringEndsWith('.avif', $result->getPath());
     }
 
-    private function createPlugin(): ConvertorInterfacePlugin
+    public function testUsesFormatOfConvertor(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->expects($this->once())
+            ->method('needsConversion')
+            ->with(self::TMP_ROOT.'/'.self::SOURCE_RELATIVE, self::TMP_ROOT.'/media/catalog/product/a/b/test.avif')
+            ->willReturn(false);
+
+        $proceed = function () {
+            $this->fail('Convertor should not be called when the target image is up to date');
+        };
+
+        $plugin = $this->createPlugin();
+        $result = $plugin->aroundConvertImage($this->getFormatAwareSubject('avif'), $proceed, $this->getSourceImage());
+        $this->assertStringEndsWith('.avif', $result->getPath());
+    }
+
+    public function testUsesFormatFromDiConfiguration(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->expects($this->once())
+            ->method('needsConversion')
+            ->with(self::TMP_ROOT.'/'.self::SOURCE_RELATIVE, self::TMP_ROOT.'/media/catalog/product/a/b/test.avif')
+            ->willReturn(false);
+
+        $subject = $this->getAvifSubject();
+        $proceed = function () {
+            $this->fail('Convertor should not be called when the target image is up to date');
+        };
+
+        $plugin = $this->createPlugin([get_class($subject) => 'avif']);
+        $result = $plugin->aroundConvertImage($subject, $proceed, $this->getSourceImage());
+        $this->assertStringEndsWith('.avif', $result->getPath());
+    }
+
+    public function testAlwaysConvertsWhenFormatIsUnknown(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->expects($this->never())->method('needsConversion');
+        $this->tmpFileCopier->expects($this->once())->method('copy')->with(self::SOURCE_RELATIVE);
+
+        $resultImage = $this->getTargetImage();
+        $plugin = $this->createPlugin();
+        $result = $plugin->aroundConvertImage($this->getSubject(), fn () => $resultImage, $this->getSourceImage());
+        $this->assertSame($resultImage, $result);
+    }
+
+    private function createPlugin(array $formats = []): ConvertorInterfacePlugin
     {
         $tmpDirectoryWrite = $this->createMock(WriteInterface::class);
         $tmpDirectoryWrite->method('getDriver')->willReturn($this->tmpDriver);
@@ -221,7 +271,8 @@ class ConvertorInterfaceTest extends AbstractTestCase
             $targetDirectory,
             $this->targetImageFactory,
             $this->fileUtil,
-            $this->tmpFileCopier
+            $this->tmpFileCopier,
+            $formats
         );
     }
 
@@ -238,6 +289,33 @@ class ConvertorInterfaceTest extends AbstractTestCase
     private function getSubject(): ConvertorInterface
     {
         return $this->createMock(ConvertorInterface::class);
+    }
+
+    private function getWebpSubject(): ConvertorInterface
+    {
+        return $this->getFormatAwareSubject('webp');
+    }
+
+    private function getFormatAwareSubject(string $format): ConvertorInterface
+    {
+        return new class($format) implements ConvertorInterface {
+            private string $format;
+
+            public function __construct(string $format)
+            {
+                $this->format = $format;
+            }
+
+            public function getFormat(): string
+            {
+                return $this->format;
+            }
+
+            public function convertImage(Image $image): Image
+            {
+                return $image;
+            }
+        };
     }
 
     private function getAvifSubject(): ConvertorInterface
