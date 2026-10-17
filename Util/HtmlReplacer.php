@@ -122,7 +122,8 @@ class HtmlReplacer
             return '';
         }
 
-        $regex = '/<img '.self::MARKER_CODE.'="'.$imageMarker.'"([^\>]+)>/';
+        // Quoted attribute values may contain a ">", like in Alpine.js attributes `@click="() => foo()"`
+        $regex = '/<img '.self::MARKER_CODE.'="'.$imageMarker.'"((?:[^>"\']|"[^"]*"|\'[^\']*\')*)>/';
         if (!preg_match($regex, $html, $imageHtmlMatch)) {
             return '';
         }
@@ -195,7 +196,7 @@ class HtmlReplacer
     {
         $i = 0;
         $html = preg_replace_callback(
-            "/<img([^\>]+)>/mi",
+            "/<img((?:[^>\"']|\"[^\"]*\"|'[^']*')+)>/mi",
             function ($matches) use (&$i) {
                 $i++;
 
