@@ -57,14 +57,28 @@ class FileTest extends AbstractTestCase
         $this->assertTrue($plugin->aroundFileExists($this->getFileSubject(), $proceed, self::TMP_PATH));
     }
 
-    public function testFileExistsReturnsFalseWhenFileIsMissingOnRemoteStorage(): void
+    public function testFileExistsReturnsFalseWhenFileIsMissingOnRemoteStorageAndLocally(): void
     {
         $this->remoteDirectoryRead->method('isExist')->willReturn(false);
 
         $plugin = $this->createPlugin(true);
-        $proceed = $this->createNeverCalledProceed();
+        $proceed = $this->createProceed(false, self::TMP_PATH);
 
         $this->assertFalse($plugin->aroundFileExists($this->getFileSubject(), $proceed, self::TMP_PATH));
+    }
+
+    /**
+     * Right after conversion, the target image only exists locally in var/tmp. Convertors like Yireo_Webp2
+     * check the target image at that moment.
+     */
+    public function testFileExistsReturnsTrueWhenFileOnlyExistsLocally(): void
+    {
+        $this->remoteDirectoryRead->method('isExist')->willReturn(false);
+
+        $plugin = $this->createPlugin(true);
+        $proceed = $this->createProceed(true, self::TMP_PATH);
+
+        $this->assertTrue($plugin->aroundFileExists($this->getFileSubject(), $proceed, self::TMP_PATH));
     }
 
     /**
@@ -77,7 +91,7 @@ class FileTest extends AbstractTestCase
             ->willThrowException(new FileSystemException(__('Remote storage unavailable')));
 
         $plugin = $this->createPlugin(true);
-        $proceed = $this->createNeverCalledProceed();
+        $proceed = $this->createProceed(false, self::TMP_PATH);
 
         $this->assertFalse($plugin->aroundFileExists($this->getFileSubject(), $proceed, self::TMP_PATH));
     }
