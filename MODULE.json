@@ -1,4 +1,5 @@
 {
+    "module_name": "Yireo_NextGenImages",
     "sequence": [
         "Magento_Backend",
         "Magento_Catalog",
