@@ -1,3 +1,4 @@
+import {existsSync, readFileSync} from 'fs';
 import {expect, Page} from '@playwright/test';
 
 export const defaultConfig = {
@@ -29,6 +30,25 @@ export async function configureNextGenImages(page: Page, config: Record<string, 
     }
 
     expect(data.error, 'Configure error').toBeUndefined();
+}
+
+/**
+ * Return whether a Magento module is enabled, according to app/etc/config.php
+ */
+export function isModuleEnabled(moduleName: string): boolean {
+    const configFile = (process.env.MAGENTO_ROOT ?? '/tmp/magento') + '/app/etc/config.php';
+    if (!existsSync(configFile)) {
+        return false;
+    }
+
+    return new RegExp(`'${moduleName}'\\s*=>\\s*1`).test(readFileSync(configFile, 'utf8'));
+}
+
+/**
+ * NextGenImages itself does not convert images, so a convertor module is needed
+ */
+export function hasConvertor(): boolean {
+    return isModuleEnabled('Yireo_Webp2') || isModuleEnabled('Yireo_Avif');
 }
 
 /**

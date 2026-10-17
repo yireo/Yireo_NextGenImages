@@ -1,15 +1,23 @@
-import {test, expect, configureNextGenImages, getFirstSrcSetUrl} from './lib/next-gen-images';
+import {Page} from '@playwright/test';
+import {test, expect, configureNextGenImages, getFirstSrcSetUrl, hasConvertor} from './lib/next-gen-images';
 
 /**
  * Baseline with local storage (so, no remote storage): images should be converted and served as before.
  * Requires a convertor like Yireo_Webp2 and the Luma sample data (CMS images on the homepage).
  */
+async function gotoHomepageWithImages(page: Page) {
+    await page.goto('/');
+    const imageCount = await page.locator('img[src*="/media/wysiwyg/"]').count();
+    test.skip(imageCount === 0, 'No CMS images on the homepage (Luma sample data is not installed)');
+}
+
 test.describe('NextGenImages with local storage', function () {
     test.describe.configure({mode: 'serial'});
+    test.skip(!hasConvertor(), 'No convertor module (like Yireo_Webp2) is enabled');
 
     test('renders a WebP source for CMS images', async function ({page}) {
         await configureNextGenImages(page);
-        await page.goto('/');
+        await gotoHomepageWithImages(page);
 
         const webpSources = page.locator('picture source[type="image/webp"]');
         expect(await webpSources.count(), 'Number of WebP sources').toBeGreaterThan(0);
@@ -29,7 +37,7 @@ test.describe('NextGenImages with local storage', function () {
 
     test('WebP sources point to the same folder as the original image', async function ({page}) {
         await configureNextGenImages(page);
-        await page.goto('/');
+        await gotoHomepageWithImages(page);
 
         const pictures = page.locator('picture:has(source[type="image/webp"])');
         const count = await pictures.count();
@@ -45,9 +53,8 @@ test.describe('NextGenImages with local storage', function () {
 
     test('does not render WebP sources when disabled', async function ({page}) {
         await configureNextGenImages(page, {'yireo_nextgenimages/settings/enabled': 0});
-        await page.goto('/');
+        await gotoHomepageWithImages(page);
 
         await expect(page.locator('picture source[type="image/webp"]')).toHaveCount(0);
-        expect(await page.locator('img[src*="/media/wysiwyg/"]').count()).toBeGreaterThan(0);
     });
 });
