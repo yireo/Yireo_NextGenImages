@@ -21,7 +21,6 @@ class PictureFactoryTest extends AbstractTestCase
 
         $config = $this->getMagentoMock(Config::class);
 
-        // @phpstan-ignore-next-line
         $pictureFactory = new PictureFactory($layout, $config);
 
         $image = $this->getMagentoMock(Image::class);

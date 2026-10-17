@@ -1,4 +1,4 @@
-<?php declare(strict_types=1); // @phpstan-ignorefile
+<?php declare(strict_types=1);
 
 namespace Yireo\NextGenImages\Test\Unit\Image;
 
@@ -17,7 +17,6 @@ class ImageFactoryTest extends TestCase
         $objectManager = $this->getObjectManager();
         $objectManager->method('create')->willReturn(new Image('/tmp/pub/foo/bar.jpg', '/foo/bar.jpg'));
 
-        // @phpstan-ignore-next-line
         $imageFactory = new ImageFactory($objectManager, $urlConvertor);
         $image = $imageFactory->createFromPath('/tmp/pub/foo/bar.jpg');
 
@@ -33,7 +32,6 @@ class ImageFactoryTest extends TestCase
         $objectManager = $this->getObjectManager();
         $objectManager->method('create')->willReturn(new Image('/tmp/pub/foo/bar.jpg', '/foo/bar.jpg'));
 
-        // @phpstan-ignore-next-line
         $imageFactory = new ImageFactory($objectManager, $urlConvertor);
         $image = $imageFactory->createFromUrl('/foo/bar.jpg');
 
@@ -52,7 +50,6 @@ class ImageFactoryTest extends TestCase
             new Image('/tmp/pub/foo/bar.jpg', '/foo/bar.jpg', '/foo/bar.jpg,/baz/qux.jpg 500w')
         );
         
-        // @phpstan-ignore-next-line
         $imageFactory = new ImageFactory($objectManager, $urlConvertor);
         $image = $imageFactory->createFromUrl(['/foo/bar.jpg', '500w' => '/baz/qux.jpg']);
         
