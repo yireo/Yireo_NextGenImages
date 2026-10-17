@@ -33,8 +33,8 @@
         "yireo/magento2-csp-utilities": "^1.0"
     },
     "require-dev": {
-        "bitexpert/phpstan-magento": "^0.3.0",
-        "phpstan/phpstan": "^0.12.32",
+        "bitexpert/phpstan-magento": "^0.42",
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^9.0|^10.0|^11.0",
         "yireo/magento2-integration-test-helper": "@dev"
     },
