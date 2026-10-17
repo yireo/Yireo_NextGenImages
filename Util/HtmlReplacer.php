@@ -151,6 +151,7 @@ class HtmlReplacer
         if ($imageSrcSet) {
             $srcSetImages = explode(',', $imageSrcSet);
             $imageUrls = [];
+            $imageUrl = '';
             foreach ($srcSetImages as $srcSetImage) {
                 $pieces = explode(' ', trim($srcSetImage));
                 if (isset($pieces[1])) {
@@ -160,6 +161,10 @@ class HtmlReplacer
                     $descriptor = 0;
                     $imageUrl = $imageUrls[$descriptor] = $pieces[0];
                 }
+            }
+
+            if ($imageUrl === '') {
+                $imageUrl = (string)reset($imageUrls);
             }
             $images = $this->imageCollector->collect($imageUrls);
             if (!count($images) > 0) {
