@@ -459,7 +459,7 @@ class Picture extends Template
         $html = preg_replace('/(\s+)>/m', '>', $html);
         $html = preg_replace('/(\s+)/m', ' ', $html);
         $html = str_replace("\n", "", $html);
-        $html = trim($html);
+        $html = trim($html, " \f\n\r\t\v\x00");
 
         return $html;
     }

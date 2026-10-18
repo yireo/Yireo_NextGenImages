@@ -153,7 +153,7 @@ class HtmlReplacer
             $imageUrls = [];
             $imageUrl = '';
             foreach ($srcSetImages as $srcSetImage) {
-                $pieces = explode(' ', trim($srcSetImage));
+                $pieces = explode(' ', trim($srcSetImage, " \f\n\r\t\v\x00"));
                 if (isset($pieces[1])) {
                     $descriptor = $pieces[1];
                     $imageUrls[$descriptor] = $pieces[0];

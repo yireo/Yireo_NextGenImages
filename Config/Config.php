@@ -98,7 +98,7 @@ class Config implements ArgumentInterface
     {
         $pubPath = $this->directoryList->getRoot().'/pub/';
 
-        $value = trim($this->getValue('yireo_nextgenimages/settings/cache_directory'));
+        $value = trim($this->getValue('yireo_nextgenimages/settings/cache_directory'), " \f\n\r\t\v\x00");
         if (empty($value)) {
             return $pubPath.'/media/nextgenimages/';
         }
