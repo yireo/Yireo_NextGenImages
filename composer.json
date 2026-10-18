@@ -34,10 +34,10 @@
     },
     "require-dev": {
         "bitexpert/phpstan-magento": "^0.42",
+        "loki/magento2-functional-tests": "@dev",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^9.0|^10.0|^11.0",
-        "yireo/magento2-integration-test-helper": "~0.0",
-        "loki/magento2-functional-tests": "@dev"
+        "yireo/magento2-integration-test-helper": "~0.0"
     },
     "suggest": {
         "yireo/magento2-webp2": "Support for WebP2 images"
