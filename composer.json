@@ -26,6 +26,7 @@
         "magento/module-config": "^101.0",
         "magento/module-configurable-product": "^100.0",
         "magento/module-page-cache": "^100.0",
+        "magento/module-remote-storage": "^100.4",
         "magento/module-store": "^100.0|^101.0",
         "magento/module-swatches": "^100.0",
         "php": ">=8.2 <8.6",
