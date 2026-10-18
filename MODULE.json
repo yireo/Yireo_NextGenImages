@@ -12,6 +12,7 @@
         "Yireo_IntegrationTestHelper"
     ],
     "modules": [
+        "Magento_AdminNotification",
         "Magento_Backend",
         "Magento_Catalog",
         "Magento_CatalogInventory",
@@ -28,11 +29,15 @@
         "Magento_MediaStorage",
         "Magento_Msrp",
         "Magento_PageCache",
+        "Magento_Payment",
         "Magento_Quote",
+        "Magento_Rule",
         "Magento_Sales",
+        "Magento_SalesSequence",
         "Magento_Store",
         "Magento_Swatches",
         "Magento_Theme",
+        "Magento_Variable",
         "Yireo_CspUtilities",
         "Yireo_IntegrationTestHelper"
     ],
@@ -110,9 +115,9 @@
         }
     ],
     "tests": {
-        "unit": 37,
-        "integration": 12,
-        "functional": 0
+        "unit": 73,
+        "integration": 27,
+        "functional": 3
     },
     "php_versions": [
         "8.2",
@@ -120,5 +125,9 @@
         "8.4",
         "8.5"
     ],
-    "composer_name": "yireo/magento2-next-gen-images"
+    "composer_name": "yireo/magento2-next-gen-images",
+    "skip_magento_versions": [],
+    "skip_css_utils": false,
+    "phpcs_severity": 10,
+    "phpstan_level": 1
 }
