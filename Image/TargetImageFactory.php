@@ -44,7 +44,14 @@ class TargetImageFactory
         $folder = $this->getTargetPathFromImage($image);
         $filename = $this->getTargetFilename($image, $suffix);
 
-        return $this->imageFactory->createFromPath($folder.'/'.$filename);
+        $targetImage = $this->imageFactory->createFromPath($folder.'/'.$filename);
+
+        $queryString = parse_url($image->getUrl(), PHP_URL_QUERY);
+        if ($queryString) {
+            $targetImage->setUrl($targetImage->getUrl().'?'.$queryString);
+        }
+
+        return $targetImage;
     }
 
     /**

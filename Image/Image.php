@@ -45,6 +45,14 @@ class Image
     }
 
     /**
+     * @param string $url
+     */
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+
+    /**
      * @return string
      */
     public function getUrl(): string

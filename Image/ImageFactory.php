@@ -44,10 +44,11 @@ class ImageFactory
     public function createFromUrl($url): Image
     {
         $urls = is_array($url) ? $url : [$url];
-        $baseUrl = $this->cleanUrl($urls[0] ?? '');
+        $originalUrl = $urls[0] ?? '';
+        $baseUrl = $this->cleanUrl($originalUrl);
         $srcSet = $this->getSrcSet($urls);
         $path = $this->urlConvertor->getFilenameFromUrl($baseUrl);
-        return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $baseUrl, 'srcSet' => $srcSet]);
+        return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $originalUrl, 'srcSet' => $srcSet]);
     }
     
     private function cleanUrl(string $url): string
@@ -63,9 +64,9 @@ class ImageFactory
     {
         $srcSetPieces = [];
         foreach ($urls as $key => $url) {
-            $srcSetPieces[] = $this->cleanUrl($url) . ($key !== 0 ? (' ' . $key) : '');
+            $srcSetPieces[] = $url . ($key !== 0 ? (' ' . $key) : '');
         }
-        
+
         return implode(',', $srcSetPieces);
     }
 }
