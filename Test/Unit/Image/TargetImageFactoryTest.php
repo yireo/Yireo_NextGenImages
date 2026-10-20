@@ -29,7 +29,6 @@ class TargetImageFactoryTest extends AbstractTestCase
         $filesystem = $this->getMagentoMock(Filesystem::class);
         $filesystem->method('getDirectoryWrite')->willReturn($writer);
 
-        // @phpstan-ignore-next-line
         $targetImageFactory = new TargetImageFactory(
             $this->getMagentoMock(DirectoryList::class),
             $this->getMagentoMock(Config::class),
@@ -62,7 +61,6 @@ class TargetImageFactoryTest extends AbstractTestCase
         $filesystem = $this->getMagentoMock(Filesystem::class);
         $filesystem->method('getDirectoryWrite')->willReturn($writer);
 
-        // @phpstan-ignore-next-line
         $targetImageFactory = new TargetImageFactory(
             $directoryList,
             $config,

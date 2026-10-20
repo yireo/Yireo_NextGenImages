@@ -1,16 +1,19 @@
 {
+    "module_name": "Yireo_NextGenImages",
     "sequence": [
         "Magento_Backend",
         "Magento_Catalog",
         "Magento_Config",
         "Magento_ConfigurableProduct",
         "Magento_PageCache",
+        "Magento_RemoteStorage",
         "Magento_Store",
         "Magento_Swatches",
         "Yireo_CspUtilities",
         "Yireo_IntegrationTestHelper"
     ],
     "modules": [
+        "Magento_AdminNotification",
         "Magento_Backend",
         "Magento_Catalog",
         "Magento_CatalogInventory",
@@ -18,6 +21,7 @@
         "Magento_Cms",
         "Magento_Config",
         "Magento_ConfigurableProduct",
+        "Magento_Cron",
         "Magento_Csp",
         "Magento_Customer",
         "Magento_Directory",
@@ -27,90 +31,108 @@
         "Magento_MediaStorage",
         "Magento_Msrp",
         "Magento_PageCache",
+        "Magento_Payment",
         "Magento_Quote",
+        "Magento_RemoteStorage",
+        "Magento_Robots",
+        "Magento_Rule",
         "Magento_Sales",
+        "Magento_SalesSequence",
+        "Magento_Sitemap",
         "Magento_Store",
         "Magento_Swatches",
         "Magento_Theme",
+        "Magento_Variable",
         "Yireo_CspUtilities",
         "Yireo_IntegrationTestHelper"
     ],
     "components": [],
     "config": [
         {
-            "path": "yireo_nextgenimages\/settings\/funding",
+            "path": "yireo_nextgenimages/settings/funding",
             "label": "Settings > Funding",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/enabled",
+            "path": "yireo_nextgenimages/settings/enabled",
             "label": "Settings > Enabled",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/debug",
+            "path": "yireo_nextgenimages/settings/debug",
             "label": "Settings > Debugging",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/log",
+            "path": "yireo_nextgenimages/settings/log",
             "label": "Settings > Logging",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/convert_images",
+            "path": "yireo_nextgenimages/settings/convert_images",
             "label": "Settings > Convert images",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/convert_css_backgrounds",
+            "path": "yireo_nextgenimages/settings/convert_css_backgrounds",
             "label": "Settings > Convert CSS backgrounds",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/target_directory",
+            "path": "yireo_nextgenimages/settings/target_directory",
             "label": "Settings > Target directory",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/cache_directory",
+            "path": "yireo_nextgenimages/settings/cache_directory",
             "label": "Settings > Media cache directory",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/hash",
+            "path": "yireo_nextgenimages/settings/hash",
             "label": "Settings > Add image hash",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/convert_on_save",
+            "path": "yireo_nextgenimages/settings/convert_on_save",
             "label": "Settings > Convert images on save",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/lazy_loading",
+            "path": "yireo_nextgenimages/settings/lazy_loading",
             "label": "Settings > Add lazy loading attribute",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/php_version",
+            "path": "yireo_nextgenimages/settings/php_version",
             "label": "Settings > PHP version",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/module_version",
+            "path": "yireo_nextgenimages/settings/module_version",
             "label": "Settings > Module version",
             "description": ""
         },
         {
-            "path": "yireo_nextgenimages\/settings\/gd",
+            "path": "yireo_nextgenimages/settings/gd",
             "label": "Settings > GD support",
             "description": ""
         }
     ],
     "tests": {
-        "unit": 37,
-        "integration": 12,
-        "functional": 0
-    }
+        "unit": 73,
+        "integration": 27,
+        "functional": 3
+    },
+    "php_versions": [
+        "8.2",
+        "8.3",
+        "8.4",
+        "8.5"
+    ],
+    "composer_name": "yireo/magento2-next-gen-images",
+    "skip_magento_versions": [],
+    "skip_css_utils": false,
+    "phpcs_severity": "9",
+    "phpstan_level": "1"
 }

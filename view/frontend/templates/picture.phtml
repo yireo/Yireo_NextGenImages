@@ -1,9 +1,8 @@
 <?php declare(strict_types=1);
 
 use Yireo\NextGenImages\Block\Picture;
-use Yireo\NextGenImages\Block\Picture;
 
-/** @version 0.5.15 */
+/** @version 0.5.16 */
 /** @var Picture $block */
 /** @var Escaper $escaper */
 
@@ -11,7 +10,7 @@ $width = ($block->getWidth()) ? ' width="'.$block->getWidth().'"' : '';
 $height = ($block->getHeight()) ? ' height="'.$block->getHeight().'"' : '';
 $class = ($block->getClass()) ? ' class="'.$block->getClass().'"' : '';
 $lazyLoading = ($block->getLazyLoading()) ? ' loading="lazy" ' : '';
-$originalTag = trim($block->getOriginalTag());
+$originalTag = trim($block->getOriginalTag(), " \f\n\r\t\v\x00");
 $originalTag = preg_replace('/(\/?)>$/', $lazyLoading.'\1>', $originalTag);
 $originalImage = $block->getOriginalImage();
 $originalImageType = $block->getOriginalImageType();

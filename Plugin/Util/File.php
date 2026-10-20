@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yireo\NextGenImages\Plugin\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
@@ -38,9 +39,16 @@ class File
             return $proceed($filePath);
         }
 
-        $relativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
-        
-        return $this->remoteDirectoryRead->isExist($relativePath);
+        try {
+            $relativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
+            if ($this->remoteDirectoryRead->isExist($relativePath)) {
+                return true;
+            }
+        } catch (FileSystemException $fileSystemException) {
+        }
+
+        // A freshly converted image only exists locally until it is moved to the remote storage
+        return $proceed($filePath);
     }
 
     public function aroundGetModificationTime(BaseFile $subject, callable $proceed, string $filePath): int
@@ -49,9 +57,17 @@ class File
             return $proceed($filePath);
         }
 
-        $tmpRelativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
-        $stat = $this->remoteDirectoryRead->stat($tmpRelativePath);
+        try {
+            $tmpRelativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
+            $stat = $this->remoteDirectoryRead->stat($tmpRelativePath);
+        } catch (FileSystemException $fileSystemException) {
+            return 0;
+        }
 
-        return (int)($stat['mtime'] ?? $stat['ctime'] ?? 0);
+        if (!empty($stat['mtime'])) {
+            return (int)$stat['mtime'];
+        }
+
+        return (int)($stat['ctime'] ?? 0);
     }
 }

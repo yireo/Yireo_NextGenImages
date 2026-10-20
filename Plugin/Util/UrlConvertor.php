@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Yireo\NextGenImages\Plugin\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Exception\NotFoundException;
 use Magento\RemoteStorage\Model\Config as RemoteStorageConfig;
 use Yireo\NextGenImages\Util\UrlConvertor as BaseUrlConvertor;
 
@@ -80,31 +77,16 @@ class UrlConvertor
             return $result;
         }
 
-        try {
-            $realMediaPath = $this->fileDriver->getRealPath($this->mediaPath);
-            if (strpos($result, $realMediaPath) !== false) {
-                return str_replace($this->mediaPath, $this->tmpMediaPath, $result);
-            }
-        } catch (FileSystemException|NoSuchEntityException $e) {
-            throw new NotFoundException(__('Media folder does not exist'));
+        if (strpos($result, $this->getRealPath($this->mediaPath)) !== false) {
+            return str_replace($this->mediaPath, $this->tmpMediaPath, $result);
         }
 
-        try {
-            $realStaticPath = $this->fileDriver->getRealPath($this->staticPath);
-            if (strpos($result, $realStaticPath) !== false) {
-                return str_replace($this->staticPath, $this->tmpStaticPath, $result);
-            }
-        } catch (FileSystemException|NoSuchEntityException $e) {
-            throw new NotFoundException(__('Static folder does not exist'));
+        if (strpos($result, $this->getRealPath($this->staticPath)) !== false) {
+            return str_replace($this->staticPath, $this->tmpStaticPath, $result);
         }
 
-        try {
-            $realBasePath = $this->fileDriver->getRealPath($this->basePath);
-            if (strpos($result, $realBasePath) !== false) {
-                return str_replace($this->basePath, $this->tmpBasePath, $result);
-            }
-        } catch (FileSystemException $e) {
-            throw new NotFoundException(__('Base folder does not exist'));
+        if (strpos($result, $this->getRealPath($this->basePath)) !== false) {
+            return str_replace($this->basePath, $this->tmpBasePath, $result);
         }
 
         return $result;
@@ -132,5 +114,18 @@ class UrlConvertor
         }
 
         return [$filename];
+    }
+
+    /**
+     * With remote storage, local folders (like pub/media) might not exist, so fall back to the configured path
+     */
+    private function getRealPath(string $path): string
+    {
+        $realPath = $this->fileDriver->getRealPath($path);
+        if (is_string($realPath) && $realPath !== '') {
+            return $realPath;
+        }
+
+        return $path;
     }
 }

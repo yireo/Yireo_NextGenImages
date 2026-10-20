@@ -1,7 +1,7 @@
 {
     "name": "yireo/magento2-next-gen-images",
     "license": "OSL-3.0",
-    "version": "0.5.15",
+    "version": "0.5.16",
     "type": "magento2-module",
     "homepage": "https://www.yireo.com/software/magento-extensions/next-gen-images",
     "description": "Magento 2 module to add NextGen images support to the Magento frontend",
@@ -26,17 +26,19 @@
         "magento/module-config": "^101.0",
         "magento/module-configurable-product": "^100.0",
         "magento/module-page-cache": "^100.0",
+        "magento/module-remote-storage": "^100.4",
         "magento/module-store": "^100.0|^101.0",
         "magento/module-swatches": "^100.0",
-        "php": ">=7.4.0",
+        "php": ">=8.2 <8.6",
         "psr/log": "^1 || ^2 || ^3",
         "yireo/magento2-csp-utilities": "^1.0"
     },
     "require-dev": {
-        "bitexpert/phpstan-magento": "^0.3.0",
-        "phpstan/phpstan": "^0.12.32",
+        "bitexpert/phpstan-magento": "^0.42",
+        "loki/magento2-functional-tests": "@dev",
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^9.0|^10.0|^11.0",
-        "yireo/magento2-integration-test-helper": "@dev"
+        "yireo/magento2-integration-test-helper": "~0.0"
     },
     "suggest": {
         "yireo/magento2-webp2": "Support for WebP2 images"

@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.16] - 18 October 2026
+### Fixed
+- Fall back to first srcset image without default descriptor
+- Keep img tags with a ">" in an attribute intact
+- Detect target format per convertor
+- Download each remote image only once per request
+- Map paths when local folders do not exist
+- Handle remote errors and staged files in file plugin
+- Remove duplicate import in picture template
+- Add test coverage for remote storage support (PR #95)
+- Set dependency with `symfony/console` to v5, v6 or v7
+- Remove background of sponsoring box for Nebula compat
+- Swatches fix for category pages
+- WIP for better support configurable options
+- Add support for converting pictures with src-sets
+
 ## [0.5.15] - 22 October 2025
 ### Fixed
 - Fix PHP call
