@@ -44,7 +44,10 @@ class ImageFactory
     public function createFromUrl($url): Image
     {
         $urls = is_array($url) ? $url : [$url];
-        $baseUrl = $this->cleanUrl($urls[0] ?? '');
+        // Use reset() to get first element regardless of key type. Without this, when srcSet images have
+        // string key descriptors (e.g., '480w' => 'url'), $urls[0] returns null, making baseUrl empty
+        // and breaking functionality. Cast to string to handle false (empty array) and null cases.
+        $baseUrl = $this->cleanUrl((string)reset($urls));
         $srcSet = $this->getSrcSet($urls);
         $path = $this->urlConvertor->getFilenameFromUrl($baseUrl);
         return $this->objectManager->create(Image::class, ['path' => $path, 'url' => $baseUrl, 'srcSet' => $srcSet]);

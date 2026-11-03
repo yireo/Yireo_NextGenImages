@@ -12,10 +12,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Yireo\NextGenImages\Convertor\ConvertorInterface;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\TargetImageFactory;
+use Yireo\NextGenImages\Logger\Debugger;
 use Yireo\NextGenImages\Plugin\Convertor\ConvertorInterface as ConvertorInterfacePlugin;
 use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
 use Yireo\NextGenImages\Util\File;
 use Yireo\NextGenImages\Util\TmpFileCopier;
+use Yireo\NextGenImages\Util\UrlConvertor;
+use Yireo\NextGenImages\Image\ImageFactory;
 
 class ConvertorInterfaceTest extends AbstractTestCase
 {
@@ -36,6 +39,15 @@ class ConvertorInterfaceTest extends AbstractTestCase
     /** @var TmpFileCopier&MockObject */
     private $tmpFileCopier;
 
+    /** @var UrlConvertor&MockObject */
+    private $urlConvertor;
+
+    /** @var ImageFactory&MockObject */
+    private $imageFactory;
+
+    /** @var Debugger&MockObject */
+    private $debugger;
+
     /** @var DriverInterface&MockObject */
     private $tmpDriver;
 
@@ -47,6 +59,9 @@ class ConvertorInterfaceTest extends AbstractTestCase
         $this->remoteStorageConfig = $this->createMock(RemoteStorageConfig::class);
         $this->fileUtil = $this->createMock(File::class);
         $this->tmpFileCopier = $this->createMock(TmpFileCopier::class);
+        $this->urlConvertor = $this->createMock(UrlConvertor::class);
+        $this->imageFactory = $this->createMock(ImageFactory::class);
+        $this->debugger = $this->createMock(Debugger::class);
         $this->tmpDriver = $this->createMock(DriverInterface::class);
         $this->remoteDriver = $this->createMock(DriverInterface::class);
 
@@ -133,7 +148,7 @@ class ConvertorInterfaceTest extends AbstractTestCase
         };
 
         $plugin = $this->createPlugin();
-        $this->assertSame($resultImage, $plugin->aroundConvertImage($this->getSubject(), $proceed, $this->getSourceImage()));
+        $this->assertSame($resultImage, $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImage()));
         $this->assertSame(['copy', 'convert', 'move'], $calls);
     }
 
@@ -169,8 +184,9 @@ class ConvertorInterfaceTest extends AbstractTestCase
         };
 
         $plugin = $this->createPlugin();
-        $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImage());
-        $this->assertTrue($proceedCalled, 'Convertor should decide what happens to a missing source image');
+        $result = $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImage());
+        $this->assertFalse($proceedCalled, 'Convertor should not be called when source image does not exist');
+        $this->assertStringEndsWith('.webp', $result->getPath());
     }
 
     /**
@@ -236,11 +252,14 @@ class ConvertorInterfaceTest extends AbstractTestCase
     {
         $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
         $this->fileUtil->method('fileExists')->willReturn(true);
-        $this->fileUtil->expects($this->never())->method('needsConversion');
+        $this->fileUtil->expects($this->once())
+            ->method('needsConversion')
+            ->with(self::TMP_ROOT.'/'.self::SOURCE_RELATIVE, self::TMP_ROOT.'/'.self::TARGET_RELATIVE)
+            ->willReturn(true);
         $this->tmpFileCopier->expects($this->once())->method('copy')->with(self::SOURCE_RELATIVE);
 
         $resultImage = $this->getTargetImage();
-        $plugin = $this->createPlugin();
+        $plugin = $this->createPlugin($this->getDiFormatConfig());
         $result = $plugin->aroundConvertImage($this->getSubject(), fn () => $resultImage, $this->getSourceImage());
         $this->assertSame($resultImage, $result);
     }
@@ -272,8 +291,16 @@ class ConvertorInterfaceTest extends AbstractTestCase
             $this->targetImageFactory,
             $this->fileUtil,
             $this->tmpFileCopier,
+            $this->urlConvertor,
+            $this->imageFactory,
+            $this->debugger,
             $formats
         );
+    }
+
+    private function getDiFormatConfig(): array
+    {
+        return [ConvertorInterface::class => 'webp'];
     }
 
     private function getSourceImage(): Image
