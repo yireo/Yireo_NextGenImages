@@ -104,7 +104,7 @@ class Config implements ArgumentInterface
         }
 
         try {
-            if (false === $this->fileDriver->isDirectory($value)) {
+            if (false === $this->fileDriver->isDirectory($pubPath.$value)) {
                 return $pubPath.'/media/nextgenimages/';
             }
         } catch (FileSystemException $e) {
