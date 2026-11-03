@@ -73,4 +73,32 @@ class TargetImageFactoryTest extends AbstractTestCase
         $this->assertInstanceOf(Image::class, $webpImage);
         $this->assertEquals('/tmp/pub/example.webp', $webpImage->getPath());
     }
+
+    public function testGetWithCustomCacheTargetDirectory()
+    {
+        $config = $this->getMagentoMock(Config::class);
+        $config->method('getTargetDirectory')->willReturn(TargetDirectory::CACHE);
+        $config->method('getCacheDirectoryPath')->willReturn('/tmp/pub/media/custom/');
+
+        $directoryList = $this->getMagentoMock(DirectoryList::class);
+        $directoryList->method('getRoot')->willReturn('/tmp');
+
+        $imageFactory = $this->getMagentoMock(ImageFactory::class);
+        $imageFactory->expects($this->once())
+            ->method('createFromPath')
+            ->with($this->equalTo('/tmp/pub/media/custom/media/catalog/example.webp'))
+            ->willReturnCallback(fn (string $path) => new Image($path, '/example.webp'));
+
+        $driver = $this->getMagentoMock(DriverInterface::class);
+        $driver->method('getParentDirectory')->willReturn('/tmp/pub/media/catalog');
+        $writer = $this->getMagentoMock(WriteInterface::class);
+        $writer->method('getDriver')->willReturn($driver);
+        $filesystem = $this->getMagentoMock(Filesystem::class);
+        $filesystem->method('getDirectoryWrite')->willReturn($writer);
+
+        $targetImageFactory = new TargetImageFactory($directoryList, $config, $imageFactory, $filesystem);
+
+        $webpImage = $targetImageFactory->create(new Image('/tmp/pub/media/catalog/example.jpg', '/example.jpg'), 'webp');
+        $this->assertSame('/tmp/pub/media/custom/media/catalog/example.webp', $webpImage->getPath());
+    }
 }

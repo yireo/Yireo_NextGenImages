@@ -6,8 +6,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Filesystem;
-use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\PageCache\Model\DepersonalizeChecker;
@@ -21,7 +19,6 @@ class Config implements ArgumentInterface
     private $depersonalizeChecker;
     private $storeManager;
     private $directoryList;
-    private $fileDriver;
 
     /**
      * Config constructor.
@@ -35,15 +32,12 @@ class Config implements ArgumentInterface
         ScopeConfigInterface $scopeConfig,
         DepersonalizeChecker $depersonalizeChecker,
         StoreManagerInterface $storeManager,
-        DirectoryList $directoryList,
-        Filesystem $filesystem
-
+        DirectoryList $directoryList
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->depersonalizeChecker = $depersonalizeChecker;
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
-        $this->fileDriver = $filesystem->getDirectoryWrite(DirectoryList::PUB)->getDriver();
     }
 
     /**
@@ -96,21 +90,27 @@ class Config implements ArgumentInterface
      */
     public function getCacheDirectoryPath(): string
     {
-        $pubPath = $this->directoryList->getRoot().'/pub/';
-
-        $value = trim($this->getValue('yireo_nextgenimages/settings/cache_directory'), " \f\n\r\t\v\x00");
-        if (empty($value)) {
-            return $pubPath.'/media/nextgenimages/';
+        $pubPath = $this->getPubPath();
+        $value = trim((string)$this->getValue('yireo_nextgenimages/settings/cache_directory'), " \f\n\r\t\v\x00");
+        if (str_starts_with($value, $pubPath.'/')) {
+            $value = substr($value, strlen($pubPath));
         }
 
+        $value = trim($value, '/');
+        if ($value === '' || in_array('..', explode('/', $value), true)) {
+            $value = 'media/nextgenimages';
+        }
+
+        return $pubPath.'/'.$value.'/';
+    }
+
+    private function getPubPath(): string
+    {
         try {
-            if (false === $this->fileDriver->isDirectory($value)) {
-                return $pubPath.'/media/nextgenimages/';
-            }
+            return rtrim($this->directoryList->getPath(DirectoryList::PUB), '/');
         } catch (FileSystemException $e) {
+            return $this->directoryList->getRoot().'/pub';
         }
-
-        return $pubPath.$value;
     }
 
     /**
