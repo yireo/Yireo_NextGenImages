@@ -28,6 +28,7 @@
         "Magento_Eav",
         "Magento_Indexer",
         "Magento_LayeredNavigation",
+        "Magento_MediaGalleryUiApi",
         "Magento_MediaStorage",
         "Magento_Msrp",
         "Magento_PageCache",
@@ -120,8 +121,8 @@
         }
     ],
     "tests": {
-        "unit": 73,
-        "integration": 27,
+        "unit": 77,
+        "integration": 29,
         "functional": 3
     },
     "php_versions": [
