@@ -10,12 +10,6 @@
         "Magento 2",
         "Yireo"
     ],
-    "authors": [
-        {
-            "name": "Jisse Reitsma (Yireo)",
-            "email": "jisse@yireo.com"
-        }
-    ],
     "require": {
         "ext-dom": "*",
         "ext-gd": "*",
