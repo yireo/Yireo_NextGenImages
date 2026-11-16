@@ -52,6 +52,13 @@ class ImageTest extends AbstractTestCase
         $image = new Image('/tmp/pub/foobar.WEBP', 'foobar.WEBP');
         $this->assertEquals('image/webp', $image->getMimetype());
 
+        $image = new Image('/tmp/pub/foobar.avif', 'foobar.avif');
+        $this->assertEquals('image/avif', $image->getMimetype());
+        $this->assertEquals('avif', $image->getCode());
+
+        $image = new Image('/tmp/pub/foobar.AVIF', 'foobar.AVIF');
+        $this->assertEquals('image/avif', $image->getMimetype());
+
         $image = new Image('/tmp/pub/foobar.v', 'foobar.v');
         $this->assertEquals('image/png', $image->getMimetype());
 

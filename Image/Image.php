@@ -93,6 +93,10 @@ class Image
             return 'webp';
         }
 
+        if (preg_match('/.avif$/i', $this->getPath())) {
+            return 'avif';
+        }
+
         return 'png';
     }
 
