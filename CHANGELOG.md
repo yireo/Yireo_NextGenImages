@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.17] - 16 November 2026
+### Fixed
+- Detect AVIF mimetype instead of falling back to PNG
+- Resolve cache directory relative to pub folder
+- Import Escaper class used in picture template docblock
+
 ## [0.5.16] - 18 October 2026
 ### Fixed
 - Fall back to first srcset image without default descriptor
