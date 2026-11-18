@@ -1,7 +1,7 @@
 name: Magento 2 Integration Tests
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     tags: ['*']
   pull_request:
   workflow_dispatch:
@@ -140,4 +140,4 @@ jobs:
           elif php ../../../vendor/bin/phpunit --atleast-version 9; then
             cp phpunit9.xml phpunit.xml
           fi
-          php -d memory_limit=-1 ../../../vendor/bin/phpunit -c phpunit.xml "../../../vendor/${COMPOSER_NAME}/Test/Integration"
+          MAGENTO_MODULE_FOLDER="vendor/${COMPOSER_NAME}" php -d memory_limit=-1 ../../../vendor/bin/phpunit -c phpunit.xml "../../../vendor/${COMPOSER_NAME}/Test/Integration"

@@ -1,7 +1,7 @@
 name: Magento 2 Static Tests
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     tags: ['*']
   pull_request:
   workflow_dispatch:

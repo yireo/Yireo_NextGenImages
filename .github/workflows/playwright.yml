@@ -1,7 +1,7 @@
 name: Playwright test
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     tags: ['*']
   pull_request:
   workflow_dispatch:
@@ -298,7 +298,7 @@ jobs:
           else
             npm install --prefer-offline --no-audit --no-fund
           fi
-          npx playwright install chromium
+          npx playwright install --only-shell chromium
 
           echo "Creating /tmp/magento/.env.playwright..."
           printf "TEST_URL=%s\nTEST_TOKEN=loki\nMODULE_NAME=%s\n" "${MAGENTO_BASE_URL}" "${MAGENTO_MODULE}" > /tmp/magento/.env.playwright
