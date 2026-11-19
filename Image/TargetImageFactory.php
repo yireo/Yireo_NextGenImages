@@ -56,6 +56,11 @@ class TargetImageFactory
     {
         // phpcs:ignore
         $filename = basename($image->getPath());
+
+        if ($this->config->addHash() === false) {
+            return $filename.'.'.$suffix;
+        }
+
         $path = preg_replace('/\.(jpg|jpeg|png)$/', '', $filename);
 
         return $path.$this->getTargetHash($image).'.'.$suffix;
@@ -67,10 +72,6 @@ class TargetImageFactory
      */
     private function getTargetHash(Image $image): string
     {
-        if ($this->config->addHash() === false) {
-            return '';
-        }
-
         return '-'.hash('crc32', $image->getPath());
     }
 
