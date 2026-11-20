@@ -133,6 +133,42 @@ class HtmlReplacerTest extends AbstractTestCase
                 .'</div>',
             ],
             [
+                '<div>'
+                .'<img src="/media/tmp/test1.jpg" loading="lazy"/>'
+                .'</div>',
+                '<div>'
+                .'<picture>'
+                .'<source type="image/jpeg" srcset="/media/tmp/test1.jpg">'
+                .'<source type="image/webp" srcset="/media/tmp/test1.webp">'
+                .'<img src="/media/tmp/test1.jpg" loading="lazy"/>'
+                .'</picture>'
+                .'</div>',
+            ],
+            [
+                '<div>'
+                .'<img src="/media/tmp/test1.jpg" loading="eager"/>'
+                .'</div>',
+                '<div>'
+                .'<picture>'
+                .'<source type="image/jpeg" srcset="/media/tmp/test1.jpg">'
+                .'<source type="image/webp" srcset="/media/tmp/test1.webp">'
+                .'<img src="/media/tmp/test1.jpg" loading="eager"/>'
+                .'</picture>'
+                .'</div>',
+            ],
+            [
+                '<div>'
+                .'<img src="/media/tmp/test1.jpg" fetchpriority="high"/>'
+                .'</div>',
+                '<div>'
+                .'<picture>'
+                .'<source type="image/jpeg" srcset="/media/tmp/test1.jpg">'
+                .'<source type="image/webp" srcset="/media/tmp/test1.webp">'
+                .'<img src="/media/tmp/test1.jpg" fetchpriority="high"/>'
+                .'</picture>'
+                .'</div>',
+            ],
+            [
                 '<div style="background-image: url(/media/tmp/test1.jpg);"></div>',
                 '<div style="background-image: url(/media/tmp/test1.jpg);"></div>',
             ],

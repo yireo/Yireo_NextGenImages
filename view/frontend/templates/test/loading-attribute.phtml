@@ -1,0 +1,19 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @version 0.5.17 */
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+$imageUrl = $escaper->escapeUrl($block->getViewFileUrl('Yireo_NextGenImages::images/test-loading-attribute.jpg'));
+?>
+<div id="yireo-nextgenimages-test-loading-attribute">
+    <img src="<?= /* @noEscape */ $imageUrl ?>" alt="no-attr">
+    <img src="<?= /* @noEscape */ $imageUrl ?>" alt="lazy" loading="lazy">
+    <img src="<?= /* @noEscape */ $imageUrl ?>" alt="lazy-self-closing" loading="lazy" />
+    <img src="<?= /* @noEscape */ $imageUrl ?>" alt="eager" loading="eager">
+    <img src="<?= /* @noEscape */ $imageUrl ?>" alt="fetchpriority" fetchpriority="high">
+    <img src="<?= /* @noEscape */ $imageUrl ?>" alt="fetchpriority-lazy" fetchpriority="high" loading="lazy">
+</div>

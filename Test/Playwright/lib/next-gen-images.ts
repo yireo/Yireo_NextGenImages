@@ -59,4 +59,14 @@ export function getFirstSrcSetUrl(srcSet: string | null): string {
     return srcSet!.split(',')[0].trim().split(' ')[0];
 }
 
+/**
+ * Return the raw HTML of a page rendering the given layout handles via the Loki_FunctionalTests endpoint
+ */
+export async function getRawHtmlOfHandles(page: Page, handles: string[]): Promise<string> {
+    const response = await page.request.get('/loki_functional_tests/index/page?handles=' + handles.join(',') + '&token=' + token());
+    expect(response.status(), 'Test page response status').toBe(200);
+
+    return response.text();
+}
+
 export {test, expect} from '@playwright/test';
