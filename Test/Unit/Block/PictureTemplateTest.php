@@ -34,6 +34,11 @@ class PictureTemplateTest extends AbstractTestCase
             'eager present, lazy config on' => ['<img src="/media/a.png" loading="eager">', true, 1],
             'no loading attribute, lazy config on' => ['<img src="/media/a.png">', true, 1],
             'no loading attribute, lazy config off' => ['<img src="/media/a.png">', false, 0],
+            'fetchpriority high, lazy config on' => ['<img src="/media/a.png" fetchpriority="high">', true, 0],
+            'fetchpriority high, lazy config off' => ['<img src="/media/a.png" fetchpriority="high">', false, 0],
+            'fetchpriority high, self closing' => ['<img src="/media/a.png" fetchpriority="high" />', true, 0],
+            'fetchpriority high with lazy' => ['<img src="/media/a.png" fetchpriority="high" loading="lazy">', true, 1],
+            'fetchpriority high with eager' => ['<img src="/media/a.png" fetchpriority="high" loading="eager">', true, 1],
         ];
     }
 
