@@ -96,10 +96,14 @@ class HtmlReplacer
 
         $document = $this->domUtils->htmlToDOMDocument($html);
         $images = $document->getElementsByTagName('img');
-        
+
         $replacements = [];
         foreach ($images as $image) {
             $imageHtml = $this->getImageHtmlFromImage($image, $html);
+            if (empty($imageHtml)) {
+                continue;
+            }
+
             $pictureHtml = $this->getPictureHtmlFromImage($image, $html);
             if (!empty($pictureHtml)) {
                 $replacements[$imageHtml] = $pictureHtml;
