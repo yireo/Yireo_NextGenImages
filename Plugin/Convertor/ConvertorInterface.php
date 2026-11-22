@@ -91,16 +91,15 @@ class ConvertorInterface
         }
 
         $targetImage = $this->targetImageFactory->create($image, $format);
-        $hasSrcSet = $image->getSrcSet() !== null;
-        $imagesNeedingConversion = $this->getImagesNeedingConversion($image, $targetImage, $format);
+        $srcSetPaths = $this->mapSrcSetToPaths($image->getSrcSet());
+        $imagesNeedingConversion = $this->getImagesNeedingConversion($image, $targetImage, $srcSetPaths, $format);
 
         if (empty($imagesNeedingConversion)) {
             // Target image is up to date. If srcSet is present, call proceed() so the original convertor
             // can assign converted srcSet URLs to the target image
-            return $hasSrcSet ? $proceed($image) : $targetImage;
+            return $image->getSrcSet() !== null ? $proceed($image) : $targetImage;
         }
 
-        // Copy only images that need conversion
         $this->copyImagesToTmp($imagesNeedingConversion);
 
         $resultImage = $proceed($image);
@@ -135,46 +134,43 @@ class ConvertorInterface
      *
      * @param Image $image
      * @param Image $targetImage
+     * @param string[] $srcSetPaths
      * @param string $format
-     * @return array<int, string>
+     * @return string[]
      */
-    private function getImagesNeedingConversion(Image $image, Image $targetImage, string $format): array
-    {
+    private function getImagesNeedingConversion(
+        Image $image,
+        Image $targetImage,
+        array $srcSetPaths,
+        string $format
+    ): array {
         $paths = [];
 
         if ($this->fileUtil->needsConversion($image->getPath(), $targetImage->getPath())) {
             $paths[] = $image->getPath();
         }
 
-        $paths = array_merge(
-            $paths,
-            $this->getSrcSetImagesNeedingConversion($image, $format)
-        );
+        foreach (array_unique($srcSetPaths) as $filePath) {
+            if ($filePath === $image->getPath()) {
+                continue;
+            }
 
-        return array_values(array_unique($paths));
-    }
-
-    private function getSrcSetImagesNeedingConversion(Image $image, string $format): array
-    {
-        $imagesNeedingConversion = [];
-
-        foreach ($this->mapSrcSetToPaths($image->getSrcSet()) as $filePath) {
             try {
-                $srcSetImageObj = $this->imageFactory->createFromPath($filePath);
-                $srcSetTargetImage = $this->targetImageFactory->create($srcSetImageObj, $format);
+                $srcSetImage = $this->imageFactory->createFromPath($filePath);
+                $srcSetTargetImage = $this->targetImageFactory->create($srcSetImage, $format);
             } catch (NotFoundException|FileSystemException|ValidatorException $exception) {
                 $this->debugger->debug($exception->getMessage(), ['path' => $filePath]);
                 continue;
             }
 
             if ($this->fileUtil->needsConversion($filePath, $srcSetTargetImage->getPath())) {
-                $imagesNeedingConversion[] = $filePath;
+                $paths[] = $filePath;
             }
         }
 
-        return $imagesNeedingConversion;
+        return $paths;
     }
-    
+
     private function mapSrcSetToPaths(?string $srcSet): array
     {
         if ($srcSet === null || $srcSet === '') {
@@ -232,12 +228,10 @@ class ConvertorInterface
 
     private function moveConvertedImagesToRemote(Image $resultImage): void
     {
-        $pathsToMove = [$resultImage->getPath()];
-
-        // The converted variants already exist, so their srcset URLs point to the files to move as-is
-        foreach ($this->mapSrcSetToPaths($resultImage->getSrcSet()) as $filePath) {
-            $pathsToMove[] = $filePath;
-        }
+        $pathsToMove = array_merge(
+            [$resultImage->getPath()],
+            $this->mapSrcSetToPaths($resultImage->getSrcSet())
+        );
 
         $this->movePathsToRemote($pathsToMove);
     }
