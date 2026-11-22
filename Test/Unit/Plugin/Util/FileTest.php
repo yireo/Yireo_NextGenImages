@@ -154,6 +154,73 @@ class FileTest extends AbstractTestCase
         $this->assertSame(0, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
     }
 
+    public function testFileExistsRemembersExistingRemoteFile(): void
+    {
+        $this->remoteDirectoryRead->expects($this->once())
+            ->method('isExist')
+            ->with(self::RELATIVE_PATH)
+            ->willReturn(true);
+
+        $plugin = $this->createPlugin(true);
+        $proceed = $this->createNeverCalledProceed();
+
+        $this->assertTrue($plugin->aroundFileExists($this->getFileSubject(), $proceed, self::TMP_PATH));
+        $this->assertTrue($plugin->aroundFileExists($this->getFileSubject(), $proceed, self::TMP_PATH));
+    }
+
+    /**
+     * A target image that is missing now, might be moved to remote storage later during the same request
+     */
+    public function testFileExistsDoesNotRememberMissingRemoteFile(): void
+    {
+        $this->remoteDirectoryRead->expects($this->exactly(2))
+            ->method('isExist')
+            ->with(self::RELATIVE_PATH)
+            ->willReturnOnConsecutiveCalls(false, true);
+
+        $plugin = $this->createPlugin(true);
+
+        $this->assertFalse($plugin->aroundFileExists($this->getFileSubject(), fn () => false, self::TMP_PATH));
+        $this->assertTrue(
+            $plugin->aroundFileExists($this->getFileSubject(), $this->createNeverCalledProceed(), self::TMP_PATH)
+        );
+    }
+
+    public function testGetModificationTimeRemembersStatOfExistingRemoteFile(): void
+    {
+        $this->remoteDirectoryRead->expects($this->once())
+            ->method('stat')
+            ->with(self::RELATIVE_PATH)
+            ->willReturn(['mtime' => 1111]);
+
+        $plugin = $this->createPlugin(true);
+        $proceed = $this->createNeverCalledProceed();
+
+        $this->assertSame(1111, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+        $this->assertSame(1111, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+    }
+
+    public function testGetModificationTimeDoesNotRememberMissingRemoteFile(): void
+    {
+        $calls = 0;
+        $this->remoteDirectoryRead->expects($this->exactly(2))
+            ->method('stat')
+            ->with(self::RELATIVE_PATH)
+            ->willReturnCallback(function () use (&$calls) {
+                if ($calls++ === 0) {
+                    throw new FileSystemException(__('File does not exist'));
+                }
+
+                return ['mtime' => 1111];
+            });
+
+        $plugin = $this->createPlugin(true);
+        $proceed = $this->createNeverCalledProceed();
+
+        $this->assertSame(0, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+        $this->assertSame(1111, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+    }
+
     private function createPlugin(bool $remoteStorageEnabled): FilePlugin
     {
         $remoteStorageConfig = $this->createMock(RemoteStorageConfig::class);
