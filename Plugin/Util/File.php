@@ -20,6 +20,16 @@ class File
 
     private RemoteStorageConfig $remoteStorageConfig;
 
+    /**
+     * @var array<string,bool>
+     */
+    private array $existingFiles = [];
+
+    /**
+     * @var array<string,array>
+     */
+    private array $stats = [];
+
     public function __construct(
         RemoteStorageConfig $remoteStorageConfig,
         TargetDirectory $targetDirectory,
@@ -39,9 +49,14 @@ class File
             return $proceed($filePath);
         }
 
+        if (isset($this->existingFiles[$filePath])) {
+            return true;
+        }
+
         try {
             $relativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
             if ($this->remoteDirectoryRead->isExist($relativePath)) {
+                $this->existingFiles[$filePath] = true;
                 return true;
             }
         } catch (FileSystemException $fileSystemException) {
@@ -57,10 +72,8 @@ class File
             return $proceed($filePath);
         }
 
-        try {
-            $tmpRelativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
-            $stat = $this->remoteDirectoryRead->stat($tmpRelativePath);
-        } catch (FileSystemException $fileSystemException) {
+        $stat = $this->getRemoteStat($filePath);
+        if ($stat === null) {
             return 0;
         }
 
@@ -69,5 +82,25 @@ class File
         }
 
         return (int)($stat['ctime'] ?? 0);
+    }
+
+    private function getRemoteStat(string $filePath): ?array
+    {
+        if (isset($this->stats[$filePath])) {
+            return $this->stats[$filePath];
+        }
+
+        try {
+            $tmpRelativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
+            $stat = $this->remoteDirectoryRead->stat($tmpRelativePath);
+        } catch (FileSystemException $fileSystemException) {
+            return null;
+        }
+
+        if (!empty($stat)) {
+            $this->stats[$filePath] = $stat;
+        }
+
+        return $stat;
     }
 }
