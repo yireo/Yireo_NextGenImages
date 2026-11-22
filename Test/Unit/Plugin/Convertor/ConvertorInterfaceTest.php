@@ -10,6 +10,7 @@ use Magento\Framework\Filesystem\DriverInterface;
 use Magento\RemoteStorage\Model\Config as RemoteStorageConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Yireo\NextGenImages\Convertor\ConvertorInterface;
+use Yireo\NextGenImages\Exception\ConvertorException;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\TargetImageFactory;
 use Yireo\NextGenImages\Logger\Debugger;
@@ -26,6 +27,9 @@ class ConvertorInterfaceTest extends AbstractTestCase
     private const REMOTE_ROOT = '/remote';
     private const SOURCE_RELATIVE = 'media/catalog/product/a/b/test.jpg';
     private const TARGET_RELATIVE = 'media/catalog/product/a/b/test.webp';
+    private const SRCSET_SOURCE_RELATIVE = 'media/catalog/product/a/b/test-2x.jpg';
+    private const SRCSET_TARGET_RELATIVE = 'media/catalog/product/a/b/test-2x.webp';
+    private const BASE_URL = 'http://localhost/';
 
     /** @var RemoteStorageConfig&MockObject */
     private $remoteStorageConfig;
@@ -71,6 +75,13 @@ class ConvertorInterfaceTest extends AbstractTestCase
                 preg_replace('/\.(jpg|jpeg|png)$/', '.'.$suffix, $image->getPath()),
                 preg_replace('/\.(jpg|jpeg|png)$/', '.'.$suffix, $image->getUrl())
             )
+        );
+
+        $this->urlConvertor->method('getFilenameFromUrl')->willReturnCallback(
+            fn (string $url) => self::TMP_ROOT.'/'.str_replace(self::BASE_URL, '', $url)
+        );
+        $this->imageFactory->method('createFromPath')->willReturnCallback(
+            fn (string $path) => new Image($path, self::BASE_URL.str_replace(self::TMP_ROOT.'/', '', $path))
         );
     }
 
@@ -261,6 +272,162 @@ class ConvertorInterfaceTest extends AbstractTestCase
         $this->assertSame($resultImage, $result);
     }
 
+    public function testRunsConvertorWithoutCopyingWhenEverythingIsUpToDate(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->expects($this->exactly(2))->method('needsConversion')->willReturn(false);
+        $this->tmpFileCopier->expects($this->never())->method('copy');
+        $this->tmpDriver->expects($this->never())->method('rename');
+
+        $resultImage = $this->getTargetImageWithSrcSet();
+        $proceedCalls = 0;
+        $proceed = function () use ($resultImage, &$proceedCalls) {
+            $proceedCalls++;
+            return $resultImage;
+        };
+
+        $plugin = $this->createPlugin();
+        $result = $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImageWithSrcSet());
+        $this->assertSame($resultImage, $result);
+        $this->assertSame(1, $proceedCalls, 'Convertor should add the converted srcset');
+    }
+
+    public function testOnlyCopiesOutdatedSrcSetImages(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->method('needsConversion')->willReturnCallback(
+            fn (string $source) => $source === self::TMP_ROOT.'/'.self::SRCSET_SOURCE_RELATIVE
+        );
+        $this->tmpFileCopier->expects($this->once())->method('copy')->with(self::SRCSET_SOURCE_RELATIVE);
+
+        $resultImage = $this->getTargetImageWithSrcSet();
+        $plugin = $this->createPlugin();
+        $result = $plugin->aroundConvertImage(
+            $this->getWebpSubject(),
+            fn () => $resultImage,
+            $this->getSourceImageWithSrcSet()
+        );
+        $this->assertSame($resultImage, $result);
+    }
+
+    public function testDoesNotCheckMainImageAgainWhenItIsPartOfSrcSet(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->expects($this->exactly(2))->method('needsConversion')->willReturn(false);
+
+        $sourceImage = new Image(
+            self::TMP_ROOT.'/'.self::SOURCE_RELATIVE,
+            self::BASE_URL.self::SOURCE_RELATIVE,
+            self::BASE_URL.self::SOURCE_RELATIVE.','.self::BASE_URL.self::SRCSET_SOURCE_RELATIVE.' 2x'
+        );
+
+        $plugin = $this->createPlugin();
+        $plugin->aroundConvertImage($this->getWebpSubject(), fn () => $this->getTargetImage(), $sourceImage);
+    }
+
+    public function testMovesConvertedSrcSetImagesToRemoteStorage(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->method('needsConversion')->willReturn(true);
+        $this->tmpFileCopier->expects($this->exactly(2))->method('copy');
+        $this->tmpDriver->method('isExists')->willReturn(true);
+
+        $movedFiles = [];
+        $this->tmpDriver->expects($this->exactly(2))
+            ->method('rename')
+            ->willReturnCallback(function (string $source, string $destination) use (&$movedFiles) {
+                $movedFiles[$source] = $destination;
+                return true;
+            });
+
+        $plugin = $this->createPlugin();
+        $plugin->aroundConvertImage(
+            $this->getWebpSubject(),
+            fn () => $this->getTargetImageWithSrcSet(),
+            $this->getSourceImageWithSrcSet()
+        );
+
+        $this->assertSame([
+            self::TMP_ROOT.'/'.self::TARGET_RELATIVE => self::REMOTE_ROOT.'/'.self::TARGET_RELATIVE,
+            self::TMP_ROOT.'/'.self::SRCSET_TARGET_RELATIVE => self::REMOTE_ROOT.'/'.self::SRCSET_TARGET_RELATIVE,
+        ], $movedFiles);
+    }
+
+    public function testNeverMovesSrcSetImagesOfOtherFormats(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->method('needsConversion')->willReturn(true);
+        $this->tmpDriver->method('isExists')->willReturn(true);
+        $this->tmpDriver->expects($this->once())
+            ->method('rename')
+            ->with(self::TMP_ROOT.'/'.self::TARGET_RELATIVE, self::REMOTE_ROOT.'/'.self::TARGET_RELATIVE);
+
+        $sourceImage = $this->getSourceImageWithSrcSet();
+        $resultImage = $this->getTargetImage();
+        $resultImage->setSrcSet($sourceImage->getSrcSet());
+
+        $plugin = $this->createPlugin();
+        $plugin->aroundConvertImage($this->getWebpSubject(), fn () => $resultImage, $sourceImage);
+    }
+
+    public function testMatchesTargetFormatCaseInsensitive(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->method('needsConversion')->willReturn(true);
+        $this->tmpDriver->method('isExists')->willReturn(true);
+        $this->tmpDriver->expects($this->once())
+            ->method('rename')
+            ->with(self::TMP_ROOT.'/media/catalog/product/a/b/test.WEBP');
+
+        $resultImage = new Image(self::TMP_ROOT.'/media/catalog/product/a/b/test.WEBP', '/media/test.WEBP');
+
+        $plugin = $this->createPlugin();
+        $plugin->aroundConvertImage($this->getWebpSubject(), fn () => $resultImage, $this->getSourceImage());
+    }
+
+    public function testHandsMissingSourceWithSrcSetToConvertor(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(false);
+        $this->fileUtil->expects($this->never())->method('needsConversion');
+        $this->tmpFileCopier->expects($this->never())->method('copy');
+        $this->tmpDriver->expects($this->never())->method('rename');
+
+        $proceed = function () {
+            throw new ConvertorException('Source image does not exist');
+        };
+
+        $this->expectException(ConvertorException::class);
+        $plugin = $this->createPlugin();
+        $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImageWithSrcSet());
+    }
+
+    public function testOnlyMovesMainImageWhenFormatIsUnknown(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->expects($this->never())->method('needsConversion');
+        $this->tmpFileCopier->expects($this->once())->method('copy')->with(self::SOURCE_RELATIVE);
+        $this->tmpDriver->method('isExists')->willReturn(true);
+        $this->tmpDriver->expects($this->once())
+            ->method('rename')
+            ->with(self::TMP_ROOT.'/'.self::TARGET_RELATIVE, self::REMOTE_ROOT.'/'.self::TARGET_RELATIVE);
+
+        $resultImage = $this->getTargetImageWithSrcSet();
+        $plugin = $this->createPlugin();
+        $result = $plugin->aroundConvertImage(
+            $this->getSubject(),
+            fn () => $resultImage,
+            $this->getSourceImageWithSrcSet()
+        );
+        $this->assertSame($resultImage, $result);
+    }
+
     private function createPlugin(array $formats = []): ConvertorInterfacePlugin
     {
         $tmpDirectoryWrite = $this->createMock(WriteInterface::class);
@@ -303,6 +470,24 @@ class ConvertorInterfaceTest extends AbstractTestCase
     private function getTargetImage(): Image
     {
         return new Image(self::TMP_ROOT.'/'.self::TARGET_RELATIVE, '/media/'.self::TARGET_RELATIVE);
+    }
+
+    private function getSourceImageWithSrcSet(): Image
+    {
+        return new Image(
+            self::TMP_ROOT.'/'.self::SOURCE_RELATIVE,
+            self::BASE_URL.self::SOURCE_RELATIVE,
+            self::BASE_URL.self::SRCSET_SOURCE_RELATIVE.' 2x'
+        );
+    }
+
+    private function getTargetImageWithSrcSet(): Image
+    {
+        return new Image(
+            self::TMP_ROOT.'/'.self::TARGET_RELATIVE,
+            self::BASE_URL.self::TARGET_RELATIVE,
+            self::BASE_URL.self::SRCSET_TARGET_RELATIVE.' 2x'
+        );
     }
 
     private function getSubject(): ConvertorInterface
