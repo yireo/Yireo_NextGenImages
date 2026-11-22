@@ -104,7 +104,7 @@ class ConvertorInterface
 
         $resultImage = $proceed($image);
 
-        $this->moveConvertedImagesToRemote($resultImage);
+        $this->moveConvertedImagesToRemote($resultImage, $format);
 
         return $resultImage;
     }
@@ -226,11 +226,16 @@ class ConvertorInterface
         }
     }
 
-    private function moveConvertedImagesToRemote(Image $resultImage): void
+    private function moveConvertedImagesToRemote(Image $resultImage, string $format): void
     {
         $pathsToMove = array_merge(
             [$resultImage->getPath()],
             $this->mapSrcSetToPaths($resultImage->getSrcSet())
+        );
+
+        $pathsToMove = array_filter(
+            $pathsToMove,
+            fn (string $path) => strtolower(pathinfo($path, PATHINFO_EXTENSION)) === $format
         );
 
         $this->movePathsToRemote($pathsToMove);
