@@ -248,7 +248,55 @@ class HtmlReplacerTest extends AbstractTestCase
                 .'</picture>'
                 .'</div>',
             ],
+            [
+                '<div>'
+                .'<img src="/media/tmp/test1.jpg"/>'
+                .'<img src="/media/tmp/test1.jpg"/>'
+                .'<img src="/media/tmp/test2.jpg"/>'
+                .'<img src="/media/tmp/test1.jpg"/>'
+                .'</div>',
+                '<div>'
+                .str_repeat(self::getExpectedPicture('test1'), 2)
+                .self::getExpectedPicture('test2')
+                .self::getExpectedPicture('test1')
+                .'</div>',
+            ],
+            [
+                '<div>'
+                .'<img src="/media/tmp/test1.jpg"/>'
+                .'<img src="data:image/gif;base64,foobar"/>'
+                .'<img src="https://example.com/test1.jpg"/>'
+                .'<img src="/media/tmp/test1.gif"/>'
+                .'<img src="/media/tmp/test2.jpg"/>'
+                .'</div>',
+                '<div>'
+                .self::getExpectedPicture('test1')
+                .'<img src="data:image/gif;base64,foobar"/>'
+                .'<img src="https://example.com/test1.jpg"/>'
+                .'<img src="/media/tmp/test1.gif"/>'
+                .self::getExpectedPicture('test2')
+                .'</div>',
+            ],
+            [
+                '<div>'
+                .'<picture><source type="image/webp" srcset="/media/tmp/test1.webp"><img src="/media/tmp/test1.jpg"/></picture>'
+                .'<img src="/media/tmp/test2.jpg"/>'
+                .'</div>',
+                '<div>'
+                .'<picture><source type="image/webp" srcset="/media/tmp/test1.webp"><img src="/media/tmp/test1.jpg"/></picture>'
+                .self::getExpectedPicture('test2')
+                .'</div>',
+            ],
         ];
+    }
+
+    private static function getExpectedPicture(string $name): string
+    {
+        return '<picture>'
+            .'<source type="image/jpeg" srcset="/media/tmp/'.$name.'.jpg">'
+            .'<source type="image/webp" srcset="/media/tmp/'.$name.'.webp">'
+            .'<img src="/media/tmp/'.$name.'.jpg" loading="lazy" />'
+            .'</picture>';
     }
 
     private function copyImages(): void

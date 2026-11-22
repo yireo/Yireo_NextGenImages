@@ -1,0 +1,20 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @version 0.5.17 */
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+$imageUrl = $escaper->escapeUrl($block->getViewFileUrl('Yireo_NextGenImages::images/test-loading-attribute.jpg'));
+?>
+<div id="yireo-nextgenimages-test-multiple-images">
+    <picture class="existing-picture">
+        <img src="<?= /* @noEscape */ $imageUrl ?>" alt="existing-picture">
+    </picture>
+    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="data-uri">
+    <?php for ($i = 1; $i <= 100; $i++): ?>
+        <img src="<?= /* @noEscape */ $imageUrl ?>" alt="image-<?= (int)$i ?>">
+    <?php endfor; ?>
+</div>

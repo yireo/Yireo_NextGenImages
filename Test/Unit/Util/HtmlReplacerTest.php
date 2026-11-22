@@ -128,4 +128,117 @@ class HtmlReplacerTest extends AbstractTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getTestReplaceMultipleImagesArguments
+     */
+    public function testReplaceMultipleImages(string $originalHtml, string $expectedHtml)
+    {
+        $this->assertEquals($expectedHtml, $this->getHtmlReplacerWithRealDom()->replace($originalHtml));
+    }
+
+    public function getTestReplaceMultipleImagesArguments(): array
+    {
+        return [
+            'different images' => [
+                '<div><img src="/a.jpg"><img src="/b.png"/><img src="/c.jpeg" alt="c"></div>',
+                '<div><picture><img src="/a.jpg"></picture><picture><img src="/b.png"/></picture>'
+                .'<picture><img src="/c.jpeg" alt="c"></picture></div>',
+            ],
+            'identical images' => [
+                '<p><img src="/a.jpg"></p><p><img src="/a.jpg"></p><p><img src="/a.jpg"></p>',
+                '<p><picture><img src="/a.jpg"></picture></p><p><picture><img src="/a.jpg"></picture></p>'
+                .'<p><picture><img src="/a.jpg"></picture></p>',
+            ],
+            'ineligible images in between' => [
+                '<img src="/a.jpg"><img src="data:image/png;base64,foo"><img src="http://remote/b.jpg">'
+                .'<img src="/c.gif"><img src="/media/captcha/d.png"><img src="/skip.jpg"><img src="/e.jpg">',
+                '<picture><img src="/a.jpg"></picture><img src="data:image/png;base64,foo">'
+                .'<img src="http://remote/b.jpg"><img src="/c.gif"><img src="/media/captcha/d.png">'
+                .'<img src="/skip.jpg"><picture><img src="/e.jpg"></picture>',
+            ],
+            'existing picture is left alone' => [
+                '<picture><source srcset="/a.webp"><img src="/a.jpg"></picture><img src="/a.jpg">',
+                '<picture><source srcset="/a.webp"><img src="/a.jpg"></picture><picture><img src="/a.jpg"></picture>',
+            ],
+            'srcset and src images' => [
+                '<img srcset="/a.jpg 1x, /a2.jpg 2x" src="/a.jpg"><img src="/b.jpg">',
+                '<picture><img srcset="/a.jpg 1x, /a2.jpg 2x" src="/a.jpg"></picture><picture><img src="/b.jpg"></picture>',
+            ],
+            'quoted greater-than characters' => [
+                '<img src="/a.jpg" @click="() => a > b"><img src="/b.jpg" x-on:load=\'() => c\'>',
+                '<picture><img src="/a.jpg" @click="() => a > b"></picture>'
+                .'<picture><img src="/b.jpg" x-on:load=\'() => c\'></picture>',
+            ],
+            'image html inside script is left alone' => [
+                "<img src=\"/a.jpg\"><script>var a = '<img src=\"/a.jpg\">';</script>",
+                "<picture><img src=\"/a.jpg\"></picture><script>var a = '<img src=\"/a.jpg\">';</script>",
+            ],
+        ];
+    }
+
+    public function testReplaceManyImagesInLargeHtml()
+    {
+        $imageCount = 500;
+        $filler = str_repeat('<span class="filler">Lorem ipsum dolor sit amet</span>', 20);
+        $originalHtml = '';
+        $expectedHtml = '';
+        for ($i = 0; $i < $imageCount; $i++) {
+            $imageTag = '<img src="/media/catalog/product/'.($i % 50).'.jpg" alt="'.$i.'">';
+            $originalHtml .= '<div>'.$imageTag.$filler.'</div>';
+            $expectedHtml .= '<div><picture>'.$imageTag.'</picture>'.$filler.'</div>';
+        }
+
+        $start = microtime(true);
+        $actualHtml = $this->getHtmlReplacerWithRealDom()->replace($originalHtml);
+        $duration = microtime(true) - $start;
+
+        $this->assertSame($imageCount, substr_count($actualHtml, '<picture>'));
+        $this->assertStringNotContainsString('data-marker', $actualHtml);
+        $this->assertStringNotContainsString('yireo_nextgenimages', $actualHtml);
+        $this->assertEquals($expectedHtml, $actualHtml);
+        $this->assertLessThan(5, $duration, 'Replacing many images in a large HTML document is too slow');
+    }
+
+    private function getHtmlReplacerWithRealDom(): HtmlReplacer
+    {
+        $urlConvertor = $this->getMagentoMock(UrlConvertor::class);
+        $urlConvertor->method('isLocal')->willReturnCallback(function (string $url) {
+            return !str_starts_with($url, 'http://remote');
+        });
+
+        $imageCollector = $this->getMagentoMock(ImageCollector::class);
+        $imageCollector->method('collect')->willReturnCallback(function ($urls) {
+            $urls = is_array($urls) ? $urls : [$urls];
+            foreach ($urls as $url) {
+                if (str_contains($url, 'skip')) {
+                    return [];
+                }
+            }
+
+            return [new Image('/tmp/pub/test.webp', '/test.webp')];
+        });
+
+        $pictureFactory = $this->getMagentoMock(PictureFactory::class);
+        $pictureFactory->method('create')->willReturnCallback(
+            function ($image, $images, string $imageHtml) {
+                $block = $this->getMagentoMock(Picture::class);
+                $block->method('toHtml')->willReturn('<picture>'.$imageHtml.'</picture>');
+
+                return $block;
+            }
+        );
+
+        $config = $this->getMagentoMock(Config::class);
+        $config->method('convertCssBackgrounds')->willReturn(false);
+
+        return new HtmlReplacer(
+            $urlConvertor,
+            $imageCollector,
+            $pictureFactory,
+            $this->getMagentoMock(ImageFactory::class),
+            $config,
+            new DomUtils()
+        );
+    }
 }
