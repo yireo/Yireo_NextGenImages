@@ -79,8 +79,11 @@ class ConvertorInterface
 
         $format = $this->getFormat($subject);
         if ($format === '') {
-            // Without a target format it is impossible to know whether conversion is needed
-            return $proceed($image);
+            $this->copyImagesToTmp([$image->getPath()]);
+            $resultImage = $proceed($image);
+            $this->movePathsToRemote([$resultImage->getPath()]);
+
+            return $resultImage;
         }
 
         if ($this->fileUtil->fileExists($image->getPath()) === false) {
@@ -236,6 +239,11 @@ class ConvertorInterface
             $pathsToMove[] = $filePath;
         }
 
+        $this->movePathsToRemote($pathsToMove);
+    }
+
+    private function movePathsToRemote(array $pathsToMove): void
+    {
         foreach (array_unique($pathsToMove) as $tmpAbsolutePath) {
             $remoteAbsolutePath = $this->prepareRemotePath($tmpAbsolutePath);
 

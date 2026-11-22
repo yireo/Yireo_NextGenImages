@@ -252,14 +252,11 @@ class ConvertorInterfaceTest extends AbstractTestCase
     {
         $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
         $this->fileUtil->method('fileExists')->willReturn(true);
-        $this->fileUtil->expects($this->once())
-            ->method('needsConversion')
-            ->with(self::TMP_ROOT.'/'.self::SOURCE_RELATIVE, self::TMP_ROOT.'/'.self::TARGET_RELATIVE)
-            ->willReturn(true);
+        $this->fileUtil->expects($this->never())->method('needsConversion');
         $this->tmpFileCopier->expects($this->once())->method('copy')->with(self::SOURCE_RELATIVE);
 
         $resultImage = $this->getTargetImage();
-        $plugin = $this->createPlugin($this->getDiFormatConfig());
+        $plugin = $this->createPlugin();
         $result = $plugin->aroundConvertImage($this->getSubject(), fn () => $resultImage, $this->getSourceImage());
         $this->assertSame($resultImage, $result);
     }
@@ -296,11 +293,6 @@ class ConvertorInterfaceTest extends AbstractTestCase
             $this->debugger,
             $formats
         );
-    }
-
-    private function getDiFormatConfig(): array
-    {
-        return [ConvertorInterface::class => 'webp'];
     }
 
     private function getSourceImage(): Image
