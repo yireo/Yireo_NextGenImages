@@ -83,6 +83,10 @@ class ConvertorInterface
             return $proceed($image);
         }
 
+        if ($this->fileUtil->fileExists($image->getPath()) === false) {
+            return $proceed($image);
+        }
+
         $targetImage = $this->targetImageFactory->create($image, $format);
         $hasSrcSet = $image->getSrcSet() !== null;
         $imagesNeedingConversion = $this->getImagesNeedingConversion($image, $targetImage, $format);

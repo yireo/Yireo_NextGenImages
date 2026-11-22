@@ -115,6 +115,7 @@ class ConvertorInterfaceTest extends AbstractTestCase
     public function testCopiesSourceToTmpConvertsAndMovesResultToRemoteStorage(): void
     {
         $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
         $this->fileUtil->method('needsConversion')->willReturn(true);
 
         $calls = [];
@@ -184,9 +185,8 @@ class ConvertorInterfaceTest extends AbstractTestCase
         };
 
         $plugin = $this->createPlugin();
-        $result = $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImage());
-        $this->assertFalse($proceedCalled, 'Convertor should not be called when source image does not exist');
-        $this->assertStringEndsWith('.webp', $result->getPath());
+        $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $this->getSourceImage());
+        $this->assertTrue($proceedCalled, 'Convertor should decide what happens to a missing source image');
     }
 
     /**
