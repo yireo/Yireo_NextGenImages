@@ -19,4 +19,8 @@
     <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
         <plugin name="Yireo_NextGenImages::addImagesToConfigurableJsonConfig" type="Yireo\NextGenImages\Plugin\AddImagesToConfigurableJsonConfig"/>
     </type>
+
+    <type name="Magento\Swatches\Block\Product\Renderer\Configurable">
+        <plugin name="Yireo_NextGenImages::addImagesToSwatchJsonConfig" type="Yireo\NextGenImages\Plugin\AddImagesToSwatchJsonConfig"/>
+    </type>
 </config>
