@@ -126,7 +126,7 @@ class ConvertorInterface
             }
         }
 
-        return strtolower(ltrim(trim($format), '.'));
+        return strtolower(ltrim(trim($format, " \f\n\r\t\v\x00"), '.'));
     }
 
     /**
@@ -196,7 +196,7 @@ class ConvertorInterface
         $parts = explode(',', $srcSet);
 
         foreach ($parts as $part) {
-            $part = trim($part);
+            $part = trim($part, " \f\n\r\t\v\x00");
             $pieces = preg_split('/\s+/', $part, 2);
             $url = $pieces[0] ?? '';
             $descriptor = $pieces[1] ?? '';
