@@ -47,7 +47,7 @@ class RemoteStorageSrcSetTest extends AbstractRemoteStorageTestCase
 
         $this->assertSame(
             [$this->getTmpPath($this->source), $this->getTmpPath($this->srcSetSource)],
-            array_values(array_unique(SrcSetFakeWebpConvertor::$convertedPaths))
+            SrcSetFakeWebpConvertor::$convertedPaths
         );
         $this->assertSame(self::TARGET_URL.', '.self::SRCSET_TARGET_URL.' 2x', $targetImage->getSrcSet());
 

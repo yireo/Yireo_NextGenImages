@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Test\Unit\Plugin\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
@@ -140,18 +141,46 @@ class FileTest extends AbstractTestCase
     }
 
     /**
-     * The original File::getModificationTime() returns 0 when stat() fails (e.g. missing target file).
-     * The plugin should keep that contract.
+     * Right after conversion, the target image only exists locally in var/tmp, so its local modification time
+     * should be used. Otherwise the target would be converted again.
      */
-    public function testGetModificationTimeReturnsZeroWhenRemoteStatThrowsException(): void
+    public function testGetModificationTimeFallsBackToLocalFileWhenRemoteStatThrowsException(): void
     {
         $this->remoteDirectoryRead->method('stat')
             ->willThrowException(new FileSystemException(__('File does not exist')));
 
         $plugin = $this->createPlugin(true);
-        $proceed = $this->createNeverCalledProceed();
+        $proceed = $this->createProceed(3333, self::TMP_PATH);
 
-        $this->assertSame(0, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+        $this->assertSame(3333, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+    }
+
+    public function testGetModificationTimeFallsBackToLocalFileWhenPathIsOutsideTmpDirectory(): void
+    {
+        $tmpDirectoryRead = $this->createMock(ReadInterface::class);
+        $tmpDirectoryRead->method('getRelativePath')
+            ->willThrowException(new ValidatorException(__('Path is outside of var/tmp')));
+        $this->tmpDirectoryRead = $tmpDirectoryRead;
+        $this->remoteDirectoryRead->expects($this->never())->method('stat');
+
+        $plugin = $this->createPlugin(true);
+        $proceed = $this->createProceed(3333, self::TMP_PATH);
+
+        $this->assertSame(3333, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+    }
+
+    public function testFileExistsFallsBackToLocalFileWhenPathIsOutsideTmpDirectory(): void
+    {
+        $tmpDirectoryRead = $this->createMock(ReadInterface::class);
+        $tmpDirectoryRead->method('getRelativePath')
+            ->willThrowException(new ValidatorException(__('Path is outside of var/tmp')));
+        $this->tmpDirectoryRead = $tmpDirectoryRead;
+        $this->remoteDirectoryRead->expects($this->never())->method('isExist');
+
+        $plugin = $this->createPlugin(true);
+        $proceed = $this->createProceed(true, self::TMP_PATH);
+
+        $this->assertTrue($plugin->aroundFileExists($this->getFileSubject(), $proceed, self::TMP_PATH));
     }
 
     public function testFileExistsRemembersExistingRemoteFile(): void
@@ -215,10 +244,13 @@ class FileTest extends AbstractTestCase
             });
 
         $plugin = $this->createPlugin(true);
-        $proceed = $this->createNeverCalledProceed();
+        $subject = $this->getFileSubject();
 
-        $this->assertSame(0, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
-        $this->assertSame(1111, $plugin->aroundGetModificationTime($this->getFileSubject(), $proceed, self::TMP_PATH));
+        $this->assertSame(0, $plugin->aroundGetModificationTime($subject, fn () => 0, self::TMP_PATH));
+        $this->assertSame(
+            1111,
+            $plugin->aroundGetModificationTime($subject, $this->createNeverCalledProceed(), self::TMP_PATH)
+        );
     }
 
     private function createPlugin(bool $remoteStorageEnabled): FilePlugin

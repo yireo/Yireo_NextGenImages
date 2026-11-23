@@ -6,6 +6,7 @@ namespace Yireo\NextGenImages\Plugin\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
@@ -59,7 +60,7 @@ class File
                 $this->existingFiles[$filePath] = true;
                 return true;
             }
-        } catch (FileSystemException $fileSystemException) {
+        } catch (FileSystemException|ValidatorException $exception) {
         }
 
         // A freshly converted image only exists locally until it is moved to the remote storage
@@ -74,7 +75,7 @@ class File
 
         $stat = $this->getRemoteStat($filePath);
         if ($stat === null) {
-            return 0;
+            return $proceed($filePath);
         }
 
         if (!empty($stat['mtime'])) {
@@ -93,7 +94,7 @@ class File
         try {
             $tmpRelativePath = $this->tmpDirectoryRead->getRelativePath($filePath);
             $stat = $this->remoteDirectoryRead->stat($tmpRelativePath);
-        } catch (FileSystemException $fileSystemException) {
+        } catch (FileSystemException|ValidatorException $exception) {
             return null;
         }
 
