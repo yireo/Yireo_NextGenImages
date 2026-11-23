@@ -2,7 +2,6 @@
 
 namespace Yireo\NextGenImages\Test\Integration\Plugin;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Swatches\Block\Product\Renderer\Configurable;
 use Yireo\IntegrationTestHelper\Test\Integration\AbstractTestCase;
@@ -10,6 +9,7 @@ use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Plugin\AddImagesToSwatchJsonConfig;
 use Yireo\NextGenImages\Test\Integration\Stub\Convertor\FakeWebpConvertor;
+use Yireo\NextGenImages\Util\UrlConvertor;
 
 /**
  * @magentoAppArea frontend
@@ -17,6 +17,7 @@ use Yireo\NextGenImages\Test\Integration\Stub\Convertor\FakeWebpConvertor;
 class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
 {
     private const TEST_FOLDER = 'nextgenimages-swatch-test';
+    private const IMAGE_URL = 'http://localhost/media/'.self::TEST_FOLDER.'/test1.jpg';
 
     private string $mediaFolder;
 
@@ -25,8 +26,8 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
         parent::setUp();
         FakeWebpConvertor::reset();
 
-        $directoryList = $this->objectManager->get(DirectoryList::class);
-        $this->mediaFolder = $directoryList->getPath(DirectoryList::MEDIA).'/'.self::TEST_FOLDER;
+        $urlConvertor = $this->objectManager->get(UrlConvertor::class);
+        $this->mediaFolder = dirname($urlConvertor->getFilenameFromUrl(self::IMAGE_URL));
 
         $this->removeTestFiles();
         mkdir($this->mediaFolder, 0777, true);
@@ -58,11 +59,10 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
      */
     public function testReplacesExistingSwatchImageWithWebp(): void
     {
-        $imageUrl = 'http://localhost/media/'.self::TEST_FOLDER.'/test1.jpg';
         $missingUrl = 'http://localhost/media/'.self::TEST_FOLDER.'/missing.jpg';
         $json = json_encode([
             93 => [
-                1 => ['type' => 2, 'value' => $imageUrl, 'thumb' => $missingUrl],
+                1 => ['type' => 2, 'value' => self::IMAGE_URL, 'thumb' => $missingUrl],
                 2 => ['type' => 1, 'value' => '#ff0000'],
             ],
         ]);
@@ -84,7 +84,7 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
      */
     public function testLeavesConfigUntouchedWhenDisabled(): void
     {
-        $json = json_encode([93 => [1 => ['type' => 2, 'value' => 'http://localhost/media/'.self::TEST_FOLDER.'/test1.jpg']]]);
+        $json = json_encode([93 => [1 => ['type' => 2, 'value' => self::IMAGE_URL]]]);
 
         $this->assertSame($json, $this->getPlugin()->afterGetJsonSwatchConfig(
             $this->objectManager->get(Configurable::class),
