@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Test\Integration\Plugin;
 
 use Magento\Framework\Filesystem\Driver\File as FileDriver;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Swatches\Block\Product\Renderer\Configurable;
 use Yireo\IntegrationTestHelper\Test\Integration\AbstractTestCase;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
@@ -60,17 +61,17 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
     public function testReplacesExistingSwatchImageWithWebp(): void
     {
         $missingUrl = 'http://localhost/media/'.self::TEST_FOLDER.'/missing.jpg';
-        $json = json_encode([
+        $json = $this->objectManager->get(Json::class)->serialize([
             93 => [
                 1 => ['type' => 2, 'value' => self::IMAGE_URL, 'thumb' => $missingUrl],
                 2 => ['type' => 1, 'value' => '#ff0000'],
             ],
         ]);
 
-        $result = json_decode($this->getPlugin()->afterGetJsonSwatchConfig(
+        $result = $this->objectManager->get(Json::class)->unserialize($this->getPlugin()->afterGetJsonSwatchConfig(
             $this->objectManager->get(Configurable::class),
             $json
-        ), true);
+        ));
 
         $this->assertSame('http://localhost/media/'.self::TEST_FOLDER.'/test1.webp', $result[93][1]['value']);
         $this->assertSame($missingUrl, $result[93][1]['thumb']);
@@ -84,7 +85,7 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
      */
     public function testLeavesConfigUntouchedWhenDisabled(): void
     {
-        $json = json_encode([93 => [1 => ['type' => 2, 'value' => self::IMAGE_URL]]]);
+        $json = $this->objectManager->get(Json::class)->serialize([93 => [1 => ['type' => 2, 'value' => self::IMAGE_URL]]]);
 
         $this->assertSame($json, $this->getPlugin()->afterGetJsonSwatchConfig(
             $this->objectManager->get(Configurable::class),

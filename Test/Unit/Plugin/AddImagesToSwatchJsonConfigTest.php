@@ -17,14 +17,14 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
 
     public function testReturnsOriginalWhenDisabled(): void
     {
-        $json = json_encode([93 => [1 => ['type' => 2, 'value' => self::SWATCH_IMAGE]]]);
+        $json = $this->encode([93 => [1 => ['type' => 2, 'value' => self::SWATCH_IMAGE]]]);
         $plugin = $this->getPlugin(false, []);
         $this->assertSame($json, $plugin->afterGetJsonSwatchConfig($this->getSubject(), $json));
     }
 
     public function testReplacesImageSwatchUrlsWithWebp(): void
     {
-        $json = json_encode([
+        $json = $this->encode([
             93 => [
                 1 => ['type' => 2, 'value' => self::SWATCH_IMAGE, 'thumb' => self::SWATCH_THUMB, 'label' => 'Red'],
                 'additional_data' => '{"swatch_input_type":"visual"}',
@@ -36,7 +36,7 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
             self::SWATCH_THUMB => [$this->getImage('webp', 'thumb')],
         ]);
 
-        $result = json_decode($plugin->afterGetJsonSwatchConfig($this->getSubject(), $json), true);
+        $result = $this->decode($plugin->afterGetJsonSwatchConfig($this->getSubject(), $json));
         $this->assertSame('http://localhost/media/image.webp', $result[93][1]['value']);
         $this->assertSame('http://localhost/media/thumb.webp', $result[93][1]['thumb']);
         $this->assertSame('Red', $result[93][1]['label']);
@@ -45,20 +45,20 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
 
     public function testKeepsOriginalUrlWhenNoWebpIsAvailable(): void
     {
-        $json = json_encode([93 => [1 => ['type' => 2, 'value' => self::SWATCH_IMAGE, 'thumb' => self::SWATCH_THUMB]]]);
+        $json = $this->encode([93 => [1 => ['type' => 2, 'value' => self::SWATCH_IMAGE, 'thumb' => self::SWATCH_THUMB]]]);
         $plugin = $this->getPlugin(true, [
             self::SWATCH_IMAGE => [],
             self::SWATCH_THUMB => [$this->getImage('avif')],
         ]);
 
-        $result = json_decode($plugin->afterGetJsonSwatchConfig($this->getSubject(), $json), true);
+        $result = $this->decode($plugin->afterGetJsonSwatchConfig($this->getSubject(), $json));
         $this->assertSame(self::SWATCH_IMAGE, $result[93][1]['value']);
         $this->assertSame(self::SWATCH_THUMB, $result[93][1]['thumb']);
     }
 
     public function testIgnoresNonImageSwatches(): void
     {
-        $json = json_encode([
+        $json = $this->encode([
             93 => [
                 1 => ['type' => 1, 'value' => '#ff0000'],
                 2 => ['type' => 0, 'value' => 'XL'],
@@ -70,14 +70,24 @@ class AddImagesToSwatchJsonConfigTest extends AbstractTestCase
         $imageCollector->expects($this->never())->method('collect');
         $plugin = new AddImagesToSwatchJsonConfig($this->getConfig(true), new Json(), $imageCollector);
 
-        $result = json_decode($plugin->afterGetJsonSwatchConfig($this->getSubject(), $json), true);
-        $this->assertSame(json_decode($json, true), $result);
+        $result = $this->decode($plugin->afterGetJsonSwatchConfig($this->getSubject(), $json));
+        $this->assertSame($this->decode($json), $result);
     }
 
     public function testReturnsOriginalForEmptyConfig(): void
     {
         $plugin = $this->getPlugin(true, []);
         $this->assertSame('[]', $plugin->afterGetJsonSwatchConfig($this->getSubject(), '[]'));
+    }
+
+    private function encode(array $data): string
+    {
+        return (new Json())->serialize($data);
+    }
+
+    private function decode(string $json): array
+    {
+        return (new Json())->unserialize($json);
     }
 
     private function getPlugin(bool $enabled, array $imagesByUrl): AddImagesToSwatchJsonConfig
