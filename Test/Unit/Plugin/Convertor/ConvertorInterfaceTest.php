@@ -293,6 +293,22 @@ class ConvertorInterfaceTest extends AbstractTestCase
         $this->assertSame(1, $proceedCalls, 'Convertor should add the converted srcset');
     }
 
+    public function testSkipsConvertorWhenSrcSetIsEmptyAndTargetIsUpToDate(): void
+    {
+        $this->remoteStorageConfig->method('isEnabled')->willReturn(true);
+        $this->fileUtil->method('fileExists')->willReturn(true);
+        $this->fileUtil->method('needsConversion')->willReturn(false);
+
+        $sourceImage = new Image(self::TMP_ROOT.'/'.self::SOURCE_RELATIVE, self::BASE_URL.self::SOURCE_RELATIVE, '');
+        $proceed = function () {
+            $this->fail('Convertor should not be called when the target image is up to date');
+        };
+
+        $plugin = $this->createPlugin();
+        $result = $plugin->aroundConvertImage($this->getWebpSubject(), $proceed, $sourceImage);
+        $this->assertSame(self::TMP_ROOT.'/'.self::TARGET_RELATIVE, $result->getPath());
+    }
+
     public function testOnlyCopiesOutdatedSrcSetImages(): void
     {
         $this->remoteStorageConfig->method('isEnabled')->willReturn(true);

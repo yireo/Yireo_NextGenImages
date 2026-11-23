@@ -97,7 +97,7 @@ class ConvertorInterface
         if (empty($imagesNeedingConversion)) {
             // Target image is up to date. If srcSet is present, call proceed() so the original convertor
             // can assign converted srcSet URLs to the target image
-            return $image->getSrcSet() !== null ? $proceed($image) : $targetImage;
+            return !empty($image->getSrcSet()) ? $proceed($image) : $targetImage;
         }
 
         $this->copyImagesToTmp($imagesNeedingConversion);
