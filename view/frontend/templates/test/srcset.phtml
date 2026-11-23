@@ -1,0 +1,17 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @version 0.5.17 */
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+$imageUrl = $escaper->escapeUrl($block->getViewFileUrl('Yireo_NextGenImages::images/test-loading-attribute.jpg'));
+$retinaImageUrl = $escaper->escapeUrl($block->getViewFileUrl('Yireo_NextGenImages::images/test-srcset-2x.jpg'));
+?>
+<div id="yireo-nextgenimages-test-srcset">
+    <img src="<?= /* @noEscape */ $imageUrl ?>"
+         srcset="<?= /* @noEscape */ $imageUrl ?> 1x, <?= /* @noEscape */ $retinaImageUrl ?> 2x"
+         alt="srcset">
+</div>
