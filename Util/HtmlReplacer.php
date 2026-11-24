@@ -251,7 +251,7 @@ class HtmlReplacer
         $i = 0;
 
         return preg_replace_callback(
-            "/<img((?:[^>\"']|\"[^\"]*\"|'[^']*')+)>/mi",
+            "/<img(?=[\s\/>])((?:[^>\"']|\"[^\"]*\"|'[^']*')+)>/mi",
             function ($matches) use (&$i) {
                 $i++;
                 $marker = ' '.self::MARKER_CODE.'="'.$this->markerPrefix.'-'.$i.'"';

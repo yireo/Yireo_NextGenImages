@@ -286,6 +286,40 @@ class HtmlReplacerTest extends AbstractTestCase
         );
     }
 
+    public function testUppercaseImageTagWithoutAttributeSpacingIsReplaced()
+    {
+        $html = "<div><IMG\tSRC=\"/a.jpg\"><IMG\nsrc=\"/b.jpg\"/></div>";
+
+        $this->assertSame(
+            "<div><picture><IMG\tSRC=\"/a.jpg\"></picture><picture><IMG\nsrc=\"/b.jpg\"/></picture></div>",
+            $this->getHtmlReplacerWithRealDom()->replace($html)
+        );
+    }
+
+    /**
+     * @dataProvider provideImageTagLookalikes
+     */
+    #[DataProvider('provideImageTagLookalikes')]
+    public function testImageTagLookalikesAreNotMarked(string $html)
+    {
+        $htmlReplacer = $this->getHtmlReplacerWithRealDom();
+        $method = new \ReflectionMethod(HtmlReplacer::class, 'addImageMarkersToHtml');
+
+        $this->assertSame($html, $method->invoke($htmlReplacer, $html));
+        $this->assertSame($html, $htmlReplacer->replace($html));
+        $this->assertSame([], $this->collectedUrls);
+    }
+
+    public static function provideImageTagLookalikes(): array
+    {
+        return [
+            'custom element with img prefix' => ['<img-preview src="/a.jpg"></img-preview>'],
+            'uppercase custom element' => ['<IMG-PREVIEW src="/a.jpg"></IMG-PREVIEW>'],
+            'uppercase tag with img prefix' => ['<IMGX src="/a.jpg">'],
+            'lowercase tag with img prefix' => ['<imgfoo src="/a.jpg">'],
+        ];
+    }
+
     public function testExistingMarkerAttributesArePreserved()
     {
         $html = '<img data-marker="1" src="/a.jpg"><img src="/b.jpg" data-yireo-ngi-marker="foo-1">';
