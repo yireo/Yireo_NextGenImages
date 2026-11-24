@@ -2,6 +2,7 @@
 
 namespace Yireo\NextGenImages\Image;
 
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\View\Asset\File\NotFoundException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
@@ -56,7 +57,7 @@ class ImageCollector implements ArgumentInterface
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
                 $images[] = $convertor->convertImage($image);
-            } catch (ConvertorException $convertorException) {
+            } catch (ConvertorException|NotFoundException|FileSystemException $convertorException) {
                 $this->debugger->debug($convertorException->getMessage(), ['path' => $image->getPath()]);
                 continue;
             }
