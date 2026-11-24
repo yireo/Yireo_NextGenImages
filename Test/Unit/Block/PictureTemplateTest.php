@@ -92,7 +92,6 @@ class PictureTemplateTest extends AbstractTestCase
         $escaper->method('escapeHtml')->willReturnCallback($escape);
         $escaper->method('escapeHtmlAttr')->willReturnCallback($escape);
         $escaperProperty = new ReflectionProperty(Picture::class, '_escaper');
-        $escaperProperty->setAccessible(true);
         $escaperProperty->setValue($picture, $escaper);
 
         ob_start();

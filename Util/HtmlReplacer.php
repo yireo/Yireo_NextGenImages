@@ -11,7 +11,7 @@ use Yireo\NextGenImages\Image\ImageFactory;
 
 class HtmlReplacer
 {
-    private const MARKER_CODE = 'data-marker';
+    private const MARKER_CODE = 'data-yireo-ngi-marker';
 
     /**
      * @var UrlConvertor
@@ -44,6 +44,11 @@ class HtmlReplacer
     private $domUtils;
 
     /**
+     * @var string
+     */
+    private $markerPrefix;
+
+    /**
      * Constructor.
      *
      * @param UrlConvertor $urlConvertor
@@ -67,6 +72,7 @@ class HtmlReplacer
         $this->imageFactory = $imageFactory;
         $this->config = $config;
         $this->domUtils = $domUtils;
+        $this->markerPrefix = bin2hex(random_bytes(4));
     }
 
     /**
@@ -75,11 +81,16 @@ class HtmlReplacer
      */
     public function replace(string $html): string
     {
+        $originalHtml = $html;
         $html = $this->replaceInlineCssBackgroundImages($html);
         $html = $this->addImageMarkersToHtml($html);
+        if ($html === null) {
+            return $originalHtml;
+        }
+
         $html = $this->replaceImageTags($html);
 
-        return $this->removeImageMarker($html);
+        return $this->removeImageMarker($html) ?? $originalHtml;
     }
 
     /**
@@ -130,7 +141,8 @@ class HtmlReplacer
         }
 
         // Quoted attribute values may contain a ">", like in Alpine.js attributes `@click="() => foo()"`
-        $regex = '/<img '.self::MARKER_CODE.'="'.$imageMarker.'"((?:[^>"\']|"[^"]*"|\'[^\']*\')*)>/';
+        $regex = '/<img '.self::MARKER_CODE.'="'.preg_quote($imageMarker, '/')
+            .'"((?:[^>"\']|"[^"]*"|\'[^\']*\')*)>/i';
         if (!preg_match($regex, $html, $imageHtmlMatch)) {
             return '';
         }
@@ -224,31 +236,31 @@ class HtmlReplacer
 
     /**
      * @param string $html
-     * @return string
+     * @return string|null
      */
-    private function addImageMarkersToHtml(string $html): string
+    private function addImageMarkersToHtml(string $html): ?string
     {
         $i = 0;
-        $html = preg_replace_callback(
+
+        return preg_replace_callback(
             "/<img((?:[^>\"']|\"[^\"]*\"|'[^']*')+)>/mi",
             function ($matches) use (&$i) {
                 $i++;
+                $marker = ' '.self::MARKER_CODE.'="'.$this->markerPrefix.'-'.$i.'"';
 
-                return str_replace('<img', '<img '.self::MARKER_CODE.'="'.$i.'"', $matches[0]);
+                return preg_replace('/^<img/i', '$0'.$marker, $matches[0], 1) ?? $matches[0];
             },
             $html
         );
-
-        return $html;
     }
 
     /**
      * @param string $html
-     * @return string
+     * @return string|null
      */
-    private function removeImageMarker(string $html): string
+    private function removeImageMarker(string $html): ?string
     {
-        return preg_replace('/ '.self::MARKER_CODE.'="([^\"]+)"/', '', $html);
+        return preg_replace('/ '.self::MARKER_CODE.'="'.preg_quote($this->markerPrefix, '/').'-\d+"/', '', $html);
     }
 
     /**

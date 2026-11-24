@@ -30,7 +30,7 @@ test.describe('NextGenImages with multiple images', function () {
         await configureNextGenImages(page);
         const html = await getContainerHtml(page);
 
-        expect(html).not.toContain('data-marker');
+        expect(html).not.toContain('data-yireo-ngi-marker');
         expect(html).not.toContain('yireo_nextgenimages');
         expect(html, 'Nested picture').not.toMatch(/<picture[^>]*>(?:(?!<\/picture>)[\s\S])*<picture/);
 

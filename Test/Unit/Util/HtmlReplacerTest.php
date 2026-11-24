@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Test\Unit\Util;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionProperty;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
@@ -197,7 +198,7 @@ class HtmlReplacerTest extends AbstractTestCase
         $duration = microtime(true) - $start;
 
         $this->assertSame($imageCount, substr_count($actualHtml, '<picture>'));
-        $this->assertStringNotContainsString('data-marker', $actualHtml);
+        $this->assertStringNotContainsString('data-yireo-ngi-marker', $actualHtml);
         $this->assertStringNotContainsString('yireo_nextgenimages', $actualHtml);
         $this->assertEquals($expectedHtml, $actualHtml);
         $this->assertLessThan(5, $duration, 'Replacing many images in a large HTML document is too slow');
@@ -247,6 +248,70 @@ class HtmlReplacerTest extends AbstractTestCase
                 ['1x' => '/a.jpg', '4x' => '/e.jpg'],
             ],
         ];
+    }
+
+    public function testUppercaseImageTagIsReplaced()
+    {
+        $html = '<div><IMG SRC="/a.jpg" ALT="a"><Img src="/b.jpg"></div>';
+
+        $this->assertSame(
+            '<div><picture><IMG SRC="/a.jpg" ALT="a"></picture><picture><Img src="/b.jpg"></picture></div>',
+            $this->getHtmlReplacerWithRealDom()->replace($html)
+        );
+    }
+
+    public function testExistingMarkerAttributesArePreserved()
+    {
+        $html = '<img data-marker="1" src="/a.jpg"><img src="/b.jpg" data-yireo-ngi-marker="foo-1">';
+
+        $this->assertSame(
+            '<picture><img data-marker="1" src="/a.jpg"></picture>'
+            .'<picture><img src="/b.jpg" data-yireo-ngi-marker="foo-1"></picture>',
+            $this->getHtmlReplacerWithRealDom()->replace($html)
+        );
+    }
+
+    public function testMarkerWithRegexCharacters()
+    {
+        $htmlReplacer = $this->getHtmlReplacerWithRealDom();
+        $markerPrefix = new ReflectionProperty(HtmlReplacer::class, 'markerPrefix');
+        $markerPrefix->setValue($htmlReplacer, 'a.b+(c)/[d]');
+
+        $html = '<img src="/a.jpg"><img src="/b.jpg">';
+
+        $this->assertSame(
+            '<picture><img src="/a.jpg"></picture><picture><img src="/b.jpg"></picture>',
+            $htmlReplacer->replace($html)
+        );
+    }
+
+    public function testMarkerPrefixIsRandom()
+    {
+        $markerPrefix = new ReflectionProperty(HtmlReplacer::class, 'markerPrefix');
+
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}$/', $markerPrefix->getValue($this->getHtmlReplacerWithRealDom()));
+        $this->assertNotSame(
+            $markerPrefix->getValue($this->getHtmlReplacerWithRealDom()),
+            $markerPrefix->getValue($this->getHtmlReplacerWithRealDom())
+        );
+    }
+
+    public function testOriginalHtmlIsReturnedOnRegexFailure()
+    {
+        $backtrackLimit = ini_get('pcre.backtrack_limit');
+        $jit = ini_get('pcre.jit');
+        ini_set('pcre.jit', '0');
+        ini_set('pcre.backtrack_limit', '1');
+
+        try {
+            $html = '<div><img src="/a.jpg" alt="'.str_repeat('a', 1000).'"></div>';
+            $actualHtml = $this->getHtmlReplacerWithRealDom()->replace($html);
+        } finally {
+            ini_set('pcre.backtrack_limit', (string)$backtrackLimit);
+            ini_set('pcre.jit', (string)$jit);
+        }
+
+        $this->assertSame($html, $actualHtml);
     }
 
     private function getHtmlReplacerWithRealDom(): HtmlReplacer
