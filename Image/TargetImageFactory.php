@@ -8,6 +8,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\DriverInterface;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Config\Source\TargetDirectory;
+use Yireo\NextGenImages\Util\PathNormalizer;
 
 class TargetImageFactory
 {
@@ -41,10 +42,30 @@ class TargetImageFactory
      */
     public function create(Image $image, string $suffix): Image
     {
-        $folder = $this->getTargetPathFromImage($image);
-        $filename = $this->getTargetFilename($image, $suffix);
+        $targetPath = $this->getTargetPathFromImage($image).'/'.$this->getTargetFilename($image, $suffix);
+        if ($this->config->getTargetDirectory() === TargetDirectory::CACHE) {
+            $targetPath = $this->assertInsideCacheDirectory($targetPath);
+        }
 
-        return $this->imageFactory->createFromPath($folder.'/'.$filename);
+        return $this->imageFactory->createFromPath($targetPath);
+    }
+
+    /**
+     * @param string $targetPath
+     * @return string
+     * @throws FileSystemException
+     */
+    private function assertInsideCacheDirectory(string $targetPath): string
+    {
+        $normalizedTargetPath = PathNormalizer::normalize($targetPath);
+        $cacheDirectory = rtrim(PathNormalizer::normalize($this->config->getCacheDirectoryPath()), '/');
+        if (!str_starts_with($normalizedTargetPath, $cacheDirectory.'/')) {
+            throw new FileSystemException(
+                __('Target path "%1" is outside of the cache directory', $targetPath)
+            );
+        }
+
+        return $normalizedTargetPath;
     }
 
     /**

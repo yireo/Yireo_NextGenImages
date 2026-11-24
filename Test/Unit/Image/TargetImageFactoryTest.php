@@ -3,6 +3,7 @@
 namespace Yireo\NextGenImages\Test\Unit\Image;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\DriverInterface;
@@ -132,6 +133,51 @@ class TargetImageFactoryTest extends AbstractTestCase
         $targetImageFactory = new TargetImageFactory($directoryList, $config, $imageFactory, $filesystem);
         $webpImage = $targetImageFactory->create(new Image($parentDirectory.'/example.jpg', '/example.jpg'), 'webp');
         $this->assertSame($expectedPath, $webpImage->getPath());
+    }
+
+    public function testGetWithCacheTargetDirectoryNormalizesTargetPath()
+    {
+        $targetImageFactory = $this->getCacheTargetImageFactory('/tmp/pub/media/catalog/../product');
+        $webpImage = $targetImageFactory->create(
+            new Image('/tmp/pub/media/catalog/../product/example.jpg', '/example.jpg'),
+            'webp'
+        );
+
+        $this->assertSame('/tmp/pub/media/nextgenimages/media/product/example.webp', $webpImage->getPath());
+    }
+
+    public function testGetWithCacheTargetDirectoryRejectsTraversalOutsideCacheDirectory()
+    {
+        $targetImageFactory = $this->getCacheTargetImageFactory('/tmp/pub/media/../../../../etc', false);
+
+        $this->expectException(FileSystemException::class);
+        $targetImageFactory->create(new Image('/tmp/pub/media/../../../../etc/example.jpg', '/example.jpg'), 'webp');
+    }
+
+    private function getCacheTargetImageFactory(
+        string $parentDirectory,
+        bool $expectCreate = true
+    ): TargetImageFactory {
+        $config = $this->getMagentoMock(Config::class);
+        $config->method('getTargetDirectory')->willReturn(TargetDirectory::CACHE);
+        $config->method('getCacheDirectoryPath')->willReturn('/tmp/pub/media/nextgenimages/');
+
+        $directoryList = $this->getMagentoMock(DirectoryList::class);
+        $directoryList->method('getRoot')->willReturn('/tmp');
+
+        $imageFactory = $this->getMagentoMock(ImageFactory::class);
+        $imageFactory->expects($expectCreate ? $this->once() : $this->never())
+            ->method('createFromPath')
+            ->willReturnCallback(fn (string $path) => new Image($path, '/example.webp'));
+
+        $driver = $this->getMagentoMock(DriverInterface::class);
+        $driver->method('getParentDirectory')->willReturn($parentDirectory);
+        $writer = $this->getMagentoMock(WriteInterface::class);
+        $writer->method('getDriver')->willReturn($driver);
+        $filesystem = $this->getMagentoMock(Filesystem::class);
+        $filesystem->method('getDirectoryWrite')->willReturn($writer);
+
+        return new TargetImageFactory($directoryList, $config, $imageFactory, $filesystem);
     }
 
     public static function provideCacheTargetPaths(): array
