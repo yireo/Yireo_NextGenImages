@@ -251,6 +251,14 @@ class HtmlReplacerTest extends AbstractTestCase
                 '/a.jpg 1x, /b.jpg 2x&quot;&gt;&lt;svg onload=alert(1)&gt;, /c.jpg 3y, /d.jpg x, /e.jpg 4x',
                 ['1x' => '/a.jpg', '4x' => '/e.jpg'],
             ],
+            'decimal densities' => [
+                '/a.jpg 480w, /b.jpg 1.5x, /c.jpg .75x',
+                ['480w' => '/a.jpg', '1.5x' => '/b.jpg', '.75x' => '/c.jpg'],
+            ],
+            'invalid decimal and exponent descriptors are dropped' => [
+                '/a.jpg 1x, /b.jpg 1.5w, /c.jpg 2e0x, /d.jpg 1x&quot;, /e.jpg 1.x',
+                ['1x' => '/a.jpg'],
+            ],
         ];
     }
 

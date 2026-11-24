@@ -9,7 +9,7 @@ use Yireo\NextGenImages\Util\UrlConvertor;
 
 class ImageFactory
 {
-    public const SRCSET_DESCRIPTOR_REGEX = '/^\d+(\.\d+)?[wx]$/';
+    public const SRCSET_DESCRIPTOR_REGEX = '/^(\d+w|(\d+|\d*\.\d+)x)$/D';
 
     private ObjectManagerInterface $objectManager;
 

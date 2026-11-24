@@ -120,6 +120,21 @@ class ImageFactoryTest extends TestCase
                 ],
                 '/a.jpg 1x,/f.jpg 4x',
             ],
+            'decimal densities' => [
+                ['480w' => '/a.jpg', '1.5x' => '/b.jpg', '.75x' => '/c.jpg'],
+                '/a.jpg 480w,/b.jpg 1.5x,/c.jpg .75x',
+            ],
+            'invalid decimal and exponent descriptors' => [
+                [
+                    '1x' => '/a.jpg',
+                    '1.5w' => '/b.jpg',
+                    '2e0x' => '/c.jpg',
+                    '1x"' => '/d.jpg',
+                    "2x\n" => '/e.jpg',
+                    '1.x' => '/f.jpg',
+                ],
+                '/a.jpg 1x',
+            ],
         ];
     }
 
