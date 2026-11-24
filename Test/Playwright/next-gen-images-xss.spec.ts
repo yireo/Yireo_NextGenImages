@@ -3,7 +3,7 @@ import {test, expect, configureNextGenImages, getRawHtmlOfHandles, hasConvertor}
 
 /**
  * Escaped payloads in srcset descriptors, sizes and media attributes should never end up as raw HTML.
- * Requires a convertor like Yireo_Webp2.
+ * Requires a convertor like Yireo_Webp2 or Yireo_Avif.
  */
 const handle = 'yireo_nextgenimages_test_xss';
 const containerSelector = '#yireo-nextgenimages-test-xss';
@@ -24,14 +24,14 @@ async function getContainerHtml(page: Page): Promise<string> {
 }
 
 test.describe('NextGenImages with XSS payloads', function () {
-    test.skip(!hasConvertor(), 'No convertor module (like Yireo_Webp2) is enabled');
+    test.skip(!hasConvertor(), 'No convertor module (like Yireo_Webp2 or Yireo_Avif) is enabled');
 
     test('does not render payloads as raw HTML', async function ({page}) {
         await configureNextGenImages(page);
         const html = await getContainerHtml(page);
 
         expect(html, 'Raw HTML of container').not.toContain('<svg');
-        expect(html, 'Converted images').toMatch(/<picture[^>]*>[\s\S]*?<source[^>]+type="image\/webp"/);
+        expect(html, 'Converted images').toMatch(/<picture[^>]*>[\s\S]*?<source[^>]+type="image\/(webp|avif)"/);
         expect(html, 'Escaped sizes of source').toMatch(/<source[^>]+sizes="100vw&quot;&gt;&lt;svg\/onload=alert\(1\)&gt;"/);
         expect(html, 'Escaped media of source').toMatch(/<source[^>]+media="all&quot;&gt;&lt;svg\/onload=alert\(1\)&gt;"/);
 
