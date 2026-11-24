@@ -2,6 +2,9 @@
 
 namespace Yireo\NextGenImages\Plugin;
 
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Image;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
@@ -32,10 +35,10 @@ class ConvertAfterImageSave
     private $imageFactory;
 
     /**
-     * ConvertAfterImageSave constructor.
      * @param ConvertorListing $convertorListing
      * @param Debugger $debugger
      * @param Config $config
+     * @param ImageFactory $imageFactory
      */
     public function __construct(
         ConvertorListing $convertorListing,
@@ -52,8 +55,8 @@ class ConvertAfterImageSave
     /**
      * @param Image $subject
      * @param mixed $return
-     * @param null $destination
-     * @return void
+     * @param string|null $destination
+     * @return mixed
      */
     public function afterSave(Image $subject, $return, $destination = null)
     {
@@ -65,13 +68,25 @@ class ConvertAfterImageSave
             return $return;
         }
 
-        $image = $this->imageFactory->createFromPath((string)$destination);
+        if (empty($destination)) {
+            return $return;
+        }
+
+        try {
+            $image = $this->imageFactory->createFromPath((string)$destination);
+        } catch (NotFoundException|FileSystemException|NoSuchEntityException $e) {
+            $this->debugger->debug($e->getMessage());
+            return $return;
+        }
+
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
                 $convertor->convertImage($image);
-            } catch (ConvertorException $e) {
+            } catch (ConvertorException|NotFoundException|FileSystemException|NoSuchEntityException $e) {
                 $this->debugger->debug($e->getMessage());
             }
         }
+
+        return $return;
     }
 }
