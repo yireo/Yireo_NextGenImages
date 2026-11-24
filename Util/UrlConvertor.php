@@ -234,15 +234,15 @@ class UrlConvertor
      */
     private function assertAllowedPath(string $path): string
     {
-        $normalizedPath = $this->normalizePath($path);
+        $normalizedPath = PathNormalizer::normalize($path);
         if ($this->isInProtectedMediaFolder($normalizedPath)) {
             throw new NotFoundException((string)__('Path "'.$path.'" is inside a protected media folder'));
         }
 
         $allowedFolders = [$this->getBaseFolder(), $this->getMediaFolder(), $this->getStaticFolder()];
         foreach ($allowedFolders as $allowedFolder) {
-            if (str_starts_with($normalizedPath, $this->normalizePath($allowedFolder).'/')) {
-                return $path;
+            if (str_starts_with($normalizedPath, PathNormalizer::normalize($allowedFolder).'/')) {
+                return $normalizedPath;
             }
         }
 
@@ -259,7 +259,7 @@ class UrlConvertor
         $normalizedPath = strtolower($normalizedPath).'/';
         $mediaFolders = [$this->getMediaFolder(), $this->getBaseFolder().'/media'];
         foreach ($mediaFolders as $mediaFolder) {
-            $mediaFolder = strtolower($this->normalizePath($mediaFolder));
+            $mediaFolder = strtolower(PathNormalizer::normalize($mediaFolder));
             foreach (self::PROTECTED_MEDIA_FOLDERS as $protectedFolder) {
                 if (str_starts_with($normalizedPath, $mediaFolder.'/'.$protectedFolder.'/')) {
                     return true;
@@ -268,29 +268,6 @@ class UrlConvertor
         }
 
         return false;
-    }
-
-    /**
-     * @param string $path
-     * @return string
-     */
-    private function normalizePath(string $path): string
-    {
-        $segments = [];
-        foreach (explode('/', str_replace('\\', '/', $path)) as $segment) {
-            if ($segment === '' || $segment === '.') {
-                continue;
-            }
-
-            if ($segment === '..') {
-                array_pop($segments);
-                continue;
-            }
-
-            $segments[] = $segment;
-        }
-
-        return '/'.implode('/', $segments);
     }
 
     /**

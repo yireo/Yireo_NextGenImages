@@ -154,7 +154,7 @@ class UrlConvertorTest extends TestCase
         );
 
         $this->assertSame(
-            '/var/www/html/pub/media/catalog/../sample.png',
+            '/var/www/html/pub/media/sample.png',
             $urlConvertor->getFilenameFromUrl('http://localhost/media/catalog/../sample.png')
         );
     }
