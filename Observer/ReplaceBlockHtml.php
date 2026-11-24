@@ -9,6 +9,7 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Config\Config;
+use Yireo\NextGenImages\Util\BlockRenderStack;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\ShouldModifyOutput;
 
@@ -17,6 +18,8 @@ use Yireo\NextGenImages\Util\ShouldModifyOutput;
  */
 class ReplaceBlockHtml implements ObserverInterface
 {
+    private const ALPINE_REQUEST_HEADER = 'X-Alpine-Request';
+
     /**
      * @var HtmlReplacer
      */
@@ -36,28 +39,33 @@ class ReplaceBlockHtml implements ObserverInterface
      * @var Config
      */
     private $config;
+
     private RequestInterface $request;
 
+    private BlockRenderStack $blockRenderStack;
+
     /**
-     * ReplaceTags constructor.
-     *
      * @param HtmlReplacer $htmlReplacer
      * @param ShouldModifyOutput $shouldModifyOutput
      * @param LayoutInterface $layout
      * @param Config $config
+     * @param RequestInterface $request
+     * @param BlockRenderStack $blockRenderStack
      */
     public function __construct(
         HtmlReplacer $htmlReplacer,
         ShouldModifyOutput $shouldModifyOutput,
         LayoutInterface $layout,
         Config $config,
-        RequestInterface $request
+        RequestInterface $request,
+        BlockRenderStack $blockRenderStack
     ) {
         $this->htmlReplacer = $htmlReplacer;
         $this->shouldModifyOutput = $shouldModifyOutput;
         $this->layout = $layout;
         $this->config = $config;
         $this->request = $request;
+        $this->blockRenderStack = $blockRenderStack;
     }
 
     /**
@@ -67,6 +75,11 @@ class ReplaceBlockHtml implements ObserverInterface
     public function execute(Observer $observer)
     {
         $block = $observer->getEvent()->getBlock();
+        if (false === $block instanceof BlockInterface) {
+            return;
+        }
+
+        $this->blockRenderStack->pop($block);
 
         if (false === $this->shouldModify($block)) {
             return;
@@ -77,8 +90,12 @@ class ReplaceBlockHtml implements ObserverInterface
         }
 
         $transport = $observer->getEvent()->getTransport();
-        $html = $this->htmlReplacer->replace($transport->getHtml());
-        $transport->setHtml($html);
+        $html = (string)$transport->getHtml();
+        if (false === $this->hasReplaceableContent($html)) {
+            return;
+        }
+
+        $transport->setHtml($this->htmlReplacer->replace($html));
     }
 
     private function shouldModify(BlockInterface $block): bool
@@ -87,11 +104,20 @@ class ReplaceBlockHtml implements ObserverInterface
             return true;
         }
 
-        if ($this->isAjax()) {
+        if ($this->isAjax() && $this->blockRenderStack->isEmpty()) {
             return true;
         }
 
         return false;
+    }
+
+    private function hasReplaceableContent(string $html): bool
+    {
+        if (stripos($html, '<img') !== false) {
+            return true;
+        }
+
+        return $this->config->convertCssBackgrounds();
     }
 
     private function isFullPageCacheBlock(BlockInterface $block): bool
@@ -113,7 +139,7 @@ class ReplaceBlockHtml implements ObserverInterface
 
     private function isAjax(): bool
     {
-        $value = $this->request->getHeader('X-Alpine-Request');
-        return in_array($value, [1, 'true', true]);
+        $value = $this->request->getHeader(self::ALPINE_REQUEST_HEADER);
+        return in_array($value, ['true', '1'], true);
     }
 }
