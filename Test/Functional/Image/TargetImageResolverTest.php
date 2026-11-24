@@ -17,7 +17,7 @@ class TargetImageResolverTest extends AbstractTestCase
         $webpImage = $targetImageFactory->create($image, 'webp');
 
         $mediaPath = $this->getDirectoryList()->getPath(DirectoryList::MEDIA);
-        $webpImagePath = $mediaPath . '/wysiwyg/training/training-erin.webp';
+        $webpImagePath = $mediaPath . '/wysiwyg/training/training-erin.jpg.webp';
         $this->assertEquals($webpImagePath, $webpImage->getPath());
     }
 
@@ -29,7 +29,7 @@ class TargetImageResolverTest extends AbstractTestCase
         $webpImage = $targetImageFactory->create($image, 'webp');
 
         $mediaPath = $this->getDirectoryList()->getPath(DirectoryList::MEDIA);
-        $webpImagePath = $mediaPath . '/wysiwyg/training/training-erin.webp';
+        $webpImagePath = $mediaPath . '/wysiwyg/training/training-erin.jpg.webp';
         $this->assertEquals($webpImagePath, $webpImage->getPath());
     }
 
