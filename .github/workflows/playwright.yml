@@ -239,7 +239,9 @@ jobs:
             bin/magento setup:upgrade
             bin/magento config:set dev/static/sign 0
             bin/magento setup:static-content:deploy -f --area frontend --area adminhtml en_US
-            bin/magento loki-checkout:sample-data:install
+            case "${COMPOSER_NAME}" in
+              loki-checkout/*) bin/magento loki-checkout:sample-data:install ;;
+            esac
             bin/magento loki:functional-tests:modules:dump
             bin/magento config:set loki/functional_tests/token loki
             bin/magento cache:flush config
