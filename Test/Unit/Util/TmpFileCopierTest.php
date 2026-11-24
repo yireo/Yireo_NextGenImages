@@ -4,6 +4,7 @@ namespace Yireo\NextGenImages\Test\Unit\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
@@ -143,6 +144,49 @@ class TmpFileCopierTest extends AbstractTestCase
         $copier = $this->createCopier(true);
         $copier->copy(self::RELATIVE_PATH);
         unset($copier);
+    }
+
+    public function testReturnsOriginalPathWhenPathIsInvalid(): void
+    {
+        $remoteDirectoryWrite = $this->createMock(WriteInterface::class);
+        $remoteDirectoryWrite->method('getAbsolutePath')
+            ->willThrowException(new ValidatorException(__('Path is outside of the directory')));
+        $this->remoteDirectoryWrite = $remoteDirectoryWrite;
+        $this->tmpDriver->expects($this->never())->method('filePutContents');
+        $this->logger->expects($this->once())->method('error');
+
+        $copier = $this->createCopier(true);
+        $this->assertSame('../../app/etc/env.php', $copier->copy('../../app/etc/env.php'));
+    }
+
+    public function testReturnsOriginalPathWhenCopyingFails(): void
+    {
+        $this->remoteDirectoryWrite->method('isFile')->willReturn(true);
+        $this->remoteDriver->method('fileGetContents')
+            ->willThrowException(new FileSystemException(__('Unable to read')));
+        $this->tmpDriver->expects($this->never())->method('filePutContents');
+        $this->tmpDirectoryWrite->expects($this->never())->method('delete');
+        $this->logger->expects($this->once())->method('error');
+
+        $copier = $this->createCopier(true);
+        $this->assertSame(self::RELATIVE_PATH, $copier->copy(self::RELATIVE_PATH));
+        unset($copier);
+    }
+
+    public function testCanNotBeUnserialized(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Cannot unserialize '.TmpFileCopier::class);
+
+        $serialized = 'O:'.strlen(TmpFileCopier::class).':"'.TmpFileCopier::class.'":0:{}';
+        // phpcs:ignore Magento2.Security.InsecureFunction
+        unserialize($serialized);
+    }
+
+    public function testWakeupIsBlocked(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->createCopier(false)->__wakeup();
     }
 
     private function createCopier(bool $remoteStorageEnabled): TmpFileCopier

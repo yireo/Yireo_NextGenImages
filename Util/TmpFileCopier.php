@@ -6,6 +6,7 @@ namespace Yireo\NextGenImages\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
@@ -67,6 +68,40 @@ class TmpFileCopier
             return $this->tmpFiles[$filePath];
         }
 
+        try {
+            return $this->copyToTmp($filePath);
+        } catch (FileSystemException|ValidatorException $e) {
+            $this->logger->error('Unable to copy "'.$filePath.'" to tmp folder: '.$e->getMessage());
+        }
+
+        return $filePath;
+    }
+
+    /**
+     * @throws \LogicException
+     */
+    public function __wakeup(): void
+    {
+        throw new \LogicException('Cannot unserialize '.self::class);
+    }
+
+    /**
+     * @param array $data
+     * @throws \LogicException
+     */
+    public function __unserialize(array $data): void
+    {
+        throw new \LogicException('Cannot unserialize '.self::class);
+    }
+
+    /**
+     * @param string $filePath
+     * @return string
+     * @throws FileSystemException
+     * @throws ValidatorException
+     */
+    private function copyToTmp(string $filePath): string
+    {
         $absolutePath = $this->remoteDirectoryWrite->getAbsolutePath($filePath);
 
         if ($this->remoteDirectoryWrite->isFile($absolutePath)) {
