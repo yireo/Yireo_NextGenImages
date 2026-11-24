@@ -2,7 +2,6 @@
 
 namespace Yireo\NextGenImages\Test\Unit\Util;
 
-use Magento\Framework\Escaper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
@@ -25,7 +24,6 @@ class UrlConvertorTest extends TestCase
         $urlConvertor = new UrlConvertor(
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
-            $this->getEscaperMock(),
             $this->createMock(File::class)
         );
 
@@ -45,7 +43,6 @@ class UrlConvertorTest extends TestCase
         $urlConvertor = new UrlConvertor(
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
-            $this->getEscaperMock(),
             $this->createMock(File::class)
         );
 
@@ -63,7 +60,75 @@ class UrlConvertorTest extends TestCase
             'backslash traversal' => ['/media/..\\..\\app/secret.jpg'],
             'foreign host with local URL in query' => ['http://foobar/?http://localhost/media/test.png'],
             'alpine expression with traversal' => ['../../app/image.img.jpg'],
+            'hyva alpine expression' => ['image.img.jpg'],
+            'hyva alpine expression with thumb' => ['image.thumb'],
         ];
+    }
+
+    /**
+     * @dataProvider provideUrlsWithForeignScheme
+     */
+    #[DataProvider('provideUrlsWithForeignScheme')]
+    public function testIsLocalRejectsForeignSchemes(string $url)
+    {
+        $this->assertFalse($this->getUrlConvertor()->isLocal($url));
+    }
+
+    /**
+     * @dataProvider provideUrlsWithForeignScheme
+     */
+    #[DataProvider('provideUrlsWithForeignScheme')]
+    public function testGetFilenameFromUrlRejectsForeignSchemes(string $url)
+    {
+        $this->expectException(NotFoundException::class);
+        $this->getUrlConvertor()->getFilenameFromUrl($url);
+    }
+
+    public static function provideUrlsWithForeignScheme(): array
+    {
+        return [
+            'ftp' => ['ftp://10.0.0.5/x/image.img.jpg'],
+            'phar' => ['phar://x.jpg'],
+            'php filter' => ['php://filter/x.jpg'],
+            'file' => ['file:///etc/x.jpg'],
+            'data URI' => ['data:image/png;base64,xx'],
+            'uppercase scheme' => ['PHAR://x.jpg'],
+            'compress zlib' => ['compress.zlib:///etc/x.jpg'],
+        ];
+    }
+
+    public function testIsLocalAcceptsRelativePaths()
+    {
+        $urlConvertor = $this->getUrlConvertor();
+        $this->assertTrue($urlConvertor->isLocal('/media/x.jpg'));
+        $this->assertTrue($urlConvertor->isLocal('media/x.jpg'));
+        $this->assertTrue($urlConvertor->isLocal('x.jpg'));
+        $this->assertTrue($urlConvertor->isLocal('//localhost/media/x.jpg'));
+    }
+
+    public function testGetFilenameFromUrlAllowsRelativeMediaPath()
+    {
+        $this->assertSame(
+            '/var/www/html/pub/media/x.jpg',
+            $this->getUrlConvertor()->getFilenameFromUrl('/media/x.jpg')
+        );
+    }
+
+    public function testGetFilenameFromUrlDoesNotEscapeHtml()
+    {
+        $this->assertSame(
+            '/var/www/html/pub/media/a&b.jpg',
+            $this->getUrlConvertor()->getFilenameFromUrl('http://cdn/a&b.jpg')
+        );
+    }
+
+    private function getUrlConvertor(): UrlConvertor
+    {
+        return new UrlConvertor(
+            $this->getStoreManagerMock(),
+            $this->getDirectoryListMock(),
+            $this->createMock(File::class)
+        );
     }
 
     public function testGetFilenameFromUrlAllowsTraversalInsidePublicFolder()
@@ -71,7 +136,6 @@ class UrlConvertorTest extends TestCase
         $urlConvertor = new UrlConvertor(
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
-            $this->getEscaperMock(),
             $this->createMock(File::class)
         );
 
@@ -89,7 +153,6 @@ class UrlConvertorTest extends TestCase
         $urlConvertor = new UrlConvertor(
             $this->getStoreManagerMock(),
             $this->getDirectoryListMock(),
-            $this->getEscaperMock(),
             $this->createMock(File::class)
         );
 
@@ -132,12 +195,11 @@ class UrlConvertorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $storeMock->method('getBaseUrl')
-            ->will(
-                $this->returnValueMap([
-                    [UrlInterface::URL_TYPE_WEB, null, 'http://localhost/'],
-                    [UrlInterface::URL_TYPE_MEDIA, null, 'http://cdn/'],
-                    [UrlInterface::URL_TYPE_STATIC, null, 'http://static/']
-                ]));
+            ->willReturnMap([
+                [UrlInterface::URL_TYPE_WEB, null, 'http://localhost/'],
+                [UrlInterface::URL_TYPE_MEDIA, null, 'http://cdn/'],
+                [UrlInterface::URL_TYPE_STATIC, null, 'http://static/']
+            ]);
 
         $storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
@@ -161,21 +223,5 @@ class UrlConvertorTest extends TestCase
         $directoryListMock->method('getPath')->willReturn('/var/www/html/pub/media');
 
         return $directoryListMock;
-    }
-
-    /**
-     * @return Escaper
-     */
-    private function getEscaperMock(): Escaper
-    {
-        $escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $escaperMock->expects($this->any())
-            ->method('escapeHtml')
-            ->will($this->returnArgument(0));
-
-        return $escaperMock;
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yireo\NextGenImages\Util;
 
 use Magento\Framework\App\Filesystem\DirectoryList as FilesystemDirectoryList;
-use Magento\Framework\Escaper;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DirectoryList;
@@ -27,26 +26,20 @@ class UrlConvertor
      */
     private $directoryList;
 
-    /**
-     * @var Escaper
-     */
-    private $escaper;
     private FileDriver $fileDriver;
 
     /**
      * @param StoreManagerInterface $storeManager
      * @param DirectoryList $directoryList
-     * @param Escaper $escaper
+     * @param FileDriver $fileDriver
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         DirectoryList $directoryList,
-        Escaper $escaper,
         FileDriver $fileDriver
     ) {
         $this->storeManager = $storeManager;
         $this->directoryList = $directoryList;
-        $this->escaper = $escaper;
         $this->fileDriver = $fileDriver;
     }
 
@@ -57,8 +50,8 @@ class UrlConvertor
     public function isLocal(string $url): bool
     {
         $url = $this->normalizeUrl($url);
-        if (!preg_match('#^http(s?)://#', $url)) {
-            return true;
+        if (!preg_match('#^https?://#i', $url)) {
+            return !preg_match('/^[a-z][a-z0-9+.\-]*:/i', $url);
         }
 
         foreach ($this->storeManager->getStores() as $store) {
@@ -129,7 +122,6 @@ class UrlConvertor
      */
     public function getFilenameFromUrl(string $url): string
     {
-        $url = (string)$this->escaper->escapeHtml($url);
         $url = preg_replace('/\/static\/version(\d+\/)/', '/static/', $url);
         $url = str_replace('/pub/', '/', $url);
         $url = $this->normalizeUrl($url);
@@ -164,11 +156,6 @@ class UrlConvertor
 
         if (preg_match('/^\//', $url)) {
             return $this->assertAllowedPath($this->getBaseFolder().$url);
-        }
-
-        // @todo: https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-yireo-next-gen-images/-/blob/main/src/Plugin/UrlConvertorPlugin.php#L17
-        if (preg_match('/image\.(img|full|thumb|url)/m', $url) && !in_array('..', explode('/', $url), true)) {
-            return $url;
         }
 
         throw new NotFoundException((string)__('URL "'.$url.'" is not matched with a local file'));
