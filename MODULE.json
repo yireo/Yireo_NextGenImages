@@ -9,7 +9,6 @@
         "Magento_RemoteStorage",
         "Magento_Store",
         "Magento_Swatches",
-        "Yireo_CspUtilities",
         "Yireo_IntegrationTestHelper"
     ],
     "modules": [
