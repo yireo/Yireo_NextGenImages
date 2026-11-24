@@ -52,6 +52,15 @@ class PictureTemplateTest extends AbstractTestCase
         $this->assertStringContainsString('srcset="/media/a.webp 1x&quot; onerror=&quot;alert(1)"', $html);
     }
 
+    public function testPictureAttributesAreEscaped()
+    {
+        $html = $this->render('<img src="/media/a.png" class="foo<script>" width="10" height="<b>">', false);
+
+        $this->assertStringNotContainsString('<script>', $html);
+        $this->assertStringNotContainsString('<b>', $html);
+        $this->assertStringContainsString('<picture class="foo&lt;script&gt;">', $html);
+    }
+
     private function render(string $tag, bool $addLazyLoading, array $images = []): string
     {
         $picture = (new ReflectionClass(Picture::class))->newInstanceWithoutConstructor();
@@ -68,9 +77,9 @@ class PictureTemplateTest extends AbstractTestCase
 
         $block = $picture;
         $escaper = $this->getMagentoMock(Escaper::class);
-        $escaper->method('escapeHtml')->willReturnCallback(
-            fn ($value) => htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
-        );
+        $escape = fn ($value) => htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $escaper->method('escapeHtml')->willReturnCallback($escape);
+        $escaper->method('escapeHtmlAttr')->willReturnCallback($escape);
 
         ob_start();
         include dirname(__DIR__, 3) . '/view/frontend/templates/picture.phtml';
