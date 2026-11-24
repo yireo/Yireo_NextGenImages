@@ -7,16 +7,20 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Filesystem\Driver\File;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
+use Yireo\NextGenImages\Convertor\ConvertorListing;
 use Yireo\NextGenImages\Image\Image;
 use Yireo\NextGenImages\Image\ImageCollector;
 use Yireo\NextGenImages\Image\ImageFactory;
 use Yireo\NextGenImages\Test\Integration\AbstractTestCase;
+use Yireo\NextGenImages\Test\Integration\Stub\Convertor\FakeWebpConvertor;
 use Yireo\NextGenImages\Util\DomUtils;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\UrlConvertor;
 
 class HtmlReplacerTest extends AbstractTestCase
 {
+    private const XSS_IMAGE_URL = 'http://localhost/media/nextgenimages-xss-test/test1.jpg';
+
     public function testReplaceWithNoImages()
     {
         $om = ObjectManager::getInstance();
@@ -288,6 +292,77 @@ class HtmlReplacerTest extends AbstractTestCase
                 .'</div>',
             ],
         ];
+    }
+
+    /**
+     * @param string $imageTag
+     * @param bool $expectPicture
+     * @return void
+     * @dataProvider getXssPayloads
+     * @magentoAppArea frontend
+     * @magentoConfigFixture current_store yireo_nextgenimages/settings/enabled 1
+     */
+    public function testXssPayloadsAreNotRendered(string $imageTag, bool $expectPicture)
+    {
+        $om = ObjectManager::getInstance();
+        $mediaFolder = $this->copyXssImages();
+
+        $convertorListing = $om->create(ConvertorListing::class, [
+            'convertors' => [$om->create(FakeWebpConvertor::class)],
+        ]);
+        $imageCollector = $om->create(ImageCollector::class, ['convertorListing' => $convertorListing]);
+        $htmlReplacer = $om->create(HtmlReplacer::class, ['imageCollector' => $imageCollector]);
+
+        try {
+            $html = '<div>'.str_replace('{url}', self::XSS_IMAGE_URL, $imageTag).'</div>';
+            $resultingHtml = $htmlReplacer->replace($html);
+        } finally {
+            $om->get(File::class)->deleteDirectory($mediaFolder);
+        }
+
+        $this->assertStringNotContainsString('<svg', $resultingHtml);
+        if ($expectPicture) {
+            $this->assertStringContainsString('<picture', $resultingHtml);
+            $this->assertStringContainsString('<source type="image/webp"', $resultingHtml);
+        }
+    }
+
+    public function getXssPayloads(): array
+    {
+        return [
+            'sizes' => [
+                '<img src="{url}" sizes="100vw&quot;&gt;&lt;svg/onload=alert(1)&gt;">',
+                true,
+            ],
+            'media' => [
+                '<img src="{url}" media="all&quot;&gt;&lt;svg/onload=alert(1)&gt;">',
+                true,
+            ],
+            'srcset descriptor' => [
+                '<img src="{url}" srcset="{url} 1x&quot;&gt;&lt;svg onload=alert(1)&gt;">',
+                false,
+            ],
+            'srcset with one invalid descriptor' => [
+                '<img src="{url}" srcset="{url} 1x, {url} 2x&quot;&gt;&lt;svg onload=alert(1)&gt;">',
+                true,
+            ],
+        ];
+    }
+
+    private function copyXssImages(): string
+    {
+        $om = ObjectManager::getInstance();
+        $mediaFolder = dirname($om->get(UrlConvertor::class)->getFilenameFromUrl(self::XSS_IMAGE_URL));
+
+        $fileDriver = $om->get(File::class);
+        if ($fileDriver->isDirectory($mediaFolder)) {
+            $fileDriver->deleteDirectory($mediaFolder);
+        }
+
+        $fileDriver->createDirectory($mediaFolder);
+        copy(__DIR__.'/../fixtures/images/test1.jpg', $mediaFolder.'/test1.jpg');
+
+        return $mediaFolder;
     }
 
     private static function getExpectedPicture(string $name): string

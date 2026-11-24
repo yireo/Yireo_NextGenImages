@@ -1,0 +1,26 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @version 0.5.18 */
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+$imageUrl = $escaper->escapeUrl($block->getViewFileUrl('Yireo_NextGenImages::images/test-loading-attribute.jpg'));
+$payload = $escaper->escapeHtml('"><svg/onload=alert(1)>');
+?>
+<div id="yireo-nextgenimages-test-xss">
+    <img src="<?= /* @noEscape */ $imageUrl ?>"
+         srcset="<?= /* @noEscape */ $imageUrl ?> 1x<?= /* @noEscape */ $payload ?>"
+         alt="xss-srcset">
+    <img src="<?= /* @noEscape */ $imageUrl ?>"
+         srcset="<?= /* @noEscape */ $imageUrl ?> 1x, <?= /* @noEscape */ $imageUrl ?> 2x<?= /* @noEscape */ $payload ?>"
+         alt="xss-srcset-partial">
+    <img src="<?= /* @noEscape */ $imageUrl ?>"
+         sizes="100vw<?= /* @noEscape */ $payload ?>"
+         alt="xss-sizes">
+    <img src="<?= /* @noEscape */ $imageUrl ?>"
+         media="all<?= /* @noEscape */ $payload ?>"
+         alt="xss-media">
+</div>
