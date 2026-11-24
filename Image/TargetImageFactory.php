@@ -83,14 +83,29 @@ class TargetImageFactory
     {
         if ($this->config->getTargetDirectory() === TargetDirectory::CACHE) {
             $pathRoot = $this->fileDriver->getParentDirectory($image->getPath());
-            $relativeImagePath = str_replace($this->directoryList->getRoot(), '', $pathRoot);
-            $relativeImagePath = str_replace('/pub', '', $relativeImagePath);
-            $relativeImagePath = preg_replace('#^/#', '', $relativeImagePath); // remove leading slash
-
-            return $this->config->getCacheDirectoryPath().$relativeImagePath;
+            return $this->config->getCacheDirectoryPath().$this->getRelativePath($pathRoot);
         }
 
         // phpcs:ignore
         return dirname($image->getPath());
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    private function getRelativePath(string $path): string
+    {
+        $root = rtrim($this->directoryList->getRoot(), '/');
+        if ($root !== '' && ($path === $root || str_starts_with($path, $root.'/'))) {
+            $path = substr($path, strlen($root));
+        }
+
+        $path = ltrim($path, '/');
+        if ($path === 'pub' || str_starts_with($path, 'pub/')) {
+            $path = substr($path, 4);
+        }
+
+        return $path;
     }
 }

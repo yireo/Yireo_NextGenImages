@@ -62,6 +62,12 @@ class UrlConvertorTest extends TestCase
             'alpine expression with traversal' => ['../../app/image.img.jpg'],
             'hyva alpine expression' => ['image.img.jpg'],
             'hyva alpine expression with thumb' => ['image.thumb'],
+            'media URL in protected customer folder' => ['http://cdn/customer/a/b/avatar.jpg'],
+            'base URL in protected downloadable folder' => ['http://localhost/media/downloadable/files/x.jpg'],
+            'relative protected custom_options folder' => ['/media/custom_options/quote/x.jpg'],
+            'relative protected import folder' => ['/pub/media/import/x.jpg'],
+            'protected captcha folder with traversal' => ['/media/catalog/../captcha/base/x.png'],
+            'protected folder with different case' => ['http://cdn/Customer/avatar.jpg'],
         ];
     }
 
@@ -111,6 +117,14 @@ class UrlConvertorTest extends TestCase
         $this->assertSame(
             '/var/www/html/pub/media/x.jpg',
             $this->getUrlConvertor()->getFilenameFromUrl('/media/x.jpg')
+        );
+    }
+
+    public function testGetFilenameFromUrlAllowsFoldersStartingWithProtectedName()
+    {
+        $this->assertSame(
+            '/var/www/html/pub/media/customer_service/x.jpg',
+            $this->getUrlConvertor()->getFilenameFromUrl('http://cdn/customer_service/x.jpg')
         );
     }
 

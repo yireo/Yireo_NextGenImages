@@ -16,6 +16,8 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class UrlConvertor
 {
+    private const PROTECTED_MEDIA_FOLDERS = ['customer', 'downloadable', 'custom_options', 'import', 'captcha'];
+
     /**
      * @var StoreManagerInterface
      */
@@ -233,6 +235,10 @@ class UrlConvertor
     private function assertAllowedPath(string $path): string
     {
         $normalizedPath = $this->normalizePath($path);
+        if ($this->isInProtectedMediaFolder($normalizedPath)) {
+            throw new NotFoundException((string)__('Path "'.$path.'" is inside a protected media folder'));
+        }
+
         $allowedFolders = [$this->getBaseFolder(), $this->getMediaFolder(), $this->getStaticFolder()];
         foreach ($allowedFolders as $allowedFolder) {
             if (str_starts_with($normalizedPath, $this->normalizePath($allowedFolder).'/')) {
@@ -241,6 +247,27 @@ class UrlConvertor
         }
 
         throw new NotFoundException((string)__('Path "'.$path.'" is outside of the public folder'));
+    }
+
+    /**
+     * @param string $normalizedPath
+     * @return bool
+     * @throws FileSystemException
+     */
+    private function isInProtectedMediaFolder(string $normalizedPath): bool
+    {
+        $normalizedPath = strtolower($normalizedPath).'/';
+        $mediaFolders = [$this->getMediaFolder(), $this->getBaseFolder().'/media'];
+        foreach ($mediaFolders as $mediaFolder) {
+            $mediaFolder = strtolower($this->normalizePath($mediaFolder));
+            foreach (self::PROTECTED_MEDIA_FOLDERS as $protectedFolder) {
+                if (str_starts_with($normalizedPath, $mediaFolder.'/'.$protectedFolder.'/')) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
