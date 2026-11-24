@@ -5,6 +5,7 @@ namespace Yireo\NextGenImages\Test\Unit\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\PageCache\Model\DepersonalizeChecker;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Yireo\NextGenImages\Config\Config;
@@ -32,6 +33,7 @@ class ConfigTest extends AbstractTestCase
     /**
      * @dataProvider getCacheDirectoryValues
      */
+    #[DataProvider('getCacheDirectoryValues')]
     public function testGetCacheDirectoryPath(?string $value, string $cwd, string $expectedRelativePath)
     {
         chdir($this->root.$cwd);
@@ -57,6 +59,11 @@ class ConfigTest extends AbstractTestCase
             'custom directory that does not exist yet' => ['media/notyet/', '', 'media/notyet/'],
             'directory traversal' => ['../var/', '', 'media/nextgenimages/'],
             'only slashes' => ['///', '', 'media/nextgenimages/'],
+            'outside media' => ['static/cache/', '', 'media/nextgenimages/'],
+            'media only' => ['media/', '', 'media/nextgenimages/'],
+            'empty segment' => ['media/a//b/', '', 'media/nextgenimages/'],
+            'invalid characters' => ['media/a b/', '', 'media/nextgenimages/'],
+            'nested custom directory' => ['media/cache/next_gen-images/', '', 'media/cache/next_gen-images/'],
         ];
     }
 

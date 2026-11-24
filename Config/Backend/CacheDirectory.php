@@ -6,6 +6,7 @@ namespace Yireo\NextGenImages\Config\Backend;
 
 use Magento\Framework\App\Config\Value;
 use Magento\Framework\Exception\ValidatorException;
+use Yireo\NextGenImages\Config\CacheDirectoryValidator;
 
 class CacheDirectory extends Value
 {
@@ -16,7 +17,7 @@ class CacheDirectory extends Value
     public function beforeSave()
     {
         $value = trim((string)$this->getValue(), " \f\n\r\t\v\x00");
-        if ($value !== '' && !$this->isValid($value)) {
+        if ($value !== '' && !CacheDirectoryValidator::isValid($value)) {
             throw new ValidatorException(
                 __('The media cache directory should be a folder within "media/", like "media/nextgenimages/".')
             );
@@ -25,18 +26,5 @@ class CacheDirectory extends Value
         $this->setValue($value);
 
         return parent::beforeSave();
-    }
-
-    /**
-     * @param string $value
-     * @return bool
-     */
-    private function isValid(string $value): bool
-    {
-        if (!preg_match('#^media/[a-zA-Z0-9_\-/]+/?$#D', $value)) {
-            return false;
-        }
-
-        return !in_array('..', explode('/', $value), true);
     }
 }

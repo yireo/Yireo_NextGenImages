@@ -97,8 +97,8 @@ class Config implements ArgumentInterface
         }
 
         $value = trim($value, '/');
-        if ($value === '' || in_array('..', explode('/', $value), true)) {
-            $value = 'media/nextgenimages';
+        if (!CacheDirectoryValidator::isValid($value)) {
+            $value = CacheDirectoryValidator::DEFAULT_CACHE_DIRECTORY;
         }
 
         return $pubPath.'/'.$value.'/';

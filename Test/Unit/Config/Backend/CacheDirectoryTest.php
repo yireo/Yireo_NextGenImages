@@ -64,6 +64,11 @@ class CacheDirectoryTest extends TestCase
             'backslash traversal' => ['media/..\\app'],
             'null byte' => ["media/cache\x00/x"],
             'newline' => ["media/cache\n/x"],
+            'media without slash' => ['media'],
+            'empty trailing segment' => ['media//'],
+            'empty segment in the middle' => ['media/a//b'],
+            'double trailing slash' => ['media/a//'],
+            'media prefix of other folder' => ['mediafoo/x'],
         ];
     }
 
