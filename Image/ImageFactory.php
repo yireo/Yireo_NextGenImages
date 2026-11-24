@@ -9,6 +9,8 @@ use Yireo\NextGenImages\Util\UrlConvertor;
 
 class ImageFactory
 {
+    public const SRCSET_DESCRIPTOR_REGEX = '/^\d+(\.\d+)?[wx]$/';
+
     private ObjectManagerInterface $objectManager;
 
     private UrlConvertor $urlConvertor;
@@ -66,7 +68,16 @@ class ImageFactory
     {
         $srcSetPieces = [];
         foreach ($urls as $key => $url) {
-            $srcSetPieces[] = $this->cleanUrl($url) . ($key !== 0 ? (' ' . $key) : '');
+            if (is_int($key)) {
+                $srcSetPieces[] = $this->cleanUrl($url);
+                continue;
+            }
+
+            if (!preg_match(self::SRCSET_DESCRIPTOR_REGEX, $key)) {
+                continue;
+            }
+
+            $srcSetPieces[] = $this->cleanUrl($url) . ' ' . $key;
         }
         
         return implode(',', $srcSetPieces);

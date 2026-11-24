@@ -2,6 +2,7 @@
 
 namespace Yireo\NextGenImages\Test\Unit\Util;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
@@ -16,6 +17,8 @@ use Yireo\NextGenImages\Util\UrlConvertor;
 
 class HtmlReplacerTest extends AbstractTestCase
 {
+    private array $collectedUrls = [];
+
     public function testReplaceWithNoImages()
     {
         $htmlReplacer = new HtmlReplacer(
@@ -200,6 +203,52 @@ class HtmlReplacerTest extends AbstractTestCase
         $this->assertLessThan(5, $duration, 'Replacing many images in a large HTML document is too slow');
     }
 
+    public function testSrcSetWithInjectedDescriptorIsSkipped()
+    {
+        $html = '<div><img srcset="/media/a.jpg 1x&quot;&gt;&lt;svg onload=alert(1)&gt;" alt="a"></div>';
+
+        $actualHtml = $this->getHtmlReplacerWithRealDom()->replace($html);
+
+        $this->assertSame($html, $actualHtml);
+        $this->assertSame([], $this->collectedUrls);
+    }
+
+    /**
+     * @dataProvider provideSrcSets
+     */
+    #[DataProvider('provideSrcSets')]
+    public function testSrcSetDescriptors(string $srcSet, array $expectedUrls)
+    {
+        $html = '<img srcset="'.$srcSet.'" alt="a">';
+
+        $actualHtml = $this->getHtmlReplacerWithRealDom()->replace($html);
+
+        $this->assertSame('<picture>'.$html.'</picture>', $actualHtml);
+        $this->assertSame([$expectedUrls], $this->collectedUrls);
+    }
+
+    public static function provideSrcSets(): array
+    {
+        return [
+            'valid descriptors' => [
+                '/a.jpg 1x, /b.jpg 1.5x, /c.jpg 480w',
+                ['1x' => '/a.jpg', '1.5x' => '/b.jpg', '480w' => '/c.jpg'],
+            ],
+            'without descriptor' => [
+                '/a.jpg, /b.jpg 2x',
+                [0 => '/a.jpg', '2x' => '/b.jpg'],
+            ],
+            'other whitespace' => [
+                "  /a.jpg\t1x ,\n/b.jpg   2x  ",
+                ['1x' => '/a.jpg', '2x' => '/b.jpg'],
+            ],
+            'invalid descriptors are dropped' => [
+                '/a.jpg 1x, /b.jpg 2x&quot;&gt;&lt;svg onload=alert(1)&gt;, /c.jpg 3y, /d.jpg x, /e.jpg 4x',
+                ['1x' => '/a.jpg', '4x' => '/e.jpg'],
+            ],
+        ];
+    }
+
     private function getHtmlReplacerWithRealDom(): HtmlReplacer
     {
         $urlConvertor = $this->getMagentoMock(UrlConvertor::class);
@@ -209,6 +258,7 @@ class HtmlReplacerTest extends AbstractTestCase
 
         $imageCollector = $this->getMagentoMock(ImageCollector::class);
         $imageCollector->method('collect')->willReturnCallback(function ($urls) {
+            $this->collectedUrls[] = $urls;
             $urls = is_array($urls) ? $urls : [$urls];
             foreach ($urls as $url) {
                 if (str_contains($url, 'skip')) {

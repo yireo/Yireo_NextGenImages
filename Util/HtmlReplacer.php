@@ -156,23 +156,12 @@ class HtmlReplacer
         
         $imageSrcSet = $image->getAttribute('srcset');
         if ($imageSrcSet) {
-            $srcSetImages = explode(',', $imageSrcSet);
-            $imageUrls = [];
-            $imageUrl = '';
-            foreach ($srcSetImages as $srcSetImage) {
-                $pieces = explode(' ', trim($srcSetImage, " \f\n\r\t\v\x00"));
-                if (isset($pieces[1])) {
-                    $descriptor = $pieces[1];
-                    $imageUrls[$descriptor] = $pieces[0];
-                } else {
-                    $descriptor = 0;
-                    $imageUrl = $imageUrls[$descriptor] = $pieces[0];
-                }
+            $imageUrls = $this->getImageUrlsFromSrcSet($imageSrcSet);
+            if (empty($imageUrls)) {
+                return '';
             }
 
-            if ($imageUrl === '') {
-                $imageUrl = (string)reset($imageUrls);
-            }
+            $imageUrl = (string)($imageUrls[0] ?? reset($imageUrls));
             $images = $this->imageCollector->collect($imageUrls);
             if (!count($images) > 0) {
                 return '';
@@ -198,6 +187,39 @@ class HtmlReplacer
         );
 
         return $pictureBlock->toHtml();
+    }
+
+    /**
+     * @param string $srcSet
+     * @return string[]
+     */
+    private function getImageUrlsFromSrcSet(string $srcSet): array
+    {
+        $imageUrls = [];
+        foreach (explode(',', $srcSet) as $srcSetImage) {
+            $srcSetImage = trim($srcSetImage, " \f\n\r\t\v\x00");
+            if ($srcSetImage === '') {
+                continue;
+            }
+
+            $pieces = preg_split('/\s+/', $srcSetImage);
+            if ($pieces === false || count($pieces) > 2) {
+                continue;
+            }
+
+            if (!isset($pieces[1])) {
+                $imageUrls[0] = $pieces[0];
+                continue;
+            }
+
+            if (!preg_match(ImageFactory::SRCSET_DESCRIPTOR_REGEX, $pieces[1])) {
+                continue;
+            }
+
+            $imageUrls[$pieces[1]] = $pieces[0];
+        }
+
+        return $imageUrls;
     }
 
     /**
