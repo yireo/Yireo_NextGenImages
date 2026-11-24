@@ -42,7 +42,17 @@ class PictureTemplateTest extends AbstractTestCase
         ];
     }
 
-    private function render(string $tag, bool $addLazyLoading): string
+    public function testSourceAttributesAreEscaped()
+    {
+        $webpImage = new Image('/tmp/pub/media/a.webp', '/media/a.webp', '/media/a.webp 1x" onerror="alert(1)');
+
+        $html = $this->render('<img src="/media/a.png">', false, [$webpImage]);
+
+        $this->assertStringNotContainsString('" onerror="', $html);
+        $this->assertStringContainsString('srcset="/media/a.webp 1x&quot; onerror=&quot;alert(1)"', $html);
+    }
+
+    private function render(string $tag, bool $addLazyLoading, array $images = []): string
     {
         $picture = (new ReflectionClass(Picture::class))->newInstanceWithoutConstructor();
 
@@ -54,10 +64,13 @@ class PictureTemplateTest extends AbstractTestCase
         $config->method('isDebugging')->willReturn(false);
 
         $image = $this->getMagentoMock(Image::class);
-        (new PictureFactory($layout, $config))->create($image, [], $tag, 'src');
+        (new PictureFactory($layout, $config))->create($image, $images, $tag, 'src');
 
         $block = $picture;
         $escaper = $this->getMagentoMock(Escaper::class);
+        $escaper->method('escapeHtml')->willReturnCallback(
+            fn ($value) => htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+        );
 
         ob_start();
         include dirname(__DIR__, 3) . '/view/frontend/templates/picture.phtml';

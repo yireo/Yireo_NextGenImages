@@ -26,8 +26,8 @@ $srcSetAttribute = $srcAttribute.'set';
   
     <?php foreach ($block->getImages() as $image): ?>
         <source 
-            type="<?= /* @noEscape */ $image->getMimeType() ?>" 
-            <?= /* @noEscape */ $srcSetAttribute ?>="<?= /* @noEscape */ $image->getSrcSet() ?: $image->getUrl() ?>" 
+            type="<?= $escaper->escapeHtml($image->getMimeType()) ?>" 
+            <?= /* @noEscape */ $srcSetAttribute ?>="<?= $escaper->escapeHtml($image->getSrcSet() ?: $image->getUrl()) ?>" 
             <?= /* @noEscape */ $block->getSourceAttributesAsString() ?>
         >
     <?php endforeach; ?>
