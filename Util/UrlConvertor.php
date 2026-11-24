@@ -64,17 +64,17 @@ class UrlConvertor
         foreach ($this->storeManager->getStores() as $store) {
             /** @var Store $store */
             $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
-            if (strpos($url, $storeBaseUrl) !== false) {
+            if (str_starts_with($url, $storeBaseUrl)) {
                 return true;
             }
 
             $storeMediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
-            if (strpos($url, $storeMediaUrl) !== false) {
+            if (str_starts_with($url, $storeMediaUrl)) {
                 return true;
             }
 
             $storeStaticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
-            if (strpos($url, $storeStaticUrl) !== false) {
+            if (str_starts_with($url, $storeStaticUrl)) {
                 return true;
             }
         }
@@ -141,27 +141,33 @@ class UrlConvertor
         foreach ($this->storeManager->getStores() as $store) {
             /** @var Store $store */
             $storeBaseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
-            if (strpos($url, $storeBaseUrl) !== false) {
-                return str_replace($storeBaseUrl, $this->getBaseFolder().'/', $url);
+            if (str_starts_with($url, $storeBaseUrl)) {
+                return $this->assertAllowedPath(
+                    $this->getBaseFolder().'/'.substr($url, strlen($storeBaseUrl))
+                );
             }
 
             $storeMediaUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
-            if (strpos($url, $storeMediaUrl) !== false) {
-                return str_replace($storeMediaUrl, $this->getMediaFolder().'/', $url);
+            if (str_starts_with($url, $storeMediaUrl)) {
+                return $this->assertAllowedPath(
+                    $this->getMediaFolder().'/'.substr($url, strlen($storeMediaUrl))
+                );
             }
 
             $staticUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_STATIC);
-            if (strpos($url, $staticUrl) !== false) {
-                return str_replace($staticUrl, $this->getStaticFolder().'/', $url);
+            if (str_starts_with($url, $staticUrl)) {
+                return $this->assertAllowedPath(
+                    $this->getStaticFolder().'/'.substr($url, strlen($staticUrl))
+                );
             }
         }
 
         if (preg_match('/^\//', $url)) {
-            return $this->getBaseFolder().$url;
+            return $this->assertAllowedPath($this->getBaseFolder().$url);
         }
 
         // @todo: https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-yireo-next-gen-images/-/blob/main/src/Plugin/UrlConvertorPlugin.php#L17
-        if (preg_match('/image\.(img|full|thumb|url)/m', $url)) {
+        if (preg_match('/image\.(img|full|thumb|url)/m', $url) && !in_array('..', explode('/', $url), true)) {
             return $url;
         }
 
@@ -230,6 +236,47 @@ class UrlConvertor
     private function getStaticFolder(): string
     {
         return rtrim($this->directoryList->getPath(FilesystemDirectoryList::STATIC_VIEW), '/');
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     * @throws FileSystemException
+     */
+    private function assertAllowedPath(string $path): string
+    {
+        $normalizedPath = $this->normalizePath($path);
+        $allowedFolders = [$this->getBaseFolder(), $this->getMediaFolder(), $this->getStaticFolder()];
+        foreach ($allowedFolders as $allowedFolder) {
+            if (str_starts_with($normalizedPath, $this->normalizePath($allowedFolder).'/')) {
+                return $path;
+            }
+        }
+
+        throw new NotFoundException((string)__('Path "'.$path.'" is outside of the public folder'));
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    private function normalizePath(string $path): string
+    {
+        $segments = [];
+        foreach (explode('/', str_replace('\\', '/', $path)) as $segment) {
+            if ($segment === '' || $segment === '.') {
+                continue;
+            }
+
+            if ($segment === '..') {
+                array_pop($segments);
+                continue;
+            }
+
+            $segments[] = $segment;
+        }
+
+        return '/'.implode('/', $segments);
     }
 
     /**

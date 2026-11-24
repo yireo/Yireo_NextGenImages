@@ -9,6 +9,8 @@ use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\View\Asset\File\NotFoundException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Yireo\NextGenImages\Util\UrlConvertor;
 
@@ -31,6 +33,52 @@ class UrlConvertorTest extends TestCase
         $this->assertTrue($urlConvertor->isLocal('http://localhost/media/test.png'));
         $this->assertTrue($urlConvertor->isLocal('http://cdn/test.png'));
         $this->assertFalse($urlConvertor->isLocal('http://foobar/media/test.png'));
+        $this->assertFalse($urlConvertor->isLocal('http://foobar/?http://localhost/media/test.png'));
+    }
+
+    /**
+     * @dataProvider provideUrlsOutsidePublicFolder
+     */
+    #[DataProvider('provideUrlsOutsidePublicFolder')]
+    public function testGetFilenameFromUrlRejectsPathsOutsidePublicFolder(string $url)
+    {
+        $urlConvertor = new UrlConvertor(
+            $this->getStoreManagerMock(),
+            $this->getDirectoryListMock(),
+            $this->getEscaperMock(),
+            $this->createMock(File::class)
+        );
+
+        $this->expectException(NotFoundException::class);
+        $urlConvertor->getFilenameFromUrl($url);
+    }
+
+    public static function provideUrlsOutsidePublicFolder(): array
+    {
+        return [
+            'relative traversal' => ['/../../app/etc/secret.jpg'],
+            'traversal in middle' => ['/media/../../app/etc/secret.jpg'],
+            'base URL traversal' => ['http://localhost/../app/etc/secret.jpg'],
+            'media URL traversal' => ['http://cdn/../../../etc/secret.png'],
+            'backslash traversal' => ['/media/..\\..\\app/secret.jpg'],
+            'foreign host with local URL in query' => ['http://foobar/?http://localhost/media/test.png'],
+            'alpine expression with traversal' => ['../../app/image.img.jpg'],
+        ];
+    }
+
+    public function testGetFilenameFromUrlAllowsTraversalInsidePublicFolder()
+    {
+        $urlConvertor = new UrlConvertor(
+            $this->getStoreManagerMock(),
+            $this->getDirectoryListMock(),
+            $this->getEscaperMock(),
+            $this->createMock(File::class)
+        );
+
+        $this->assertSame(
+            '/var/www/html/pub/media/catalog/../sample.png',
+            $urlConvertor->getFilenameFromUrl('http://localhost/media/catalog/../sample.png')
+        );
     }
 
     /**
