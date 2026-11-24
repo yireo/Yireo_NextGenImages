@@ -1,4 +1,8 @@
-<script>
+<?php declare(strict_types=1);
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+$script = <<<'SCRIPT'
     (function() {
         const originalInitGallery = initGallery;
         window.initGallery = function() {
@@ -7,4 +11,6 @@
             return galleryInitData;
         }
     })();
-</script>
+SCRIPT;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $script, false) ?>

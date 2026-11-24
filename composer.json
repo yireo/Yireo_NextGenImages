@@ -24,8 +24,7 @@
         "magento/module-store": "^100.0|^101.0",
         "magento/module-swatches": "^100.0",
         "php": ">=8.2 <8.6",
-        "psr/log": "^1 || ^2 || ^3",
-        "yireo/magento2-csp-utilities": "^1.0"
+        "psr/log": "^1 || ^2 || ^3"
     },
     "require-dev": {
         "bitexpert/phpstan-magento": "^0.42",
