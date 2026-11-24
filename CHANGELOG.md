@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.18] - 24 November 2026
+### Security
+- Confine paths resolved from image URLs to the public folder, and only treat store URLs as local when they match as a prefix
+- Escape srcset and type of picture sources
+
+### Added
+- Add srcset support for remote storage (#95)
+- Serve WebP images for image swatches
+
+### Fixed
+- Skip images that can not be resolved during conversion
+- Do not add a second loading attribute when the img tag already has one (#99)
+- Optimize image HTML replacement logic (#93)
+- Only move images of the target format to remote storage, remember remote file checks during the request
+- Let convertor handle missing source image, skip convertor for up-to-date images with an empty srcset
+- Pass explicit characters to trim() for PHP 8.6 compatibility
+
 ## [0.5.17] - 16 November 2026
 ### Fixed
 - Detect AVIF mimetype instead of falling back to PNG
