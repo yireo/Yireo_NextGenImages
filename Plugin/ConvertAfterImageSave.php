@@ -5,6 +5,7 @@ namespace Yireo\NextGenImages\Plugin;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\NotFoundException;
+use Magento\Framework\View\Asset\File\NotFoundException as AssetNotFoundException;
 use Magento\Framework\Image;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Convertor\ConvertorListing;
@@ -74,7 +75,7 @@ class ConvertAfterImageSave
 
         try {
             $image = $this->imageFactory->createFromPath((string)$destination);
-        } catch (NotFoundException|FileSystemException|NoSuchEntityException $e) {
+        } catch (AssetNotFoundException|NotFoundException|FileSystemException|NoSuchEntityException $e) {
             $this->debugger->debug($e->getMessage());
             return $return;
         }
@@ -82,7 +83,9 @@ class ConvertAfterImageSave
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
                 $convertor->convertImage($image);
-            } catch (ConvertorException|NotFoundException|FileSystemException|NoSuchEntityException $e) {
+            } catch (
+                ConvertorException|AssetNotFoundException|NotFoundException|FileSystemException|NoSuchEntityException $e
+            ) {
                 $this->debugger->debug($e->getMessage());
             }
         }

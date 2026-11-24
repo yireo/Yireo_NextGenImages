@@ -6,6 +6,7 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Image as FrameworkImage;
 use Magento\Framework\Phrase;
+use Magento\Framework\View\Asset\File\NotFoundException as AssetNotFoundException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Convertor\ConvertorInterface;
@@ -47,6 +48,33 @@ class ConvertAfterImageSaveTest extends AbstractTestCase
         $convertor->expects($this->never())->method('convertImage');
 
         $plugin = $this->getPlugin($imageFactory, [$convertor]);
+        $this->assertSame('original', $plugin->afterSave($this->getSubject(), 'original', '/tmp/foo.jpg'));
+    }
+
+    public function testReturnsOriginalWhenImageAssetIsNotFound(): void
+    {
+        $imageFactory = $this->getMagentoMock(ImageFactory::class);
+        $imageFactory->method('createFromPath')->willThrowException(new AssetNotFoundException('foo'));
+
+        $convertor = $this->getMagentoMock(ConvertorInterface::class);
+        $convertor->expects($this->never())->method('convertImage');
+
+        $plugin = $this->getPlugin($imageFactory, [$convertor]);
+        $this->assertSame('original', $plugin->afterSave($this->getSubject(), 'original', '/tmp/foo.jpg'));
+    }
+
+    public function testReturnsOriginalWhenConvertorThrowsAssetNotFound(): void
+    {
+        $imageFactory = $this->getMagentoMock(ImageFactory::class);
+        $imageFactory->method('createFromPath')->willReturn(new Image('/tmp/foo.jpg', '/media/foo.jpg'));
+
+        $failingConvertor = $this->getMagentoMock(ConvertorInterface::class);
+        $failingConvertor->method('convertImage')->willThrowException(new AssetNotFoundException('foo'));
+
+        $workingConvertor = $this->getMagentoMock(ConvertorInterface::class);
+        $workingConvertor->expects($this->once())->method('convertImage');
+
+        $plugin = $this->getPlugin($imageFactory, [$failingConvertor, $workingConvertor]);
         $this->assertSame('original', $plugin->afterSave($this->getSubject(), 'original', '/tmp/foo.jpg'));
     }
 
