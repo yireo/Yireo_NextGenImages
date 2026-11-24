@@ -15,6 +15,7 @@ use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Observer\ReplaceBlockHtml;
 use Yireo\NextGenImages\Observer\TrackBlockRendering;
 use Yireo\NextGenImages\Test\Unit\AbstractTestCase;
+use Yireo\NextGenImages\Util\AlpineRequest;
 use Yireo\NextGenImages\Util\BlockRenderStack;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\ShouldModifyOutput;
@@ -57,7 +58,7 @@ class ReplaceBlockHtmlTest extends AbstractTestCase
         $stack = new BlockRenderStack();
         $htmlReplacer = $this->getHtmlReplacer(1);
         $observer = $this->getObserver($htmlReplacer, 'true', $stack);
-        $tracker = new TrackBlockRendering($stack, $this->getMagentoMock(ScopeConfigInterface::class));
+        $tracker = $this->getTracker($stack, 'true');
 
         $parent = $this->getMagentoMock(Template::class);
         $child = $this->getMagentoMock(Template::class);
@@ -73,6 +74,20 @@ class ReplaceBlockHtmlTest extends AbstractTestCase
         $observer->execute($this->getEventObserver($parent, $parentTransport));
         $this->assertSame('replaced', $parentTransport->getData('html'));
         $this->assertTrue($stack->isEmpty());
+    }
+
+    /**
+     * @dataProvider getHeaderValues
+     */
+    #[DataProvider('getHeaderValues')]
+    public function testTrackingOnlyHappensForAlpineRequests(mixed $headerValue, bool $expectTracking): void
+    {
+        $stack = new BlockRenderStack();
+        $this->getTracker($stack, $headerValue)->execute(
+            $this->getEventObserver($this->getMagentoMock(Template::class))
+        );
+
+        $this->assertSame(!$expectTracking, $stack->isEmpty());
     }
 
     public function testSkipWithoutImagesAndWithoutCssBackgrounds(): void
@@ -124,17 +139,31 @@ class ReplaceBlockHtmlTest extends AbstractTestCase
         $config = $this->getMagentoMock(Config::class);
         $config->method('convertCssBackgrounds')->willReturn($convertCssBackgrounds);
 
-        $request = $this->getMagentoMock(Http::class);
-        $request->method('getHeader')->with('X-Alpine-Request')->willReturn($headerValue);
-
         return new ReplaceBlockHtml(
             $htmlReplacer,
             $shouldModifyOutput,
             $this->getMagentoMock(LayoutInterface::class),
             $config,
-            $request,
+            $this->getAlpineRequest($headerValue),
             $stack
         );
+    }
+
+    private function getTracker(BlockRenderStack $stack, mixed $headerValue): TrackBlockRendering
+    {
+        return new TrackBlockRendering(
+            $stack,
+            $this->getMagentoMock(ScopeConfigInterface::class),
+            $this->getAlpineRequest($headerValue)
+        );
+    }
+
+    private function getAlpineRequest(mixed $headerValue): AlpineRequest
+    {
+        $request = $this->getMagentoMock(Http::class);
+        $request->method('getHeader')->with('X-Alpine-Request')->willReturn($headerValue);
+
+        return new AlpineRequest($request);
     }
 
     private function getEventObserver(BlockInterface $block, ?DataObject $transport = null): Observer

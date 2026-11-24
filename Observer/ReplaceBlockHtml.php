@@ -2,13 +2,13 @@
 
 namespace Yireo\NextGenImages\Observer;
 
-use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
 use Yireo\NextGenImages\Config\Config;
+use Yireo\NextGenImages\Util\AlpineRequest;
 use Yireo\NextGenImages\Util\BlockRenderStack;
 use Yireo\NextGenImages\Util\HtmlReplacer;
 use Yireo\NextGenImages\Util\ShouldModifyOutput;
@@ -18,8 +18,6 @@ use Yireo\NextGenImages\Util\ShouldModifyOutput;
  */
 class ReplaceBlockHtml implements ObserverInterface
 {
-    private const ALPINE_REQUEST_HEADER = 'X-Alpine-Request';
-
     /**
      * @var HtmlReplacer
      */
@@ -40,7 +38,7 @@ class ReplaceBlockHtml implements ObserverInterface
      */
     private $config;
 
-    private RequestInterface $request;
+    private AlpineRequest $alpineRequest;
 
     private BlockRenderStack $blockRenderStack;
 
@@ -49,7 +47,7 @@ class ReplaceBlockHtml implements ObserverInterface
      * @param ShouldModifyOutput $shouldModifyOutput
      * @param LayoutInterface $layout
      * @param Config $config
-     * @param RequestInterface $request
+     * @param AlpineRequest $alpineRequest
      * @param BlockRenderStack $blockRenderStack
      */
     public function __construct(
@@ -57,14 +55,14 @@ class ReplaceBlockHtml implements ObserverInterface
         ShouldModifyOutput $shouldModifyOutput,
         LayoutInterface $layout,
         Config $config,
-        RequestInterface $request,
+        AlpineRequest $alpineRequest,
         BlockRenderStack $blockRenderStack
     ) {
         $this->htmlReplacer = $htmlReplacer;
         $this->shouldModifyOutput = $shouldModifyOutput;
         $this->layout = $layout;
         $this->config = $config;
-        $this->request = $request;
+        $this->alpineRequest = $alpineRequest;
         $this->blockRenderStack = $blockRenderStack;
     }
 
@@ -104,7 +102,7 @@ class ReplaceBlockHtml implements ObserverInterface
             return true;
         }
 
-        if ($this->isAjax() && $this->blockRenderStack->isEmpty()) {
+        if ($this->alpineRequest->isAlpineRequest() && $this->blockRenderStack->isEmpty()) {
             return true;
         }
 
@@ -135,11 +133,5 @@ class ReplaceBlockHtml implements ObserverInterface
         }
 
         return true;
-    }
-
-    private function isAjax(): bool
-    {
-        $value = $this->request->getHeader(self::ALPINE_REQUEST_HEADER);
-        return in_array($value, ['true', '1'], true);
     }
 }
