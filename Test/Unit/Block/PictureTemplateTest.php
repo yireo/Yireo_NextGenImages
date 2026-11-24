@@ -6,6 +6,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
+use ReflectionProperty;
 use Yireo\NextGenImages\Block\Picture;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
@@ -60,6 +61,17 @@ class PictureTemplateTest extends AbstractTestCase
         $this->assertStringNotContainsString('<picture class="foo<script>">', $html);
     }
 
+    public function testSizesAttributeOfSourceIsEscaped()
+    {
+        $webpImage = new Image('/tmp/pub/media/x.webp', '/media/x.webp');
+        $tag = '<img src="/media/x.jpg" sizes="100vw&quot;&gt;&lt;svg/onload=alert(1)&gt;">';
+
+        $html = $this->render($tag, false, [$webpImage]);
+
+        $this->assertMatchesRegularExpression('/<source [^>]*sizes="100vw&quot;&gt;&lt;svg\/onload=alert\(1\)&gt;"/', $html);
+        $this->assertStringNotContainsString('<svg', $html);
+    }
+
     private function render(string $tag, bool $addLazyLoading, array $images = []): string
     {
         $picture = (new ReflectionClass(Picture::class))->newInstanceWithoutConstructor();
@@ -79,6 +91,9 @@ class PictureTemplateTest extends AbstractTestCase
         $escape = fn ($value) => htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $escaper->method('escapeHtml')->willReturnCallback($escape);
         $escaper->method('escapeHtmlAttr')->willReturnCallback($escape);
+        $escaperProperty = new ReflectionProperty(Picture::class, '_escaper');
+        $escaperProperty->setAccessible(true);
+        $escaperProperty->setValue($picture, $escaper);
 
         ob_start();
         include dirname(__DIR__, 3) . '/view/frontend/templates/picture.phtml';

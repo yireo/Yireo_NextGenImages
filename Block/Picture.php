@@ -251,15 +251,13 @@ class Picture extends Template
 
     public function getSourceAttributesAsString(): string
     {
-        $allowedSourceAttributes = ['media', 'sizes'];
         $sourceAttributes = [];
-        foreach ($this->getOriginalAttributes() as $originalAttribute) {
-            $originalAttributeArray = explode('=', $originalAttribute);
-            if (false === in_array($originalAttributeArray[0], $allowedSourceAttributes)) {
+        foreach ($this->getOriginalDomAttributes() as $name => $value) {
+            if (!in_array($name, ['media', 'sizes'], true)) {
                 continue;
             }
 
-            $sourceAttributes[] = $originalAttribute;
+            $sourceAttributes[] = $this->getAttributeAsString($name, $value);
         }
 
         return implode(' ', $sourceAttributes);
@@ -270,12 +268,6 @@ class Picture extends Template
      */
     public function getOriginalAttributes(): array
     {
-        $attributes = [];
-        $originalNode = $this->getDomElementFromHtmlTag($this->getOriginalTag());
-        if (!$originalNode instanceof DOMNode) {
-            return $attributes;
-        }
-
         $skipAttributes = [
             'img',
             'data-src',
@@ -289,23 +281,13 @@ class Picture extends Template
             'class',
         ];
 
-        foreach ($originalNode->attributes as $attribute) {
-            $name = $attribute->nodeName;
-            if (in_array($name, $skipAttributes)) {
+        $attributes = [];
+        foreach ($this->getOriginalDomAttributes() as $name => $value) {
+            if (in_array($name, $skipAttributes, true)) {
                 continue;
             }
 
-            $value = $attribute->nodeValue;
-            if (empty($value)) {
-                continue;
-            }
-
-            if (strstr('"', $value)) {
-                $attributes[] = $name.'=\''.$value.'\'';
-            } else {
-                $attributes[] = $name.'="'.$value.'"';
-            }
-
+            $attributes[] = $this->getAttributeAsString($name, $value);
         }
 
         if (preg_match_all('/@([^=]+)=\"([^\"]+)\"/', $this->getOriginalTag(), $matches)) {
@@ -419,6 +401,39 @@ class Picture extends Template
     public function toHtml()
     {
         return $this->stripWhitespaces((string)parent::toHtml());
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getOriginalDomAttributes(): array
+    {
+        $attributes = [];
+        $originalNode = $this->getDomElementFromHtmlTag($this->getOriginalTag());
+        if (!$originalNode instanceof DOMNode || $originalNode->attributes === null) {
+            return $attributes;
+        }
+
+        foreach ($originalNode->attributes as $attribute) {
+            $name = (string)$attribute->nodeName;
+            if (!preg_match('/^[a-zA-Z_:@][a-zA-Z0-9_:.@-]*$/', $name)) {
+                continue;
+            }
+
+            $value = (string)$attribute->nodeValue;
+            if ($value === '') {
+                continue;
+            }
+
+            $attributes[$name] = $value;
+        }
+
+        return $attributes;
+    }
+
+    private function getAttributeAsString(string $name, string $value): string
+    {
+        return $name.'="'.$this->_escaper->escapeHtml($value).'"';
     }
 
     /**
