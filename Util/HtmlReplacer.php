@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Yireo\NextGenImages\Util;
 
 use DOMElement;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\View\Asset\File\NotFoundException;
 use Yireo\NextGenImages\Block\PictureFactory;
 use Yireo\NextGenImages\Config\Config;
 use Yireo\NextGenImages\Image\ImageCollector;
@@ -166,39 +168,45 @@ class HtmlReplacer
             return '';
         }
         
-        $imageSrcSet = $image->getAttribute('srcset');
-        if ($imageSrcSet) {
-            $imageUrls = $this->getImageUrlsFromSrcSet($imageSrcSet);
-            if (empty($imageUrls)) {
-                return '';
-            }
+        $imageUrls = $this->getImageUrlsFromElement($image);
+        if (empty($imageUrls)) {
+            return '';
+        }
 
-            $imageUrl = (string)($imageUrls[0] ?? reset($imageUrls));
-            $images = $this->imageCollector->collect($imageUrls);
-            if (!count($images) > 0) {
-                return '';
-            }
-        } else {
-            $imageUrl = $this->getImageUrlFromElement($image);
-            if (!$this->isAllowedByImageUrl($imageUrl)) {
-                return '';
-            }
+        try {
+            $originalImage = $this->imageFactory->createFromUrl($imageUrls);
+        } catch (NotFoundException|FileSystemException $exception) {
+            return '';
+        }
 
-            $images = $this->imageCollector->collect($imageUrl);
-            if (!count($images) > 0) {
-                return '';
-            }
+        $images = $this->imageCollector->collectFromImage($originalImage);
+        if (empty($images)) {
+            return '';
         }
 
         $imageHtml = $this->getImageHtmlFromImage($image, $html);
         $pictureBlock = $this->pictureFactory->create(
-            $this->imageFactory->createFromUrl($imageUrl),
+            $originalImage,
             $images,
             $imageHtml,
             $this->getSrcAttributeFromElement($image)
         );
 
         return $pictureBlock->toHtml();
+    }
+
+    /**
+     * @param DOMElement $image
+     * @return string|string[]
+     */
+    private function getImageUrlsFromElement(DOMElement $image)
+    {
+        $imageSrcSet = $image->getAttribute('srcset');
+        if ($imageSrcSet) {
+            return $this->getImageUrlsFromSrcSet($imageSrcSet);
+        }
+
+        return $this->getImageUrlFromElement($image);
     }
 
     /**

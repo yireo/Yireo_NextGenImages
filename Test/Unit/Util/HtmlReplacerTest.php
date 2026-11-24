@@ -2,6 +2,7 @@
 
 namespace Yireo\NextGenImages\Test\Unit\Util;
 
+use Magento\Framework\View\Asset\File\NotFoundException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use Yireo\NextGenImages\Block\Picture;
@@ -19,6 +20,8 @@ use Yireo\NextGenImages\Util\UrlConvertor;
 class HtmlReplacerTest extends AbstractTestCase
 {
     private array $collectedUrls = [];
+
+    private array $picturedUrls = [];
 
     public function testReplaceWithNoImages()
     {
@@ -54,6 +57,7 @@ class HtmlReplacerTest extends AbstractTestCase
         ];
 
         $imageCollector->method('collect')->willReturn($images);
+        $imageCollector->method('collectFromImage')->willReturn($images);
 
         $block = $this->getMagentoMock(Picture::class);
         $block->method('toHtml')->willReturn('<DUMMYPICTURE/>');
@@ -250,6 +254,28 @@ class HtmlReplacerTest extends AbstractTestCase
         ];
     }
 
+    public function testSrcSetUsesSameBaseImageForCollectionAndPicture()
+    {
+        $html = '<img srcset="/a.jpg 2x, /b.jpg" alt="a">';
+
+        $actualHtml = $this->getHtmlReplacerWithRealDom()->replace($html);
+
+        $this->assertSame('<picture>'.$html.'</picture>', $actualHtml);
+        $this->assertSame([['2x' => '/a.jpg', 0 => '/b.jpg']], $this->collectedUrls);
+        $this->assertSame(['/a.jpg'], $this->picturedUrls);
+    }
+
+    public function testImageIsKeptWhenBaseImageLookupFails()
+    {
+        $html = '<img srcset="/missing.jpg 1x, /b.jpg 2x" alt="a"><img src="/missing.jpg"><img src="/c.jpg">';
+
+        $this->assertSame(
+            '<img srcset="/missing.jpg 1x, /b.jpg 2x" alt="a"><img src="/missing.jpg"><picture><img src="/c.jpg"></picture>',
+            $this->getHtmlReplacerWithRealDom()->replace($html)
+        );
+        $this->assertSame(['/c.jpg'], $this->picturedUrls);
+    }
+
     public function testUppercaseImageTagIsReplaced()
     {
         $html = '<div><IMG SRC="/a.jpg" ALT="a"><Img src="/b.jpg"></div>';
@@ -321,14 +347,23 @@ class HtmlReplacerTest extends AbstractTestCase
             return !str_starts_with($url, 'http://remote');
         });
 
-        $imageCollector = $this->getMagentoMock(ImageCollector::class);
-        $imageCollector->method('collect')->willReturnCallback(function ($urls) {
+        $imageFactory = $this->getMagentoMock(ImageFactory::class);
+        $imageFactory->method('createFromUrl')->willReturnCallback(function ($urls) {
             $this->collectedUrls[] = $urls;
             $urls = is_array($urls) ? $urls : [$urls];
             foreach ($urls as $url) {
-                if (str_contains($url, 'skip')) {
-                    return [];
+                if (str_contains($url, 'missing')) {
+                    throw new NotFoundException('missing');
                 }
+            }
+
+            return new Image('/tmp/pub'.reset($urls), (string)reset($urls), implode(',', $urls));
+        });
+
+        $imageCollector = $this->getMagentoMock(ImageCollector::class);
+        $imageCollector->method('collectFromImage')->willReturnCallback(function (Image $image) {
+            if (str_contains((string)$image->getSrcSet(), 'skip')) {
+                return [];
             }
 
             return [new Image('/tmp/pub/test.webp', '/test.webp')];
@@ -336,7 +371,8 @@ class HtmlReplacerTest extends AbstractTestCase
 
         $pictureFactory = $this->getMagentoMock(PictureFactory::class);
         $pictureFactory->method('create')->willReturnCallback(
-            function ($image, $images, string $imageHtml) {
+            function (Image $image, $images, string $imageHtml) {
+                $this->picturedUrls[] = $image->getUrl();
                 $block = $this->getMagentoMock(Picture::class);
                 $block->method('toHtml')->willReturn('<picture>'.$imageHtml.'</picture>');
 
@@ -351,7 +387,7 @@ class HtmlReplacerTest extends AbstractTestCase
             $urlConvertor,
             $imageCollector,
             $pictureFactory,
-            $this->getMagentoMock(ImageFactory::class),
+            $imageFactory,
             $config,
             new DomUtils()
         );

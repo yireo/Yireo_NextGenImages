@@ -53,6 +53,15 @@ class ImageCollector implements ArgumentInterface
             return [];
         }
 
+        return $this->collectFromImage($image);
+    }
+
+    /**
+     * @param Image $image
+     * @return Image[]
+     */
+    public function collectFromImage(Image $image): array
+    {
         $images = [];
         foreach ($this->convertorListing->getConvertors() as $convertor) {
             try {
