@@ -43,7 +43,6 @@
         "Magento_Swatches",
         "Magento_Theme",
         "Magento_Variable",
-        "Yireo_CspUtilities",
         "Yireo_IntegrationTestHelper"
     ],
     "components": [],
@@ -120,9 +119,9 @@
         }
     ],
     "tests": {
-        "unit": 77,
-        "integration": 29,
-        "functional": 3
+        "unit": 153,
+        "integration": 44,
+        "functional": 8
     },
     "php_versions": [
         "8.2",
