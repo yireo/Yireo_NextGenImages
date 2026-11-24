@@ -50,27 +50,21 @@ class HtmlReplacerTest extends AbstractTestCase
         $om = ObjectManager::getInstance();
         $this->copyImages();
 
-        $returnMap = [
-            [
-                '/media/tmp/test1.jpg',
-                [
-                    new Image('/tmp/pub/media/tmp/test1.jpg', '/media/tmp/test1.jpg'),
-                    new Image('/tmp/pub/media/tmp/test1.webp', '/media/tmp/test1.webp'),
-                ],
+        $imagesByUrl = [
+            '/media/tmp/test1.jpg' => [
+                new Image('/tmp/pub/media/tmp/test1.jpg', '/media/tmp/test1.jpg'),
+                new Image('/tmp/pub/media/tmp/test1.webp', '/media/tmp/test1.webp'),
             ],
-            [
-                '/media/tmp/test2.jpg',
-                [
-                    new Image('/tmp/pub/media/tmp/test2.jpg', '/media/tmp/test2.jpg'),
-                    new Image('/tmp/pub/media/tmp/test2.webp', '/media/tmp/test2.webp'),
-                ],
+            '/media/tmp/test2.jpg' => [
+                new Image('/tmp/pub/media/tmp/test2.jpg', '/media/tmp/test2.jpg'),
+                new Image('/tmp/pub/media/tmp/test2.webp', '/media/tmp/test2.webp'),
             ],
         ];
 
         $imageCollector = $this->getMagentoMock(ImageCollector::class);
         $imageCollector
-            ->method('collect')
-            ->will($this->returnValueMap($returnMap));
+            ->method('collectFromImage')
+            ->willReturnCallback(fn (Image $image) => $imagesByUrl[$image->getUrl()] ?? []);
 
         $htmlReplacer = new HtmlReplacer(
             $om->create(UrlConvertor::class),
