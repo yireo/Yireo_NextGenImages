@@ -8,20 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.18] - 24 November 2026
 ### Security
-- Confine paths resolved from image URLs to the public folder, and only treat store URLs as local when they match as a prefix
-- Escape srcset and type of picture sources
+- Confine paths resolved from image URLs to the public folder, reject stream wrapper URLs (phar, php, file, data) and block protected media folders like media/customer and media/downloadable
+- Keep cached images inside the media cache directory and only accept a cache directory setting within media/ without `..` segments
+- Escape all attributes of generated picture and source tags (srcset, sizes, media, type, class, width, height) and only accept valid srcset descriptors
+- Escape output in the admin configuration templates and protect the configuration with its own ACL resource
+- Prevent object injection via unserialize of the temporary file copier
+- Only process Alpine block HTML for exact X-Alpine-Request header values, once per outermost block
+- Do not match tags that merely start with img, and use a random marker when replacing images in HTML
 
 ### Added
 - Add srcset support for remote storage (#95)
-- Serve WebP images for image swatches
+- Serve WebP images for image swatches in Luma and Hyvä
+
+### Changed
+- Render inline scripts via SecureHtmlRenderer so they receive a CSP nonce, dropping the yireo/magento2-csp-utilities dependency
 
 ### Fixed
-- Skip images that can not be resolved during conversion
+- Never break saving a product image when conversion fails, and skip images that can not be resolved
 - Do not add a second loading attribute when the img tag already has one (#99)
-- Optimize image HTML replacement logic (#93)
-- Only move images of the target format to remote storage, remember remote file checks during the request
-- Let convertor handle missing source image, skip convertor for up-to-date images with an empty srcset
-- Pass explicit characters to trim() for PHP 8.6 compatibility
+- Speed up replacing images in the HTML of pages with many images (#91, #93)
+- Remote storage: only move images of the target format, remember remote file checks during the request, and fall back to the original image when the source is missing
+- Keep folders like media/publications intact in the cache path, and pass explicit characters to trim() for PHP 8.6 compatibility
 
 ## [0.5.17] - 16 November 2026
 ### Fixed
