@@ -1,16 +1,18 @@
 <?php
 declare(strict_types=1);
 
+use Magento\Framework\Escaper;
 use Yireo\NextGenImages\Block\Adminhtml\System\Config\Gd;
 
 /** @version 0.5.17 */
-/** @var $block Gd */
+/** @var Gd $block */
+/** @var Escaper $escaper */
 ?>
 <?php if ($block->hasGdSupport()): ?>
     <div class="message message-success">
-    <?= /* @noEscape */ __('WebP is supported by GD') ?>
+    <?= $escaper->escapeHtml(__('WebP is supported by GD')) ?>
     </div><?php else: ?>
     <div class="message message-warning">
-    <?= /* @noEscape */ __('WebP is not supported by GD') ?>
+    <?= $escaper->escapeHtml(__('WebP is not supported by GD')) ?>
     </div>
 <?php endif; ?>

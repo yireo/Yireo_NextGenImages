@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-/** @version 0.5.17 */
-/** @var $block PhpVersion */
-
+use Magento\Framework\Escaper;
 use Yireo\NextGenImages\Block\Adminhtml\System\Config\PhpVersion;
 
+/** @version 0.5.17 */
+/** @var PhpVersion $block */
+/** @var Escaper $escaper */
 ?>
 
-<?= /* @noEscape */ $block->getPhpVersion() ?>
+<?= $escaper->escapeHtml($block->getPhpVersion()) ?>

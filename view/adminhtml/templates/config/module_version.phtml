@@ -1,14 +1,16 @@
 <?php
 declare(strict_types=1);
 
+use Magento\Framework\Escaper;
 use Yireo\NextGenImages\Block\Adminhtml\System\Config\ModuleVersion;
 
 /** @version 0.5.17 */
-/** @var $block ModuleVersion */
+/** @var ModuleVersion $block */
+/** @var Escaper $escaper */
 ?>
-<?= /* @noEscape */ $block->getModuleVersion() ?>
+<?= $escaper->escapeHtml($block->getModuleVersion()) ?>
 <?php if ($block->hasHyvaYireoNextGenImages()): ?>
     <div class="message message-warning">
-        <?= /* @noEscape */ __('Please remove Hyva_YireoNextGenImages as soon as possible') ?>
+        <?= $escaper->escapeHtml(__('Please remove Hyva_YireoNextGenImages as soon as possible')) ?>
     </div>
 <?php endif; ?>
