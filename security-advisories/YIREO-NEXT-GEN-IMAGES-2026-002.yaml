@@ -1,0 +1,71 @@
+schema_version: 1.6.0
+id: YIREO-NEXT-GEN-IMAGES-2026-002
+aliases:
+  - GHSA-8x2r-2fw8-v55f
+published: '2026-11-25T08:22:22Z'
+modified: '2026-11-25T08:22:22Z'
+summary: 'Cross-site scripting via srcset descriptors of converted images'
+details: |-
+  ### Impact
+
+  `Yireo_NextGenImages` replaces `<img>` tags in the frontend HTML with a `<picture>` element that contains a `<source>` per converted image (WebP, AVIF). For images with a `srcset` attribute, the descriptor of every `srcset` entry (like `2x` or `640w`) was taken from the parsed DOM, where HTML entities are already decoded, and printed into the `srcset` attribute of the generated `<source>` tag without escaping (`view/frontend/templates/picture.phtml`).
+
+  A properly escaped attribute in the original HTML, for instance
+
+  ```html
+  <img src="/media/a.jpg" srcset="/media/a.jpg 1x&quot;onerror=&quot;alert(1)">
+  ```
+
+  therefore became
+
+  ```html
+  <source type="image/webp" srcset="/media/a.webp 1x"onerror="alert(1)">
+  ```
+
+  Anyone who can get an `<img srcset>` value into a rendered frontend page can inject HTML and JavaScript that runs in the browser of every visitor of that page, even when the code that renders the image escapes the value correctly. Examples are content contributors without the right to add scripts, or extensions that render user-supplied image URLs. A convertor module such as `yireo/magento2-webp2` must be installed for the `<picture>` element to be generated.
+
+  ### Patches
+
+  Fixed in **0.5.18**: the `srcset` and `type` values of picture sources are escaped, and `srcset` entries with a descriptor other than a width (`640w`) or pixel density (`2x`, `1.5x`) are dropped.
+
+  ```
+  composer require yireo/magento2-next-gen-images:^0.5.18
+  ```
+
+  Users of `yireo/magento2-webp2` should also upgrade to 0.14.5, which validates `srcset` descriptors itself as well.
+
+  ### Workarounds
+
+  Disable the module output with `bin/magento config:set yireo_nextgenimages/settings/enabled 0` and flush the cache.
+
+  ### References
+
+  - Fixes: https://github.com/yireo/Yireo_NextGenImages/commit/cc39cff, https://github.com/yireo/Yireo_NextGenImages/commit/9dd2130
+  - Release: https://github.com/yireo/Yireo_NextGenImages/releases/tag/0.5.18
+severity:
+  -
+    type: CVSS_V3
+    score: 'CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N'
+affected:
+  -
+    package:
+      ecosystem: Packagist
+      name: yireo/magento2-next-gen-images
+    ranges:
+      -
+        type: ECOSYSTEM
+        events:
+          -
+            introduced: 0.5.16
+          -
+            fixed: 0.5.18
+references:
+  -
+    type: PACKAGE
+    url: 'https://github.com/yireo/Yireo_NextGenImages'
+  -
+    type: ADVISORY
+    url: 'https://github.com/yireo/Yireo_NextGenImages/security/advisories/GHSA-8x2r-2fw8-v55f'
+database_specific:
+  cwe_ids:
+    - CWE-79
